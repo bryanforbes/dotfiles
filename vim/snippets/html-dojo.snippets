@@ -1,0 +1,16 @@
+snippet dinclude
+	<script type="text/javascript" src="${1:dojo}/dojo.js" djConfig="${2:isDebug: true}"></script>${3}
+snippet script
+	<script type="text/javascript">
+		${1}
+	</script>
+snippet require
+	dojo.require("${1}");${2}
+snippet aolCdn
+	http://o.aolcdn.com/dojo/${1:1.4.0}${2}
+snippet googleCdn
+	http://ajax.googleapis.com/ajax/libs/dojo/${1:1.4.0}${2}
+snippet addonload
+	dojo.addOnLoad(function(){
+		${1}
+	});

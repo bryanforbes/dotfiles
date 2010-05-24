@@ -1,0 +1,18 @@
+[user]
+	email = bryan@reigndropsfall.net
+	name = Bryan Forbes
+[alias]
+	st = status
+	ci = commit -v
+	co = checkout
+	br = branch
+[core]
+	autocrlf = input
+	excludesfile = ~/.gitignore
+	editor = vim
+[color]
+	ui = auto
+[url "git@github.com:"]
+	insteadOf = github:
+[url "git://github.com/"]
+	insteadOf = gitpub:

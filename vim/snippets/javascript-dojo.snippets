@@ -1,0 +1,33 @@
+snippet declare
+	dojo.declare("${1:className}", ${2:null}, {
+		${3}
+	});
+snippet provide
+	dojo.provide("${1}");${2}
+snippet require
+	dojo.require("${1}");${2}
+snippet constr
+	constructor: function(${1}){
+		${2}
+	},
+snippet module
+	dojo.provide("${1:moduleName}");
+
+	dojo.declare("$1", null, {
+	});
+snippet funcmod
+	dojo.provide("${1:moduleName}");
+
+	${2}
+
+	(function(){
+		var ${3} = $1;
+	})();
+snippet reqmod
+	dojo.provide("${1:moduleName}");
+
+	dojo.require("${2:reqireName}");
+	${3}
+
+	dojo.declare("$1", $2, {
+	});
