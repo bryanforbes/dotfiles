@@ -14,6 +14,8 @@ nnoremap <leader>w :w!<cr>
 noremap <leader>s :source ~/.vimrc<cr>
 " Fast editing of .vimrc
 noremap <leader>v :e! ~/.vimrc<cr>
+" NERDTree
+"noremap <leader>r :NERDTreeToggle<cr>
 
 noremap <leader>t :tabnew<cr>
 noremap <C-j> :tabnext<CR>
@@ -36,6 +38,7 @@ endtry
 
 filetype on " detect the type of file
 filetype plugin on
+filetype indent on
 let g:tex_flavor="latex"
 set ffs=unix,mac,dos " support all three filetypes in this order
 
@@ -52,7 +55,12 @@ set incsearch
 set modeline
 " set spell spelllang=en
 
+" set list
+" set listchars=tab:▸\ ,eol:¬
+
 syntax on
+
+source ~/.vim/my_functions.vim
 
 augroup myfiletypes
 	au!

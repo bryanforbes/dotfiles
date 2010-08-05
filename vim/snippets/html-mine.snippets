@@ -1,0 +1,15 @@
+snippet html5page
+	<!DOCTYPE HTML>
+	<html>
+	<head>
+		<title>${1:`substitute(Filename('', 'Page Title'), '^.', '\u&', '')`}</title>
+		<style type="text/css">
+			${2}
+		</style>
+		<script type="text/javascript">
+			${3}
+		</script>
+	</head>
+	<body>
+	</body>
+	</html>
