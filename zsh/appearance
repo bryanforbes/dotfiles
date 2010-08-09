@@ -1,8 +1,5 @@
 # vim: set filetype=zsh:
 
-typeset -ga preexec_functions
-typeset -ga precmd_functions
-
 case "$TERM" in
   xterm*|rxvt*)
     term_preexec () {
@@ -44,4 +41,7 @@ setopt prompt_subst
 PROMPT='${PR_GREEN}%n${PR_RESET} at ${PR_YELLOW}%m${PR_RESET} in ${PR_BLUE}%~${PR_RESET}
 ${vcs_info_msg_0_}%# '
 
-eval $(dircolors)
+# only eval dircolors if it exists
+if [[ -a "$(whence dircolors)" ]]; then
+	eval $(dircolors)
+fi

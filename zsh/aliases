@@ -48,7 +48,7 @@ alias gsr="git svn rebase"
 alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
 
 # gvim if this isn't a console
-if [[ -a /usr/bin/gvim && ($TERM == "xterm" || $TERM == "rxvt") ]]; then
+if [[ -a "$(whence gvim)" && ($TERM == "xterm" || $TERM == "xterm-color" || $TERM == "rxvt") ]]; then
 	alias vi='gvim -p --remote-tab-silent'
 elif [[ -n "$(alias -L vi)" ]]; then
 	unalias vi

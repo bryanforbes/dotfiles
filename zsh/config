@@ -2,8 +2,8 @@
 
 typeset -U fpath
 
-fpath=($ZSH/functions $fpath)
-autoload -U $ZSH/functions/*(:t)
+fpath=($ZSH_HOME/functions $fpath)
+autoload -U $ZSH_HOME/functions/*(:t)
 
 typeset -U path
 path=(~/bin $path)

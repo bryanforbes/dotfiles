@@ -1,6 +1,8 @@
 # vim: set filetype=zsh:
 
-if [[ -d "/usr/share/zsh/functions/VCS_Info" || -d "/usr/share/zsh-beta/VCS_Info" ]]; then
+VCS_INFO_LOCATION=(${^fpath}/vcs_info(N.))
+
+if [[ $#VCS_INFO_LOCATION > 0 ]]; then
 	autoload -Uz vcs_info
 
 	function set_vcs_info {
@@ -17,3 +19,5 @@ if [[ -d "/usr/share/zsh/functions/VCS_Info" || -d "/usr/share/zsh-beta/VCS_Info
 	zstyle ':vcs_info:*:prompt:*' actionformats " (%s) [%b|%a] %c%u"
 	zstyle ':vcs_info:*:prompt:*' formats " (%s) [%b] %c%u"
 fi
+
+unset VCS_INFO_LOCATION
