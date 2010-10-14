@@ -36,6 +36,12 @@ try
 catch
 endtry
 
+" Pathogen
+" Turn filetype off to force reloading on Debian systems
+filetype off
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
 filetype on " detect the type of file
 filetype plugin on
 filetype indent on
@@ -53,6 +59,7 @@ set smartindent
 set hlsearch
 set incsearch
 set modeline
+set ru
 " set spell spelllang=en
 
 " set list
