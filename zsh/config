@@ -1,13 +1,15 @@
 # vim: set filetype=zsh:
 
-typeset -U fpath
+# Arrays that don't repeat members
+typeset -U fpath path cdpath manpath
+
+# Global arrays for preexec and precmd functions
+typeset -ga preexec_functions precmd_functions
 
 fpath=($ZSH_HOME/functions $fpath)
 autoload -U $ZSH_HOME/functions/*(:t)
 
-typeset -U path
 path=(~/bin $path)
-
 cdpath=(. ~)
 
 ## smart urls
@@ -60,6 +62,8 @@ bindkey "^[[6~" down-line-or-history
 
 bindkey '5D' emacs-backward-word
 bindkey '5C' emacs-forward-word
+bindkey '^[[5D' emacs-backward-word
+bindkey '^[[5C' emacs-forward-word
 
 # make search up and down work, so partially type and hit up/down to find relevant stuff
 bindkey '^[[A' up-line-or-search
@@ -71,8 +75,6 @@ bindkey "^[[F"  end-of-line
 bindkey "^[[4~" end-of-line
 bindkey ' ' magic-space    # also do history expansion on space
 
-bindkey '^[[5D' beginning-of-line
-bindkey '^[[5C' end-of-line
 bindkey '^[[3~' delete-char
 bindkey '^[^N' newtab
 bindkey '^?' backward-delete-char

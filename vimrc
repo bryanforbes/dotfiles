@@ -1,4 +1,8 @@
-colorscheme wombat
+if &t_Co == 256
+	colorscheme wombat256
+else
+	colorscheme wombat
+endif
 
 "===============
 " Key mappings
@@ -47,6 +51,8 @@ filetype plugin on
 filetype indent on
 let g:tex_flavor="latex"
 set ffs=unix,mac,dos " support all three filetypes in this order
+
+let g:syntastic_enable_signs=1
 
 set ts=4
 set sw=4
