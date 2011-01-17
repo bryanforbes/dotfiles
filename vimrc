@@ -29,8 +29,10 @@ noremap <C-k> :tabprevious<CR>
 inoremap <C-Space> <C-x><C-o>
 
 
-"When .vimrc is edited, reload it
+"When .vimrc or .vim_local_autocmds is edited, reload it
 autocmd! bufwritepost .vimrc source ~/.vimrc
+autocmd! bufwritepost .vim_local_autocmds source ~/.vimrc
+
 
 "Tab configuration
 try
@@ -56,6 +58,7 @@ let g:syntastic_enable_signs=1
 
 set ts=4
 set sw=4
+set sts=4
 set noet
 set tw=0
 set sta
@@ -80,19 +83,19 @@ augroup myfiletypes
 
 	" Syntax Highlighting
 	" Python
-	autocmd BufRead,BufNewFile *.py set et softtabstop=4 ts=4 sw=4 smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
+	autocmd BufRead,BufNewFile *.py set et sts=4 ts=4 sw=4 smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
 
 	" Cython
-	autocmd BufRead,BufNewFile *.pyx,*.pxd,*.pxi set et softtabstop=4 ts=4 sw=4 smartindent filetype=pyrex
+	autocmd BufRead,BufNewFile *.pyx,*.pxd,*.pxi set et sts=4 ts=4 sw=4 smartindent filetype=pyrex
 
 	" C
-	autocmd BufRead,BufNewFile *.c set noet softtabstop=4 smartindent cino=>s,e0,n0,f0,{0,}0,^0,:s,=s,l0,g0,hs,ps,ts,+s,c3,C0,(0,us,\U0,w0,m0,j0,)20,*30
+	autocmd BufRead,BufNewFile *.c set noet sts=4 smartindent cino=>s,e0,n0,f0,{0,}0,^0,:s,=s,l0,g0,hs,ps,ts,+s,c3,C0,(0,us,\U0,w0,m0,j0,)20,*30
 
 	" Haskell
-	autocmd BufRead,BufNewFile *.hs set et ts=2 sw=2 softtabstop=2
+	autocmd BufRead,BufNewFile *.hs set et ts=2 sw=2 sts=2
 
 	" Javascript
-	autocmd BufRead,BufNewFile *.js,*.json,*.smd,*.php,*.php.T,*.html set noet ts=4 sw=4
+	autocmd BufRead,BufNewFile *.js,*.json,*.smd set noet ts=4 sw=4 sts=4
 	autocmd BufRead,BufNewFile *.json,*.smd set filetype=javascript
 
 	" Nginx
@@ -115,8 +118,12 @@ augroup myfiletypes
 	autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 	autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 
+
+	" ~/.vim_local_autocmds should act like a vim config file
+	autocmd BufRead,BufNewFile ~/.vim_local_autocmds set filetype=vim
+
 	" Pull in local autocmd's if they exist
-	if filereadable("~/.vim_local_autocmds")
+	if filereadable(glob("~/.vim_local_autocmds"))
 		source ~/.vim_local_autocmds
 	endif
 augroup END
