@@ -36,6 +36,14 @@ set modeline
 set fileformats=unix,mac,dos		" support all three filetypes in this order
 set spelllang=en
 
+if exists("*mkdir")
+	if !isdirectory($HOME . "/.vim/undodir")
+		call mkdir($HOME . "/.vim/undodir")
+	endif
+	if !isdirectory($HOME . "/.vim/swpdir")
+		call mkdir($HOME . "/.vim/swpdir")
+	endif
+endif
 set directory=~/.vim/swpdir,/tmp	" swap directory
 if v:version >= 703					" options only for Vim >= 7.3
 	set undofile
@@ -86,12 +94,15 @@ noremap <leader>s :source ~/.vimrc<cr>
 " Fast editing of .vimrc
 noremap <leader>v :e! ~/.vimrc<cr>
 
-noremap <leader>t :tabnew<cr>
+" Change directory to current buffer
+map <leader>cd :cd %:p:h<cr>
+
+" noremap <leader>t :tabnew<cr>
 noremap <C-j> :tabnext<CR>
 noremap <C-k> :tabprevious<CR>
 
 " Remap code completion from Ctrl+x, Ctrl+o to Ctrl+Space
-inoremap <C-Space> <C-x><C-o>
+" inoremap <C-Space> <C-x><C-o>
 
 
 "=================
@@ -103,6 +114,11 @@ nmap <leader>err :Errors<CR><C-W>j
 "let g:syntastic_quiet_warnings=1
 let g:syntastic_enable_signs=1
 let g:syntastic_jsl_conf="~/.vim/jsl.conf"
+
+" Command-T
+let g:CommandTMaxHeight=20
+let g:CommandTAcceptSelectionMap="<C-b>"	" open selection in current window with Ctrl-B
+let g:CommandTAcceptSelectionTabMap="<CR>"	" open selection in new tab with Enter
 
 
 "===================
