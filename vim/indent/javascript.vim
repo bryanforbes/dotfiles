@@ -12,6 +12,6 @@ if exists("b:did_indent")
 endif
 let b:did_indent = 1
 
-" Defined in ~/.vim/my_functions.vim
-setlocal indentexpr=GetJsIndent(v:lnum)
+" Defined in ~/.vim/autoload/my_functions.vim
+setlocal indentexpr=myfunctions#GetJsIndent(v:lnum)
 setlocal indentkeys=0{,0},0),:,!^F,o,O,e,*<Return>,=*/

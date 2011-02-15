@@ -210,7 +210,7 @@ fun! HtmlIndentGet(lnum)
 	      setlocal noic
 	    endif
 		" defined in ~/.vim/my_functions.vim
-	    return GetJsIndent(v:lnum)
+	    return myfunctions#GetJsIndent(v:lnum)
 	endif
     endif
 
