@@ -139,26 +139,27 @@ au FileType haskell setl et ts=2 sw=2 sts=2
 
 " Javascript
 "au FileType javascript setl noet ts=4 sw=4 sts=4
-au BufRead,BufNewFile *.json,*.smd set ft=json
+au BufRead,BufNewFile *.json,*.smd setl ft=json
 
 " HTML
 "au FileType html,xhtml setl noet ts=4 sw=4 sts=4
 
-" CSS
+" CSS/LESS
 "au FileType css setl noet ts=4 sw=4 sts=4
+au BufNewFile,BufRead *.less setl ft=less
 
 " Nginx
-au BufRead,BufNewFile *.nginx set ft=nginx
+au BufRead,BufNewFile *.nginx setl ft=nginx
 
 " Mako
-au BufRead,BufNewFile *.mak set ft=mako
+au BufRead,BufNewFile *.mak setl ft=mako
 
 " Jinja
-au BufRead,BufNewFile *.jin set noet ft=jinja
-au BufRead,BufNewFile *.html.jin set noet ft=htmljinja
+au BufRead,BufNewFile *.jin setl noet ft=jinja
+au BufRead,BufNewFile *.html.jin setl noet ft=htmljinja
 
 " Go
-au BufRead,BufNewFile *.go set noet ft=go
+au BufRead,BufNewFile *.go setl noet ft=go
 
 " Code completion
 "au FileType python set omnifunc=pythoncomplete#Complete
@@ -167,7 +168,7 @@ au BufRead,BufNewFile *.go set noet ft=go
 "au FileType css set omnifunc=csscomplete#CompleteCSS
 
 " ~/.vim_local_autocmds should act like a vim config file
-au BufRead,BufNewFile ~/.vim_local_autocmds set ft=vim
+au BufRead,BufNewFile ~/.vim_local_autocmds setl ft=vim
 
 " Pull in local autocmd's if they exist
 if filereadable(glob("~/.vim_local_autocmds"))
