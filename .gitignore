@@ -1,2 +1,4 @@
 vim/undodir/*
 vim/swpdir/*
+vim/bundle/*
+!vim/bundle/README

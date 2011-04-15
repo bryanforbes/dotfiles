@@ -1,10 +1,24 @@
 " Full VIM
 set nocompatible
 
-" Pathogen
 filetype off
-silent! call pathogen#runtime_append_all_bundles()
-silent! call pathogen#helptags()
+
+" Pathogen
+" silent! call pathogen#runtime_append_all_bundles()
+" silent! call pathogen#helptags()
+
+" Vundle
+set rtp+=~/.vim/vundle.git/
+call vundle#rc()
+
+Bundle "git://github.com/altercation/vim-colors-solarized.git"
+
+Bundle "git://github.com/msanders/snipmate.vim.git"
+Bundle "git://github.com/tpope/vim-surround.git"
+Bundle "git://github.com/tpope/vim-markdown.git"
+Bundle "git://github.com/scrooloose/syntastic.git"
+Bundle "git://github.com/wincent/Command-T.git"
+
 filetype plugin indent on
 
 " Set mapleader
@@ -68,7 +82,7 @@ catch
 endtry
 
 " Color Scheme
-set background=light
+set background=dark
 colorscheme solarized
 
 " if &t_Co == 256
