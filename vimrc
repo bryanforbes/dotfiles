@@ -44,6 +44,7 @@ if exists("*mkdir")
 		call mkdir($HOME . "/.vim/swpdir")
 	endif
 endif
+
 set directory=~/.vim/swpdir,/tmp	" swap directory
 if v:version >= 703					" options only for Vim >= 7.3
 	set undofile
@@ -67,11 +68,14 @@ catch
 endtry
 
 " Color Scheme
-if &t_Co == 256
-	colorscheme wombat256
-else
-	colorscheme wombat
-endif
+set background=light
+colorscheme solarized
+
+" if &t_Co == 256
+" 	colorscheme wombat256
+" else
+"	colorscheme wombat
+" endif
 
 syntax on							" enable syntax highlighting
 
@@ -93,6 +97,9 @@ nnoremap <leader>w :up!<cr>
 noremap <leader>s :source ~/.vimrc<cr>
 " Fast editing of .vimrc
 noremap <leader>v :e! ~/.vimrc<cr>
+
+" turn on spell checking
+map <leader>spell :setlocal spell!<cr>
 
 " Change directory to current buffer
 map <leader>cd :cd %:p:h<cr>
