@@ -7,10 +7,10 @@ snippet script
 snippet require
 	dojo.require("${1}");${2}
 snippet aolCdn
-	http://o.aolcdn.com/dojo/${1:1.4.0}${2}
+	http://o.aolcdn.com/dojo/${1:1.6}${2}
 snippet googleCdn
-	http://ajax.googleapis.com/ajax/libs/dojo/${1:1.4.0}${2}
-snippet addonload
-	dojo.addOnLoad(function(){
+	http://ajax.googleapis.com/ajax/libs/dojo/${1:1.6}${2}
+snippet ready
+	dojo.ready(function(){
 		${1}
 	});

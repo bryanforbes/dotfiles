@@ -11,23 +11,23 @@ snippet constr
 		${2}
 	},
 snippet module
-	dojo.provide("${1:moduleName}");
-	$3
-	dojo.declare("$1", ${2:null}, {
+	dojo.provide("${1:namespace}.${2:`Filename()`}");
+	${4}
+	dojo.declare("$1.$2", ${3:null}, {
 	});
 snippet funcmod
-	dojo.provide("${1:moduleName}");
+	dojo.provide("${1:namespace}.${2:`Filename()`}");
 
-	${2}
-
-	(function(){
-		var ${3} = $1;
-	})();
-snippet reqmod
-	dojo.provide("${1:moduleName}");
-
-	dojo.require("${2:reqireName}");
 	${3}
 
-	dojo.declare("$1", $2, {
+	(function(){
+		var ${4} = $1.$2;
+	})();
+snippet reqmod
+	dojo.provide("${1:namespace}.${2:`Filename()`}");
+
+	dojo.require("${3:reqireName}");
+	${4}
+
+	dojo.declare("$1.$2", $3, {
 	});
