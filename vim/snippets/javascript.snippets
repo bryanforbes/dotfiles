@@ -1,0 +1,45 @@
+snippet '':f "object method string"
+'${1:${2:#thing}:${3:click}}': function(element){
+	$0
+}${10:,}
+endsnippet
+
+snippet :f "Object Method"
+${1:method_name}: function(${3:attribute}){
+	$0
+}${10:,}
+endsnippet
+
+snippet :, "Object Value JS"
+${1:value_name}: ${0:value},
+endsnippet
+
+snippet if "if"
+if(${1:true}){
+	$0
+}
+endsnippet
+
+snippet ife "if/else"
+if(${1:true}){
+	$0
+}else{
+}
+endsnippet
+
+snippet elif "else if"
+}else if(${1:true}){
+	$0
+endsnippet
+
+snippet fun "function"
+function${1: function_name}(${2:argument}){
+	$0
+}
+endsnippet
+
+snippet anon "Immediately invoked function expression"
+(function(${1:argument}){
+	$0
+})(${2:variable});
+endsnippet

@@ -1,0 +1,41 @@
+# Dojo 1.x
+snippet declare "dojo.declare" b
+dojo.declare("${1:className}", ${2:null}, {
+	$0
+});
+endsnippet
+
+snippet provide "dojo.provide" b
+dojo.provide("${1}");$0
+endsnippet
+
+snippet require "Dojo 1.x require" b
+dojo.require("${1}");$0
+endsnippet
+
+snippet cache
+dojo.cache("${1:namespace}", "${2:filename}")$0
+endsnippet
+
+# Dojo 2.x
+snippet define "Dojo 2.x define" b
+define([$1], function($2){
+	$0
+});
+endsnippet
+
+snippet require "Dojo 2.x require" b
+require([$1], function($2){
+	$0
+});
+endsnippet
+
+snippet has
+has("${1:testName}")$0
+endsnippet
+
+snippet hasa "has.js test addition" b
+has.add("${1:testName}", function($2){
+	$0
+});
+endsnippet
