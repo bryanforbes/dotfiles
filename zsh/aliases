@@ -28,8 +28,8 @@ fi
 # git
 alias ga='git add'
 alias gae='git add --edit'
-alias gl='git pull'
-alias gp='git push'
+alias gpl='git pull'
+alias gpu='git push'
 alias gd='git diff'
 alias gdc='git diff --cached'
 alias gc='git commit -v'
