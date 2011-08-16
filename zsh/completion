@@ -13,7 +13,7 @@ autoload -U bashcompinit
 bashcompinit
 
 # Source any bash completion files we might have
-for source_file ($ZSH_HOME/bash_completion.d/*) source $source_file
+for source_file ($ZSH_HOME/bash_completion.d/*(.N)) source $source_file
 
 zmodload -i zsh/complist
 zstyle ':completion:*' completer _expand _complete _correct _approximate
