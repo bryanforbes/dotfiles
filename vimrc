@@ -13,11 +13,11 @@ call vundle#rc()
 
 Bundle "git://github.com/altercation/vim-colors-solarized.git"
 
-Bundle "git://github.com/msanders/snipmate.vim.git"
+Bundle "UltiSnips"
 Bundle "git://github.com/tpope/vim-surround.git"
 Bundle "git://github.com/tpope/vim-markdown.git"
 Bundle "git://github.com/scrooloose/syntastic.git"
-Bundle "git://github.com/wincent/Command-T.git"
+" Bundle "git://github.com/wincent/Command-T.git"
 
 filetype plugin indent on
 
@@ -141,6 +141,11 @@ let g:CommandTMaxHeight=20
 let g:CommandTAcceptSelectionMap="<C-b>"	" open selection in current window with Ctrl-B
 let g:CommandTAcceptSelectionTabMap="<CR>"	" open selection in new tab with Enter
 
+" UltiSnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsSnippetDirectories=["snippets"]
 
 "===================
 " Language Specific
