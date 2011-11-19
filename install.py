@@ -47,4 +47,4 @@ if __name__ == "__main__":
             file.fnmatch("*.sh") or file.fnmatch("*.md"):
             continue
 
-        #replace_file(file)
+        replace_file(file)
