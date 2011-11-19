@@ -4,20 +4,8 @@ set nocompatible
 filetype off
 
 " Pathogen
-" silent! call pathogen#runtime_append_all_bundles()
-" silent! call pathogen#helptags()
-
-" Vundle
-set rtp+=~/.vim/vundle.git/
-call vundle#rc()
-
-Bundle "git://github.com/altercation/vim-colors-solarized.git"
-
-Bundle "UltiSnips"
-Bundle "git://github.com/tpope/vim-surround.git"
-Bundle "git://github.com/tpope/vim-markdown.git"
-Bundle "git://github.com/scrooloose/syntastic.git"
-" Bundle "git://github.com/wincent/Command-T.git"
+runtime bundle/vim-pathogen/autoload/pathogen.vim
+call pathogen#infect()
 
 filetype plugin indent on
 
@@ -46,6 +34,7 @@ set incsearch						" go to search results as typing
 set ignorecase						" ignore case when searching
 set smartcase						" but case-sensitive if expression contains a capital letter
 set modeline
+set hidden
 
 set fileformats=unix,mac,dos		" support all three filetypes in this order
 set spelllang=en
@@ -119,16 +108,27 @@ map <leader>spell :setlocal spell!<cr>
 map <leader>cd :cd %:p:h<cr>
 
 " noremap <leader>t :tabnew<cr>
-noremap <C-j> :tabnext<CR>
-noremap <C-k> :tabprevious<CR>
+noremap <C-j> :MBEbn<CR>
+noremap <C-k> :MBEbp<CR>
+noremap <leader>d :bdelete<cr>
+
+" Visually select the text that was last edited/pasted
+nmap gV `[v`]
 
 " Remap code completion from Ctrl+x, Ctrl+o to Ctrl+Space
 " inoremap <C-Space> <C-x><C-o>
+
+" Markdown to HTML
+nmap <leader>md :%!~/bin/markdown --html4tags <cr>
 
 
 "=================
 " Plugin Settings
 "=================
+
+" MiniBufExpl
+let g:miniBufExplorerMoreThanOne = 1
+let g:miniBufExplCheckDupeBufs = 0
 
 " Syntastic
 nmap <leader>err :Errors<CR><C-W>j
