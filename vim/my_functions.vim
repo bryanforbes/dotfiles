@@ -7,3 +7,15 @@ fu! FormatJSON() range
 	endw
 endf
 command! -range FormatJSON :<line1>,<line2>call FormatJSON()
+
+fu! EscapeTags()
+	s/</\&lt;/eg
+	s/>/\&gt;/eg
+endf
+command! -range EscapeTags :<line1>,<line2>call EscapeTags()
+
+fu! UnEscapeTags()
+	s/&lt;/</eg
+	s/&gt;/>/eg
+endf
+command! -range UnEscapeTags :<line1>,<line2>call UnEscapeTags()

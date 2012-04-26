@@ -3,6 +3,7 @@
 # Push and pop directories on directory stack
 alias pu='pushd'
 alias po='popd'
+alias -- -='cd -'
 
 # Super user
 alias _='sudo'
@@ -50,9 +51,15 @@ alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
 
 # gvim if this is xterm or similar
 if [[ -a "$(whence gvim)" && ($TERM == xterm* || $TERM == "rxvt") ]]; then
-	alias vi='gvim -p --remote-tab-silent'
+	alias vi='gvim'
+	alias vi1='gvim --servername VIM1'
+	alias vi2='gvim --servername VIM2'
+	alias vi3='gvim --servername VIM3'
 elif [[ -n "$(alias -L vi)" ]]; then
 	unalias vi
+	unalias vi1
+	unalias vi2
+	unalias vi3
 fi
 
 # pbcopy if this is xterm and if it doesn't already exist and xsel exists

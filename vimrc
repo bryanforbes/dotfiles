@@ -6,7 +6,7 @@ filetype off
 " Pathogen
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 call pathogen#infect()
-
+call pathogen#helptags()
 filetype plugin indent on
 
 " Set mapleader
@@ -17,16 +17,27 @@ let g:mapleader = ","
 " Configuration
 "===============
 set showmode						" display the mode you're in
-set history=500						" sets how many lines of history VIM has to remember
-set undolevels=500
 set scrolloff=3						" show 3 lines of context around the cursor
 set mousehide						" hide the mouse cursor when typing
 set mouse=a							" full mouse support
 set showcmd							" show typed commands
+set cursorline						" highlight current line, for quick orientation
+set laststatus=2					" always show the statusline
+
+set history=1000					" sets how many lines of history VIM has to remember
+set undolevels=1000
+set directory=~/.vim/.tmp			" swap directory
+if v:version >= 703					" options only for Vim >= 7.3
+	set undofile
+	set undodir=~/.vim/.undo		" undo file directory
+endif
+set nobackup						" do not keep backup files
+set noswapfile						" do not write annoying .swp files
 
 set ruler							" always show current position
 set backspace=indent,eol,start		" set backspace config, backspace as normal
-set encoding=utf8
+set termencoding=utf-8
+set encoding=utf-8
 set confirm
 
 set hlsearch						" highlight search things
@@ -34,25 +45,12 @@ set incsearch						" go to search results as typing
 set ignorecase						" ignore case when searching
 set smartcase						" but case-sensitive if expression contains a capital letter
 set modeline
-set hidden
+set hidden							" hide buffers instead of closing them
+set switchbuf=useopen				" reveal already open files from the quickfix
+									"	window instead of opening new buffers
 
 set fileformats=unix,mac,dos		" support all three filetypes in this order
 set spelllang=en
-
-if exists("*mkdir")
-	if !isdirectory($HOME . "/.vim/undodir")
-		call mkdir($HOME . "/.vim/undodir")
-	endif
-	if !isdirectory($HOME . "/.vim/swpdir")
-		call mkdir($HOME . "/.vim/swpdir")
-	endif
-endif
-
-set directory=~/.vim/swpdir,/tmp	" swap directory
-if v:version >= 703					" options only for Vim >= 7.3
-	set undofile
-	set undodir=~/.vim/undodir		" undo file directory
-endif
 
 set tabstop=4
 set shiftwidth=4
@@ -65,30 +63,40 @@ set smartindent
 
 "Tab configuration
 try
-	set switchbuf=usetab
+	"set switchbuf=usetab
 	set showtabline=1				" only show tab bar when requested
 catch
 endtry
 
-" Color Scheme
-set background=dark
-colorscheme solarized
-
-" if &t_Co == 256
-" 	colorscheme wombat256
-" else
-"	colorscheme wombat
-" endif
-
 syntax on							" enable syntax highlighting
 
-" set cino=>s,e0,n0,f0,{0,}0,^0,:s,=s,l0,g0,hs,ps,ts,+s,c3,C0,(0,us,\U0,w0,m0,j0,)20,*30
-" set list listchars=tab:▸\ ,eol:¬
+"=====
+" GUI
+"=====
+if has("gui_running")
+	" Color Scheme
+	let g:solarized_visibility = 'low'
+	set background=dark
+	colorscheme solarized
 
-"When .vimrc or .vim_local_autocmds is edited, reload it
-au! bufwritepost .vimrc source ~/.vimrc
-au! bufwritepost .vim_local_autocmds source ~/.vimrc
+	if has("gui_gtk2")
+		" GNOME/GTK+
+		set guifont=Monospace\ 9
+	elseif has("gui_win32")
+		" Windows
+		set guifont=Consolas:h12:cANSI
+	elseif has("gui_macvim")
+		" MacVim
+		set guifont=Menlo:h12
+		set guioptions-=T		" Don't show the toolbar
+		set fuopt+=maxhorz
+	endif
+else
+	set background=dark
+	colorscheme solarized
+endif "has("gui_running")
 
+set listchars=tab:▸\ ,trail:·,extends:#,precedes:#
 
 "==============
 " Key mappings
@@ -97,9 +105,9 @@ au! bufwritepost .vim_local_autocmds source ~/.vimrc
 " Fast saving
 nnoremap <leader>w :up!<cr>
 " Fast reloading of the .vimrc
-noremap <leader>s :source ~/.vimrc<cr>
+noremap <leader>s :source $MYVIMRC<cr>
 " Fast editing of .vimrc
-noremap <leader>v :e! ~/.vimrc<cr>
+noremap <leader>v :e! $MYVIMRC<cr>
 
 " turn on spell checking
 map <leader>spell :setlocal spell!<cr>
@@ -108,38 +116,41 @@ map <leader>spell :setlocal spell!<cr>
 map <leader>cd :cd %:p:h<cr>
 
 " noremap <leader>t :tabnew<cr>
-noremap <C-j> :MBEbn<CR>
-noremap <C-k> :MBEbp<CR>
-noremap <leader>d :bdelete<cr>
+noremap <C-j> :bn<CR>
+noremap <C-k> :bp<CR>
+noremap <leader>d :bd!<cr>
 
 " Visually select the text that was last edited/pasted
 nmap gV `[v`]
 
+" Shortcut to rapidly toggle `set list`
+nmap <leader>l :set list!<cr>
+
+" Bracket/brace matching with <tab> instead of %
+nnoremap <tab> %
+vnoremap <tab> %
+
 " Remap code completion from Ctrl+x, Ctrl+o to Ctrl+Space
 " inoremap <C-Space> <C-x><C-o>
 
-" Markdown to HTML
-nmap <leader>md :%!~/bin/markdown --html4tags <cr>
+" Fugitive
+noremap <leader>gd :Gdiff<cr>
+noremap <leader>gc :Gcommit -v<cr>
+noremap <leader>gs :Gstatus<cr>
 
 
 "=================
 " Plugin Settings
 "=================
 
-" MiniBufExpl
-let g:miniBufExplorerMoreThanOne = 1
-let g:miniBufExplCheckDupeBufs = 0
-
 " Syntastic
 nmap <leader>err :Errors<CR><C-W>j
-"let g:syntastic_quiet_warnings=1
+noremap <leader>y :SyntasticCheck<cr>
+let g:syntastic_check_on_open=1
 let g:syntastic_enable_signs=1
+let g:syntastic_javascript_checker="jshint"
+let g:syntastic_javascript_jshint_conf="~/.vim/jshintrc"
 let g:syntastic_jsl_conf="~/.vim/jsl.conf"
-
-" Command-T
-let g:CommandTMaxHeight=20
-let g:CommandTAcceptSelectionMap="<C-b>"	" open selection in current window with Ctrl-B
-let g:CommandTAcceptSelectionTabMap="<CR>"	" open selection in new tab with Enter
 
 " UltiSnips
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -147,59 +158,72 @@ let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 let g:UltiSnipsSnippetDirectories=["snippets"]
 
-"===================
-" Language Specific
-"===================
+"==============
+" Autocommands
+"==============
+if has("autocmd")
+	augroup BryanPresets
+		au!
 
-" Python
-au FileType python setl et
+		" When .vimrc or .vim_local_autocmds is edited, reload it
+		autocmd BufWritePost .vimrc source $MYVIMRC
+		autocmd BufWritePost .vim_local_autocmds source $MYVIMRC
 
-" Cython
-au BufRead,BufNewFile *.pyx,*.pxd,*.pxi setl et ft=pyrex
+		"===================
+		" Language Specific
+		"===================
 
-" C
-au FileType c setl cino=>s,e0,n0,f0,{0,}0,^0,:s,=s,l0,g0,hs,ps,ts,+s,c3,C0,(0,us,\U0,w0,m0,j0,)20,*30
+		" Python
+		autocmd FileType python setlocal expandtab
 
-" Haskell
-au FileType haskell setl et ts=2 sw=2 sts=2
+		" Cython
+		autocmd BufRead,BufNewFile *.pyx,*.pxd,*.pxi setlocal expandtab filetype=pyrex
 
-" Javascript
-"au FileType javascript setl noet ts=4 sw=4 sts=4
-au BufRead,BufNewFile *.json,*.smd setl ft=json
+		" C
+		autocmd FileType c setlocal cino=>s,e0,n0,f0,{0,}0,^0,:s,=s,l0,g0,hs,ps,ts,+s,c3,C0,(0,us,\U0,w0,m0,j0,)20,*30
 
-" HTML
-"au FileType html,xhtml setl noet ts=4 sw=4 sts=4
+		" Haskell
+		autocmd FileType haskell setlocal et ts=2 sw=2 sts=2
 
-" CSS/LESS
-"au FileType css setl noet ts=4 sw=4 sts=4
-au BufNewFile,BufRead *.less setl ft=less
+		" Javascript
+		"autocmd FileType javascript setlocal noet ts=4 sw=4 sts=4
+		autocmd BufRead,BufNewFile *.json,*.smd setlocal ft=json
 
-" Nginx
-au BufRead,BufNewFile *.nginx setl ft=nginx
+		" HTML
+		"autocmd FileType html,xhtml setlocal noet ts=4 sw=4 sts=4
 
-" Mako
-au BufRead,BufNewFile *.mak setl ft=mako
+		" CSS/LESS
+		"autocmd FileType css setlocal noet ts=4 sw=4 sts=4
+		autocmd BufNewFile,BufRead *.less set filetype=less
 
-" Jinja
-au BufRead,BufNewFile *.jin setl noet ft=jinja
-au BufRead,BufNewFile *.html.jin setl noet ft=htmljinja
+		" Nginx
+		autocmd BufRead,BufNewFile *.nginx set filetype=nginx
 
-" Go
-au BufRead,BufNewFile *.go setl noet ft=go
+		" Mako
+		autocmd BufRead,BufNewFile *.mak set filetype=mako
 
-" Code completion
-"au FileType python set omnifunc=pythoncomplete#Complete
-"au FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-"au FileType html set omnifunc=htmlcomplete#CompleteTags
-"au FileType css set omnifunc=csscomplete#CompleteCSS
+		" Jinja
+		autocmd BufRead,BufNewFile *.jin setlocal noet ft=jinja
+		autocmd BufRead,BufNewFile *.html.jin setlocal noet ft=htmljinja
 
-" ~/.vim_local_autocmds should act like a vim config file
-au BufRead,BufNewFile ~/.vim_local_autocmds setl ft=vim
+		" Go
+		autocmd BufRead,BufNewFile *.go setlocal noet ft=go
 
-" Pull in local autocmd's if they exist
-if filereadable(glob("~/.vim_local_autocmds"))
-	source ~/.vim_local_autocmds
-endif
+		" Code completion
+		"autocmd FileType python set omnifunc=pythoncomplete#Complete
+		"autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+		"autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+		"autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+
+		" ~/.vim_local_autocmds should act like a vim config file
+		autocmd BufRead,BufNewFile ~/.vim_local_autocmds set filetype=vim
+
+		" Pull in local autocmd's if they exist
+		if filereadable(glob("~/.vim_local_autocmds"))
+			source ~/.vim_local_autocmds
+		endif
+	augroup END
+endif " has("autocmd")
 
 source ~/.vim/my_functions.vim
 

@@ -13,15 +13,24 @@
 [submodule "vim/bundle/UltiSnips"]
 	path = vim/bundle/UltiSnips
 	url = git://github.com/vim-scripts/UltiSnips.git
-[submodule "vim/bundle/minibufexpl.vim"]
-	path = vim/bundle/minibufexpl.vim
-	url = git://github.com/fholgado/minibufexpl.vim.git
 [submodule "vim/bundle/vim-javascript"]
 	path = vim/bundle/vim-javascript
 	url = git://github.com/pangloss/vim-javascript.git
 [submodule "vim/bundle/syntastic"]
 	path = vim/bundle/syntastic
 	url = git://github.com/scrooloose/syntastic.git
-[submodule "vim/bundle/Textile-for-VIM"]
-	path = vim/bundle/Textile-for-VIM
-	url = git://github.com/vim-scripts/Textile-for-VIM.git
+[submodule "vim/bundle/vim-repeat"]
+	path = vim/bundle/vim-repeat
+	url = git://github.com/tpope/vim-repeat.git
+[submodule "vim/bundle/vim-fugitive"]
+	path = vim/bundle/vim-fugitive
+	url = git://github.com/tpope/vim-fugitive.git
+[submodule "vim/bundle/hammer.vim"]
+	path = vim/bundle/hammer.vim
+	url = git://github.com/matthias-guenther/hammer.vim.git
+[submodule "vim/bundle/nerdtree"]
+	path = vim/bundle/nerdtree
+	url = git://github.com/scrooloose/nerdtree.git
+[submodule "vim/bundle/command-t"]
+	path = vim/bundle/command-t
+	url = git://git.wincent.com/command-t.git
