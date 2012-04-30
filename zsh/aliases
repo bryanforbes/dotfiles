@@ -49,18 +49,11 @@ alias gm='git merge'
 # Git and svn mix
 alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
 
-# gvim if this is xterm or similar
-if [[ -a "$(whence gvim)" && ($TERM == xterm* || $TERM == "rxvt") ]]; then
-	alias vi='gvim'
-	alias vi1='gvim --servername VIM1'
-	alias vi2='gvim --servername VIM2'
-	alias vi3='gvim --servername VIM3'
-elif [[ -n "$(alias -L vi)" ]]; then
-	unalias vi
-	unalias vi1
-	unalias vi2
-	unalias vi3
-fi
+# Aliases for _vi function in ~/.zsh/functions/_vi
+alias vi="_vi VIM"
+alias vi1="_vi VIM1"
+alias vi2="_vi VIM2"
+alias vi3="_vi VIM3"
 
 # pbcopy if this is xterm and if it doesn't already exist and xsel exists
 if [[ -z "$(whence pbcopy)" && -a "$(whence xsel)" && ($TERM == "xterm" || $TERM == "xterm-color" || $TERM == "rxvt") ]]; then

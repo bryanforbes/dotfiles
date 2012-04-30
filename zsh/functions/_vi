@@ -1,0 +1,30 @@
+# Sets up _vi function which is aliased to
+# "vi", "vi1", "vi2", and "vi3" in ~/.zsh/aliases
+#
+# If gvim is present and it's a graphical shell, set up
+# --remote-silent behavior.
+
+if [[ -a "$(whence gvim)" && ($TERM == xterm* || $TERM == "rxvt") ]]; then
+	function _vi(){
+		local SERVER="$1"; shift
+
+		if [[ "$#" == "0" ]]; then
+			# No files, start gvim
+			gvim --servername $SERVER
+		elif [[ -n "$(gvim --serverlist|grep $SERVER)" ]]; then
+			# Instance already running, --remote-silent files
+			gvim --servername $SERVER --remote-silent $@
+		else
+			# No instance running, but files; start gvim with files
+			gvim --servername $SERVER $@
+		fi
+	}
+else
+	# pass-through function to vim
+	function _vi(){
+		shift # get rid of SERVER argument
+		vim $@
+	}
+fi
+
+_vi $@
