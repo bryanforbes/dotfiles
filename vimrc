@@ -74,7 +74,7 @@ endif
 "====================================
 
 set nobackup						" do not keep backup files
-set directory=~/.vim/.tmp			" swap directory
+set directory^=~/.vim/.tmp//		" swap directory
 set updatecount=20					" update the swap file every 20 characters
 
 set undolevels=1000
@@ -108,8 +108,6 @@ endif
 let g:syntastic_check_on_open=1
 let g:syntastic_enable_signs=1
 let g:syntastic_javascript_checker="jshint"
-let g:syntastic_javascript_jshint_conf="~/.vim/jshintrc"
-let g:syntastic_jsl_conf="~/.vim/jsl.conf"
 
 " UltiSnips
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -121,6 +119,18 @@ let g:UltiSnipsSnippetDirectories=["snippets"]
 let g:NERDTreeHighlightCursorline=1
 let g:NERDTreeShowHidden=1
 let g:NERDTreeWinSize=40
+
+" CtrlP
+let g:ctrlp_map = '<leader>t'
+let g:ctrlp_by_filename=1
+let g:ctrlp_match_window_reversed=0
+let g:ctrlp_switch_buffer='vt'
+let g:ctrlp_extensions = ['undo', 'changes']
+
+" HTML indent
+let g:html_indent_inctags = "body,head,tbody"
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc"
 
 "=========
 " Pathogen
@@ -161,10 +171,10 @@ if has("autocmd") && !exists("autocommands_loaded")
 	autocmd BufWritePost .vim_local_autocmds source $MYVIMRC
 
 	" ~/.vim_local_autocmds should act like a vim config file
-	autocmd BufRead,BufNewFile ~/.vim_local_autocmds set filetype=vim
+	autocmd BufRead,BufNewFile ~/.vim_local_autocmds setl filetype=vim
 
 	" Pull in local autocmd's if they exist
-	if filereadable(glob("~/.vim_local_autocmds"))
+	if filereadable($HOME . "/.vim_local_autocmds")
 		source ~/.vim_local_autocmds
 	endif
 endif " has("autocmd")
@@ -176,6 +186,9 @@ endif " has("autocmd")
 " Set mapleader
 let mapleader = ","
 let g:mapleader = ","
+
+" Map default leader to what , does normally
+nnoremap \ ,
 
 " Fast saving
 nnoremap <leader>w :up!<cr>
@@ -193,7 +206,7 @@ map <leader>cd :cd %:p:h<cr>
 " noremap <leader>t :tabnew<cr>
 noremap <C-j> :bn<CR>
 noremap <C-k> :bp<CR>
-noremap <leader>d :bd!<cr>
+noremap <leader>d :BD!<cr>
 
 " Visually select the text that was last edited/pasted
 nmap gV `[v`]
@@ -215,6 +228,9 @@ noremap <leader>y :SyntasticCheck<cr>
 
 " NERDTree
 nnoremap ,. :NERDTreeToggle<CR>
+
+" CtrlP
+noremap <leader>b :CtrlPBuffer<cr>
 
 source ~/.vim/my_functions.vim
 
