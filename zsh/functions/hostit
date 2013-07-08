@@ -1,0 +1,43 @@
+# vim: set filetype=zsh:
+
+if [[ $# -eq 0 ]]; then
+	echo "Usage: hostit [-l] [[-d -f] hostname]"
+	return
+fi
+
+REMOVE_HOST=0
+FORCE_HOST=0
+LIST_HOSTS=0
+while getopts ":dfl" opt; do
+	case $opt in
+		d)
+			REMOVE_HOST=1
+			;;
+		f)
+			FORCE_HOST=1
+			;;
+		l)
+			LIST_HOSTS=1
+			;;
+	esac
+done
+
+shift $((OPTIND-1))
+
+if [[ $LIST_HOSTS -eq 1 ]]; then
+	ls -l "$HOME/Hosts" | sed -e '/^total [0-9]*$/ d' \
+							-e 's/.*[0-9] \([a-zA-Z.]* ->.*\)$/\1/g'
+elif [[ $REMOVE_HOST -eq 1 ]]; then
+	rm "$HOME/Hosts/$1.dev"
+	echo "$1.dev removed"
+elif [[ -e "$HOME/Hosts/$1.dev" ]] && [[ $FORCE_HOST -eq 0 ]]; then
+	echo "$1.dev already exists as a host, exiting"
+	return 1
+else
+	if [[ $FORCE_HOST -eq 1 ]]; then
+		rm "$HOME/Hosts/$1.dev"
+	fi
+	ln -s "$(pwd)" "$HOME/Hosts/$1.dev"
+	echo "$1.dev created, now loading..."
+	open "http://$1.dev/"
+fi
