@@ -147,6 +147,7 @@ call pathogen#helptags()
 " in as a bundle
 set background=dark
 colorscheme solarized
+hi! link CursorLineNr LineNr
 
 "==============
 " Autocommands

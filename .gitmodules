@@ -12,7 +12,7 @@
 	url = git://github.com/altercation/vim-colors-solarized.git
 [submodule "vim/bundle/UltiSnips"]
 	path = vim/bundle/UltiSnips
-	url = git://github.com/vim-scripts/UltiSnips.git
+	url = git://github.com/SirVer/ultisnips.git
 [submodule "vim/bundle/vim-javascript"]
 	path = vim/bundle/vim-javascript
 	url = git://github.com/pangloss/vim-javascript.git
@@ -46,6 +46,6 @@
 [submodule "vim/bundle/vim-markdown-folding"]
 	path = vim/bundle/vim-markdown-folding
 	url = git://github.com/nelstrom/vim-markdown-folding.git
-[submodule "vim/bundle/bufkill.vim"]
-	path = vim/bundle/bufkill.vim
-	url = git://github.com/vim-scripts/bufkill.vim.git
+[submodule "vim/bundle/vim-json"]
+	path = vim/bundle/vim-json
+	url = git://github.com/elzr/vim-json.git

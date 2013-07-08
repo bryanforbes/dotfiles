@@ -38,6 +38,6 @@ endif
 " MacVim
 if has("gui_macvim")
 	" MacVim
-	set antialias guifont=Menlo:h12
+	set antialias guifont=Source\ Code\ Pro:h12
 	set fuopt+=maxhorz
 endif

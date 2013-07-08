@@ -19,3 +19,11 @@ fu! UnEscapeTags()
 	s/&gt;/>/eg
 endf
 command! -range UnEscapeTags :<line1>,<line2>call UnEscapeTags()
+
+fu! PrettifyXML()
+	set ft=xml
+	:%s/></>\r</g
+	:0
+	:norm =G
+endf
+command! PrettifyXML :call PrettifyXML()
