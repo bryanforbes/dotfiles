@@ -29,22 +29,27 @@ fi
 # git
 alias ga='git add'
 alias gae='git add --edit'
-alias gpl='git pull'
-alias gpu='git push'
-alias gd='git diff'
-alias gdc='git diff --cached'
+alias gb='git branch'
 alias gc='git commit -v'
 alias gca='git commit -a -v'
 alias gco='git checkout'
-alias gb='git branch'
-alias gs='git status'
-alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
-alias gst="git stash save"
-alias gsta="git stash apply"
-alias gstp="git stash pop"
-alias gsr="git svn rebase"
+alias gd='git diff'
+alias gdc='git diff --cached'
 alias gf='git fetch'
 alias gm='git merge'
+alias gpl='git pull'
+alias gpr='git pull --rebase'
+alias gpu='git push'
+alias grb='git rebase'
+alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
+alias gs='git status'
+alias gst='git stash save'
+alias gsta='git stash apply'
+alias gstp='git stash pop'
+
+# git svn
+alias gsd='git svn dcommit'
+alias gsr='git svn rebase'
 
 # Git and svn mix
 alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
