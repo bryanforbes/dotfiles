@@ -132,6 +132,9 @@ let g:html_indent_inctags = "body,head,tbody"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 
+" bufkill.vim
+let g:BufKillCreateMappings = 0
+
 "=========
 " Pathogen
 "=========
