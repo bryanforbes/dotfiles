@@ -16,3 +16,5 @@
 	insteadOf = github:
 [url "git://github.com/"]
 	insteadOf = gitpub:
+[push]
+	default = simple
