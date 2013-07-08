@@ -43,3 +43,22 @@ snippet anon "Immediately invoked function expression"
 	$0
 })(${2:variable});
 endsnippet
+
+snippet amdmodule "AMD module" b
+define([
+	$1
+], function ($2) {
+	$0
+});
+endsnippet
+
+snippet amddeclare "AMD declare" b
+define([
+	'dojo/_base/declare'${1:,
+	}
+], function (declare${2:, }) {
+	return declare(${3:null, }{
+		$0
+	});
+});
+endsnippet
