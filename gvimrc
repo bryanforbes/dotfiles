@@ -12,9 +12,8 @@ set showtabline=1				" only show tab bar when requested
 set visualbell t_vb=
 
 " Color Scheme
-let g:solarized_visibility = 'low'
-set background=dark
-colorscheme solarized
+" set background=dark
+" colorscheme solarized
 
 " GNOME/GTK+
 if has("gui_gtk2")
@@ -38,6 +37,6 @@ endif
 " MacVim
 if has("gui_macvim")
 	" MacVim
-	set antialias guifont=Source\ Code\ Pro:h12
+	set antialias guifont=Source\ Code\ Pro\ for\ Powerline:h12
 	set fuopt+=maxhorz
 endif

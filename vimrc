@@ -69,6 +69,9 @@ if has("mouse")
 	set mouse=a							" full mouse support
 endif
 
+" Ensure we're using 256 colors
+set t_Co=256
+
 "====================================
 " Swap and undo files and directories
 "====================================
@@ -83,31 +86,18 @@ if v:version >= 703					" options only for Vim >= 7.3
 	set undodir=~/.vim/.undo		" undo file directory
 endif
 
-"====================
-" Syntax highlighting
-"====================
-
-" Switch on syntax highlighting when the terminal has colors, or when running
-" in the GUI. Set the do_syntax_sel_menu flag to tell $VIMRUNTIME/menu.vim
-" to expand the syntax menu.
-"
-" Note: This happens before the 'Autocommands' section below to give the syntax
-" command a chance to trigger loading the menus (vs. letting the filetype
-" command do it). If do_syntax_sel_menu isn't set beforehand, the syntax menu
-" won't get populated.
-if &t_Co > 2 || has("gui_running")
-	let do_syntax_sel_menu=1
-	syntax on
-endif
-
 "=====================
 " Plugin Configuration
 "=====================
 
+" Airline
+let g:airline_powerline_fonts=1
+let g:airline_theme='solarized2'
+
 " Syntastic
 let g:syntastic_check_on_open=1
 let g:syntastic_enable_signs=1
-let g:syntastic_javascript_checker="jshint"
+let g:syntastic_javascript_checkers=["jshint"]
 
 " UltiSnips
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -135,12 +125,33 @@ let g:html_indent_style1 = "inc"
 " bufkill.vim
 let g:BufKillCreateMappings = 0
 
+" solarized
+let g:solarized_termcolors = 256
+let g:solarized_visibility = 'low'
+
 "=========
 " Pathogen
 "=========
 runtime bundle/vim-pathogen/autoload/pathogen.vim
-call pathogen#infect()
-call pathogen#helptags()
+execute pathogen#infect()
+execute pathogen#helptags()
+
+"====================
+" Syntax highlighting
+"====================
+
+" Switch on syntax highlighting when the terminal has colors, or when running
+" in the GUI. Set the do_syntax_sel_menu flag to tell $VIMRUNTIME/menu.vim
+" to expand the syntax menu.
+"
+" Note: This happens before the 'Autocommands' section below to give the syntax
+" command a chance to trigger loading the menus (vs. letting the filetype
+" command do it). If do_syntax_sel_menu isn't set beforehand, the syntax menu
+" won't get populated.
+if &t_Co > 2 || has("gui_running")
+	let do_syntax_sel_menu=1
+	syntax on
+endif
 
 "=============
 " Color scheme
@@ -150,7 +161,6 @@ call pathogen#helptags()
 " in as a bundle
 set background=dark
 colorscheme solarized
-hi! link CursorLineNr LineNr
 
 "==============
 " Autocommands
