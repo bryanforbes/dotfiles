@@ -92,7 +92,7 @@ endif
 
 " Airline
 let g:airline_powerline_fonts=1
-let g:airline_theme='solarized2'
+let g:airline_theme='solarized'
 
 " Syntastic
 let g:syntastic_check_on_open=1
@@ -116,6 +116,7 @@ let g:ctrlp_by_filename=1
 let g:ctrlp_match_window_reversed=0
 let g:ctrlp_switch_buffer='vt'
 let g:ctrlp_extensions = ['undo', 'changes']
+let g:ctrlp_root_markers = ['.git/']
 
 " HTML indent
 let g:html_indent_inctags = "body,head,tbody"
@@ -126,15 +127,16 @@ let g:html_indent_style1 = "inc"
 let g:BufKillCreateMappings = 0
 
 " solarized
-let g:solarized_termcolors = 256
 let g:solarized_visibility = 'low'
 
 "=========
 " Pathogen
 "=========
 runtime bundle/vim-pathogen/autoload/pathogen.vim
+filetype off
 execute pathogen#infect()
 execute pathogen#helptags()
+filetype plugin indent on
 
 "====================
 " Syntax highlighting
@@ -245,6 +247,9 @@ nnoremap ,. :NERDTreeToggle<CR>
 
 " CtrlP
 noremap <leader>b :CtrlPBuffer<cr>
+
+" Ack.vim
+noremap <leader>a :Ack!<space>
 
 source ~/.vim/my_functions.vim
 
