@@ -53,6 +53,7 @@ set textwidth=0						" don't auto-wrap lines except for specific filetypes
 
 set fileformats=unix,mac,dos		" support all three filetypes in this order
 set spelllang=en
+set foldlevelstart=20
 
 " Turn 'list off by default, but define characters to use
 " when it's turned on.
@@ -68,6 +69,9 @@ if has("mouse")
 	set mousehide						" hide the mouse cursor when typing
 	set mouse=a							" full mouse support
 endif
+
+" Yank to the system clipboard
+set clipboard=unnamed
 
 " Ensure we're using 256 colors
 set t_Co=256
@@ -98,6 +102,9 @@ let g:airline_theme='solarized'
 let g:syntastic_check_on_open=1
 let g:syntastic_enable_signs=1
 let g:syntastic_javascript_checkers=["jshint"]
+" The original arguments output AMD and put it in the same directory as the tsc file
+let g:syntastic_typescript_tsc_args="--module amd --target ES5 --noImplicitAny"
+let g:syntastic_typescript_tsc_post_args="--outDir /tmp/tsc"
 
 " UltiSnips
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -117,6 +124,10 @@ let g:ctrlp_match_window_reversed=0
 let g:ctrlp_switch_buffer='vt'
 let g:ctrlp_extensions = ['undo', 'changes']
 let g:ctrlp_root_markers = ['.git/']
+let g:ctrlp_custom_ignore = {
+	\ 'dir': '\v[\/](\.git|\.hg|\.svn|\.bzr|CVS|node_modules)$',
+	\ 'file': '\v(\~$|[._].*\.swp|core\.\d+|\.exe|\.so|\.bak|\.png|\.jpg|\.gif|\.zip|\.rar|\.tar|\.gz)$'
+\ }
 
 " HTML indent
 let g:html_indent_inctags = "body,head,tbody"
@@ -243,13 +254,13 @@ nmap <leader>err :Errors<CR><C-W>j
 noremap <leader>y :SyntasticCheck<cr>
 
 " NERDTree
-nnoremap ,. :NERDTreeToggle<CR>
+nnoremap ,f :NERDTreeToggle<CR>
 
 " CtrlP
 noremap <leader>b :CtrlPBuffer<cr>
 
-" Ack.vim
-noremap <leader>a :Ack!<space>
+" Ag.vim
+noremap <leader>a :Ag!<space>
 
 source ~/.vim/my_functions.vim
 
