@@ -19,7 +19,7 @@ if [ -e "$HOME/Projects" ]; then
 	fi
 fi
 
-cdpath=($cdpath $lcdpath)
+cdpath=(. ~ $lcdpath)
 path=(~/bin ~/.dotfiles/bin $lpath $path)
 manpath=($lmanpath $manpath)
 
