@@ -24,7 +24,7 @@ case "$(uname)" in
 		# TODO: add linux commands
 		sudo apt-add-repository ppa:git-core/ppa
 		sudo apt-get update
-		sudo apt-get install git zsh vim
+		sudo apt-get install git zsh vim || true
 		ZSHPATH=$(which zsh)
 		;;
 esac
