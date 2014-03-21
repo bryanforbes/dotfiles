@@ -1,5 +1,6 @@
 #!/bin/sh
 
+GET=
 case "$(uname)" in
 	Darwin)
 		echo "Requesting Installation of Command Line Tools"
@@ -21,6 +22,8 @@ case "$(uname)" in
 		;;
 	Linux)
 		# TODO: add linux commands
+		sudo apt-get update
+		sudo apt-get install git-core zsh vim
 		ZSHPATH=$(which zsh)
 		;;
 esac
@@ -43,5 +46,8 @@ ln -s ~/.dotfiles/vim ~/.vim
 ln -s ~/.dotfiles/vimrc ~/.vimrc
 ln -s ~/.dotfiles/zsh ~/.zsh
 ln -s ~/.dotfiles/zshrc ~/.zshrc
+
+echo "Setting up ViM environment"
+vim -c BundleInstall -c q -c q
 
 chsh -s $ZSHPATH
