@@ -2,3 +2,4 @@ vim/.undo/*
 vim/.tmp/*
 !vim/.undo/README
 !vim/.tmp/README
+vim/bundle

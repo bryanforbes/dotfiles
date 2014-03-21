@@ -57,17 +57,18 @@ set foldlevelstart=20
 
 " Turn 'list off by default, but define characters to use
 " when it's turned on.
-set nolist
-set listchars =tab:▸-		" Start and body of tabs
-set listchars+=trail:·		" Trailing spaces
-set listchars+=extends:#	" Last column when line extends off right
-set listchars+=precedes:#	" Last column when line extends off left
-set listchars+=eol:$		" End of line
+set list
+set listchars =tab:╶─		" Start and body of tabs
+set listchars+=trail:~		" Trailing spaces
+set listchars+=extends:»	" Last column when line extends off right
+set listchars+=precedes:«	" Last column when line extends off left
+" set listchars+=eol:$		" End of line
 
 " Enable mouse support if it's available
 if has("mouse")
 	set mousehide						" hide the mouse cursor when typing
 	set mouse=a							" full mouse support
+	set ttymouse=xterm2
 endif
 
 " Yank to the system clipboard
@@ -99,9 +100,10 @@ let g:airline_powerline_fonts=1
 let g:airline_theme='solarized'
 
 " Syntastic
-let g:syntastic_check_on_open=1
+let g:syntastic_check_on_open=0
 let g:syntastic_enable_signs=1
 let g:syntastic_javascript_checkers=["jshint"]
+let g:syntastic_typescript_checkers=["tslint", "tsc"]
 " The original arguments output AMD and put it in the same directory as the tsc file
 let g:syntastic_typescript_tsc_args="--module amd --target ES5 --noImplicitAny"
 let g:syntastic_typescript_tsc_post_args="--outDir /tmp/tsc"
@@ -124,9 +126,10 @@ let g:ctrlp_match_window_reversed=0
 let g:ctrlp_switch_buffer='vt'
 let g:ctrlp_extensions = ['undo', 'changes']
 let g:ctrlp_root_markers = ['.git/']
+" let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard']
 let g:ctrlp_custom_ignore = {
 	\ 'dir': '\v[\/](\.git|\.hg|\.svn|\.bzr|CVS|node_modules)$',
-	\ 'file': '\v(\~$|[._].*\.swp|core\.\d+|\.exe|\.so|\.bak|\.png|\.jpg|\.gif|\.zip|\.rar|\.tar|\.gz)$'
+	\ 'file': '\v(\~$|[._].*\.swp|core\.\d+|\.exe|\.so|\.bak|\.png|\.jpg|\.js\.map|\.gif|\.zip|\.rar|\.tar|\.gz)$'
 \ }
 
 " HTML indent
@@ -141,12 +144,12 @@ let g:BufKillCreateMappings = 0
 let g:solarized_visibility = 'low'
 
 "=========
-" Pathogen
+" Vundle
 "=========
-runtime bundle/vim-pathogen/autoload/pathogen.vim
 filetype off
-execute pathogen#infect()
-execute pathogen#helptags()
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+source ~/.vim/bundles.vim
 filetype plugin indent on
 
 "====================
@@ -170,9 +173,9 @@ endif
 " Color scheme
 "=============
 
-" This must be set after Pathogen because it is brought
+" This must be set after Vundle because it is brought
 " in as a bundle
-set background=dark
+set background=light
 colorscheme solarized
 
 "==============
@@ -231,9 +234,16 @@ map <leader>spell :setlocal spell!<cr>
 map <leader>cd :cd %:p:h<cr>
 
 " noremap <leader>t :tabnew<cr>
-noremap <C-j> :bn<CR>
-noremap <C-k> :bp<CR>
+" noremap <C-j> :bn<CR>
+" noremap <C-k> :bp<CR>
 noremap <leader>d :BD!<cr>
+noremap <leader>. <C-^>
+noremap <silent> <C-h> :call WinMove('h')<cr>
+noremap <silent> <C-j> :call WinMove('j')<cr>
+noremap <silent> <C-k> :call WinMove('k')<cr>
+noremap <silent> <C-l> :call WinMove('l')<cr>
+noremap <leader>q :wincmd q<cr>
+
 
 " Visually select the text that was last edited/pasted
 nmap gV `[v`]
