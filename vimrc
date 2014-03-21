@@ -112,7 +112,7 @@ let g:syntastic_typescript_tsc_post_args="--outDir /tmp/tsc"
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-let g:UltiSnipsSnippetDirectories=["snippets"]
+let g:UltiSnipsSnippetDirectories=["ultisnips"]
 
 " NERDTree
 let g:NERDTreeHighlightCursorline=1
