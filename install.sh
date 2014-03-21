@@ -22,8 +22,9 @@ case "$(uname)" in
 		;;
 	Linux)
 		# TODO: add linux commands
+		sudo apt-add-repository ppa:git-core/ppa
 		sudo apt-get update
-		sudo apt-get install git-core zsh vim
+		sudo apt-get install git zsh vim
 		ZSHPATH=$(which zsh)
 		;;
 esac
