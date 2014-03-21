@@ -3,4 +3,3 @@ vim/.tmp/*
 !vim/.undo/README
 !vim/.tmp/README
 vim/bundle
-zsh/local.zsh
