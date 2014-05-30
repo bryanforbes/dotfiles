@@ -99,11 +99,14 @@ endif
 let g:airline_powerline_fonts=1
 let g:airline_theme='solarized'
 
+" lightline
+source ~/.vim/lightline.vim
+
 " Syntastic
 let g:syntastic_check_on_open=0
 let g:syntastic_enable_signs=1
 let g:syntastic_javascript_checkers=["jshint"]
-let g:syntastic_typescript_checkers=["tslint", "tsc"]
+let g:syntastic_typescript_checkers=["tslint"]
 " The original arguments output AMD and put it in the same directory as the tsc file
 let g:syntastic_typescript_tsc_args="--module amd --target ES5 --noImplicitAny"
 let g:syntastic_typescript_tsc_post_args="--outDir /tmp/tsc"
@@ -175,7 +178,7 @@ endif
 
 " This must be set after Vundle because it is brought
 " in as a bundle
-set background=light
+set background=dark
 colorscheme solarized
 
 "==============
@@ -269,8 +272,8 @@ nnoremap ,f :NERDTreeToggle<CR>
 " CtrlP
 noremap <leader>b :CtrlPBuffer<cr>
 
-" Ag.vim
-noremap <leader>a :Ag!<space>
+" Ack.vim
+noremap <leader>a :Ack!<space>--follow<space>
 
 source ~/.vim/my_functions.vim
 
