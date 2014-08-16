@@ -1,3 +1,7 @@
+filetype off
+set rtp+=~/.vim/bundle/vundle/
+call vundle#begin()
+
 Plugin 'gmarik/vundle'
 
 Plugin 'SirVer/ultisnips'
@@ -27,3 +31,6 @@ Plugin 'alunny/pegjs-vim'
 Plugin 'wavded/vim-stylus'
 Plugin 'freitass/todo.txt-vim'
 Plugin 'leafgarland/typescript-vim'
+
+call vundle#end()
+filetype plugin indent on

@@ -58,7 +58,7 @@ ln -s ~/.dotfiles/vim ~/.vim
 ln -s ~/.dotfiles/vimrc ~/.vimrc
 
 echo "Setting up ViM environment"
-vim -c PluginInstall -c q -c q || true
+true | vim -u ~/.dotfiles/install.vim +PluginInstall +qa 2>/dev/null
 
 echo "Installing nvm"
 git clone https://github.com/creationix/nvm.git ~/.nvm

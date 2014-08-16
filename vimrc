@@ -152,11 +152,9 @@ let g:solarized_visibility = 'low'
 "=========
 " Vundle
 "=========
-filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+
+" The following file handles rtp modification and filetype calls
 source ~/.vim/bundles.vim
-filetype plugin indent on
 
 "====================
 " Syntax highlighting
