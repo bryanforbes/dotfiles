@@ -19,7 +19,7 @@ case "$(uname)" in
 		brew tap homebrew/php
 		brew install php55 --with-fpm
 
-		ZSHPATH=$(which zsh)
+		ZSHPATH=/usr/local/bin/zsh
 		echo "Adding $ZSHPATH to /etc/shells"
 		sudo -s "echo $ZSHPATH >> /etc/shells"
 		;;
@@ -58,7 +58,7 @@ ln -s ~/.dotfiles/vim ~/.vim
 ln -s ~/.dotfiles/vimrc ~/.vimrc
 
 echo "Setting up ViM environment"
-vim -c PluginInstall -c q -c q
+vim -c PluginInstall -c q -c q || true
 
 echo "Installing nvm"
 git clone https://github.com/creationix/nvm.git ~/.nvm
