@@ -23,12 +23,14 @@ endsnippet
 snippet ife "if/else"
 if(${1:true}){
 	$0
-}else{
+}
+else{
 }
 endsnippet
 
 snippet elif "else if"
-}else if(${1:true}){
+}
+else if(${1:true}){
 	$0
 endsnippet
 
@@ -54,11 +56,14 @@ endsnippet
 
 snippet amddeclare "AMD declare" b
 define([
-	'dojo/_base/declare'${1:,
-	}
-], function (declare${2:, }) {
-	return declare(${3:null, }{
+	'dojo/_base/declare'${1:,$2}
+], function (declare$1$2) {
+	return declare(${3:null}, {
 		$0
 	});
 });
+endsnippet
+
+snippet inherit "Dojo's inherited" b
+this.inherited(arguments$1);$0
 endsnippet

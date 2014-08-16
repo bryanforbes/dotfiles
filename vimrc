@@ -51,6 +51,9 @@ set nomodeline						" Ignore modelines
 set nojoinspaces					" Don't get fancy with the spaces when joining lines
 set textwidth=0						" don't auto-wrap lines except for specific filetypes
 
+set wildmenu						" enhanced command line completion
+set wildmode=list:longest			" complete files like a shell
+
 set fileformats=unix,mac,dos		" support all three filetypes in this order
 set spelllang=en
 set foldlevelstart=20
@@ -105,7 +108,7 @@ source ~/.vim/lightline.vim
 " Syntastic
 let g:syntastic_check_on_open=0
 let g:syntastic_enable_signs=1
-let g:syntastic_javascript_checkers=["jshint"]
+let g:syntastic_javascript_checkers=["jshint", "jscs" ]
 let g:syntastic_typescript_checkers=["tslint"]
 " The original arguments output AMD and put it in the same directory as the tsc file
 let g:syntastic_typescript_tsc_args="--module amd --target ES5 --noImplicitAny"
@@ -255,7 +258,8 @@ nmap gV `[v`]
 nmap <leader>l :set list!<cr>
 
 " Remap code completion from Ctrl+x, Ctrl+o to Ctrl+Space
-" inoremap <C-Space> <C-x><C-o>
+inoremap <C-Space> <C-x><C-o>
+inoremap <C-@> <C-x><C-o>
 
 " Fugitive
 noremap <leader>gd :Gdiff<cr>

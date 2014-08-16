@@ -39,3 +39,21 @@ has.add("${1:testName}", function($2){
 	$0
 });
 endsnippet
+
+snippet amdmodule "AMD module" b
+define([
+	$1
+], function ($2) {
+	$0
+});
+endsnippet
+
+snippet amddeclare "AMD declare" b
+define([
+	'dojo/_base/declare'${1}
+], function (declare${2}) {
+	return declare($3, {
+		$0
+	});
+});
+endsnippet
