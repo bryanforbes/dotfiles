@@ -60,6 +60,12 @@ ln -s ~/.dotfiles/vimrc ~/.vimrc
 echo "Setting up ViM environment"
 true | vim -u ~/.dotfiles/install.vim +PluginInstall +qa 2>/dev/null
 
+echo "Setting up tmux environment"
+tmux start-server
+tmux new-session -d
+true | ~/.dotfiles/tmux/plugins/tpm/scripts/install_plugins >/dev/null 2>&1
+tmux kill-server
+
 echo "Installing nvm"
 git clone https://github.com/creationix/nvm.git ~/.nvm
 source ~/.nvm/nvm.sh

@@ -3,3 +3,5 @@ vim/.tmp/*
 !vim/.undo/README
 !vim/.tmp/README
 vim/bundle
+tmux/plugins
+!tmux/plugins/tpm
