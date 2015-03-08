@@ -109,7 +109,7 @@ source ~/.vim/lightline.vim
 let g:syntastic_check_on_open=0
 let g:syntastic_enable_signs=1
 let g:syntastic_javascript_checkers=["jshint", "jscs" ]
-let g:syntastic_typescript_checkers=["tslint"]
+let g:syntastic_typescript_checkers=["tsc", "tslint"]
 " The original arguments output AMD and put it in the same directory as the tsc file
 let g:syntastic_typescript_tsc_args="--module amd --target ES5 --noImplicitAny"
 let g:syntastic_typescript_tsc_post_args="--outDir /tmp/tsc"
@@ -142,6 +142,9 @@ let g:ctrlp_custom_ignore = {
 let g:html_indent_inctags = "body,head,tbody"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
+
+" vim-json
+let g:vim_json_syntax_conceal = 0
 
 " bufkill.vim
 let g:BufKillCreateMappings = 0
