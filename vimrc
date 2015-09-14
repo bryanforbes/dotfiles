@@ -2,6 +2,7 @@
 " Configuration
 "==============
 set nocompatible					" Full ViM
+filetype off
 
 set termencoding=utf-8
 set encoding=utf-8
@@ -53,6 +54,7 @@ set textwidth=0						" don't auto-wrap lines except for specific filetypes
 
 set wildmenu						" enhanced command line completion
 set wildmode=list:longest			" complete files like a shell
+set completeopt+=longest
 
 set fileformats=unix,mac,dos		" support all three filetypes in this order
 set spelllang=en
@@ -71,11 +73,17 @@ set listchars+=precedes:«	" Last column when line extends off left
 if has("mouse")
 	set mousehide						" hide the mouse cursor when typing
 	set mouse=a							" full mouse support
-	set ttymouse=xterm2
+	if !has("nvim")
+		set ttymouse=xterm2
+	endif
 endif
 
 " Yank to the system clipboard
-set clipboard=unnamed
+if !has("nvim")
+	set clipboard=unnamed
+else
+	set clipboard=unnamedplus
+endif
 
 " Ensure we're using 256 colors
 set t_Co=256
@@ -108,8 +116,11 @@ source ~/.vim/lightline.vim
 " Syntastic
 let g:syntastic_check_on_open=0
 let g:syntastic_enable_signs=1
-let g:syntastic_javascript_checkers=["jshint", "jscs" ]
-let g:syntastic_typescript_checkers=["tsc", "tslint"]
+let g:syntastic_javascript_checkers=["jshint", "jscs"]
+let g:syntastic_javascript_jshint_exe="npm-exec jshint"
+let g:syntastic_javascript_jscs_exe="npm-exec jscs"
+let g:syntastic_typescript_checkers=["tslint"]
+let g:syntastic_typescript_tslint_exe="npm-exec tslint"
 " The original arguments output AMD and put it in the same directory as the tsc file
 let g:syntastic_typescript_tsc_args="--module amd --target ES5 --noImplicitAny"
 let g:syntastic_typescript_tsc_post_args="--outDir /tmp/tsc"
@@ -132,7 +143,8 @@ let g:ctrlp_match_window_reversed=0
 let g:ctrlp_switch_buffer='vt'
 let g:ctrlp_extensions = ['undo', 'changes']
 let g:ctrlp_root_markers = ['.git/']
-" let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard']
+let g:ctrlp_use_caching = 0
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
 let g:ctrlp_custom_ignore = {
 	\ 'dir': '\v[\/](\.git|\.hg|\.svn|\.bzr|CVS|node_modules)$',
 	\ 'file': '\v(\~$|[._].*\.swp|core\.\d+|\.exe|\.so|\.bak|\.png|\.jpg|\.js\.map|\.gif|\.zip|\.rar|\.tar|\.gz)$'
@@ -152,12 +164,29 @@ let g:BufKillCreateMappings = 0
 " solarized
 let g:solarized_visibility = 'low'
 
+" Tsuquyomi
+" let g:tsuquyomi_use_dev_node_module = 2
+" let g:tsuquyomi_tsserver_path = '/Users/bryan/.nvm/versions/node/v0.12.3/bin/ntsserver'
+
+" typescript-vim
+let g:typescript_indent_disable = 1
+
+" vim-expand-region
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
+
+"===========
+" vim-plug
+"===========
+
+source ~/.vim/plug.vim
+
 "=========
 " Vundle
 "=========
 
 " The following file handles rtp modification and filetype calls
-source ~/.vim/bundles.vim
+" source ~/.vim/bundles.vim
 
 "====================
 " Syntax highlighting
@@ -180,7 +209,7 @@ endif
 " Color scheme
 "=============
 
-" This must be set after Vundle because it is brought
+" This must be set after vim-plug because it is brought
 " in as a bundle
 set background=dark
 colorscheme solarized
@@ -261,6 +290,9 @@ nmap <leader>l :set list!<cr>
 " Remap code completion from Ctrl+x, Ctrl+o to Ctrl+Space
 inoremap <C-Space> <C-x><C-o>
 inoremap <C-@> <C-x><C-o>
+
+" surround.vim
+nmap <silent> dsf ds)db
 
 " Fugitive
 noremap <leader>gd :Gdiff<cr>
