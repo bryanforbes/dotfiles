@@ -31,8 +31,8 @@ set scrolloff=3						" show 3 lines of context around the cursor (top and bottom
 set sidescrolloff=5					" show 5 lines of context around the cursor (left and right)
 set sidescroll=1					" number of chars to scroll when scrolling sideways
 
-set splitright						" split new vertical windows right of current window
-set splitbelow						" split new horizontal windows under current window
+"set splitright						" split new vertical windows right of current window
+"set splitbelow						" split new horizontal windows under current window
 
 set noexpandtab						" insert tabs rather than spaces for <Tab>
 set smarttab						" tab respects 'tabstop', 'shiftwidth', and 'softtabstop'
@@ -79,11 +79,7 @@ if has("mouse")
 endif
 
 " Yank to the system clipboard
-if !has("nvim")
-	set clipboard=unnamed
-else
-	set clipboard=unnamedplus
-endif
+set clipboard=unnamed
 
 " Ensure we're using 256 colors
 set t_Co=256
@@ -125,6 +121,33 @@ let g:syntastic_typescript_tslint_exe="npm-exec tslint"
 let g:syntastic_typescript_tsc_args="--module amd --target ES5 --noImplicitAny"
 let g:syntastic_typescript_tsc_post_args="--outDir /tmp/tsc"
 
+" Neomake
+augroup load_neomake
+	autocmd!
+	autocmd BufRead * call NeomakeInit()
+	autocmd BufWrite * call NeomakeInit()
+augroup END
+augroup neomake_commands
+	autocmd!
+augroup END
+function! NeomakeInit()
+	autocmd! load_neomake
+	call plug#load("neomake")
+
+	let g:neomake_javascript_enabled_makers = [ "jshint", "jscs" ]
+	let g:neomake_javascript_jshint_exe = "npm-exec"
+	let g:neomake_javascript_jshint_args = [ "jshint", "--verbose" ]
+	let g:neomake_javascript_jscs_exe = "npm-exec"
+	let g:neomake_javascript_jscs_args = [ "jscs", "--no-color", "--reporter", "inline" ]
+
+	let g:neomake_typescript_enabled_makers = [ "tslint" ]
+	let g:neomake_typescript_tslint_exe = "npm-exec"
+	let g:neomake_typescript_tslint_args = [ "tslint" ]
+
+	autocmd neomake_commands BufWritePost *.ts Neomake
+	autocmd neomake_commands BufWritePost *.js Neomake
+endfunction
+
 " UltiSnips
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
@@ -165,6 +188,7 @@ let g:BufKillCreateMappings = 0
 let g:solarized_visibility = 'low'
 
 " Tsuquyomi
+" let g:tsuquyomi_disable_quickfix = 1
 " let g:tsuquyomi_use_dev_node_module = 2
 " let g:tsuquyomi_tsserver_path = '/Users/bryan/.nvm/versions/node/v0.12.3/bin/ntsserver'
 
@@ -272,7 +296,7 @@ map <leader>cd :cd %:p:h<cr>
 " noremap <leader>t :tabnew<cr>
 " noremap <C-j> :bn<CR>
 " noremap <C-k> :bp<CR>
-noremap <leader>d :BD!<cr>
+noremap <leader>d :BW!<cr>
 noremap <leader>. <C-^>
 noremap <silent> <C-h> :call WinMove('h')<cr>
 noremap <silent> <C-j> :call WinMove('j')<cr>
@@ -305,6 +329,7 @@ noremap <leader>y :SyntasticCheck<cr>
 
 " NERDTree
 nnoremap ,f :NERDTreeToggle<CR>
+nnoremap ,F :NERDTreeFocus<CR>
 
 " CtrlP
 noremap <leader>b :CtrlPBuffer<cr>

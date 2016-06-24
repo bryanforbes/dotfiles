@@ -1,0 +1,5 @@
+# vim: set filetype=zsh:
+
+echo "$PWD"
+tmux split-window -p 25 -c "$PWD"
+tmux split-window -h -c "$PWD"
