@@ -6,3 +6,4 @@ vim/bundle
 vim/plugged
 tmux/plugins
 !tmux/plugins/tpm
+tmux/resurrect
