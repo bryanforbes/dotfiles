@@ -5,17 +5,16 @@ Plug 'altercation/vim-colors-solarized'
 
 Plug 'SirVer/ultisnips'
 Plug 'mileszs/ack.vim'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFocus'] }
 " Plug 'scrooloose/syntastic'
 Plug 'itchyny/lightline.vim'
+" Plug 'tpope/vim-flagship'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-obsession'
 Plug 'dhruvasagar/vim-prosession'
-Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'terryma/vim-expand-region'
 Plug 'benekastah/neomake', { 'on': [] }
 
@@ -32,6 +31,12 @@ Plug 'alunny/pegjs-vim'
 Plug 'wavded/vim-stylus', { 'for': 'stylus' }
 Plug 'freitass/todo.txt-vim'
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
-Plug 'Quramy/tsuquyomi', { 'for': 'typescript' }
+Plug 'jason0x43/vim-tss', { 'for': 'typescript', 'do': 'npm install' }
+Plug 'ternjs/tern_for_vim', { 'for': 'javascript', 'do': 'npm install' }
+
+if executable('fzf') && has('nvim')
+	Plug '/usr/local/opt/fzf'
+	Plug 'junegunn/fzf.vim'
+endif
 
 call plug#end()

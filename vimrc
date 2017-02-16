@@ -103,8 +103,8 @@ endif
 "=====================
 
 " Airline
-let g:airline_powerline_fonts=1
-let g:airline_theme='solarized'
+" let g:airline_powerline_fonts=1
+" let g:airline_theme='solarized'
 
 " lightline
 source ~/.vim/lightline.vim
@@ -120,6 +120,9 @@ let g:syntastic_typescript_tslint_exe="npm-exec tslint"
 " The original arguments output AMD and put it in the same directory as the tsc file
 let g:syntastic_typescript_tsc_args="--module amd --target ES5 --noImplicitAny"
 let g:syntastic_typescript_tsc_post_args="--outDir /tmp/tsc"
+
+" EditorConfig
+let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 
 " Neomake
 augroup load_neomake
@@ -139,13 +142,12 @@ function! NeomakeInit()
 	let g:neomake_javascript_jshint_args = [ "jshint", "--verbose" ]
 	let g:neomake_javascript_jscs_exe = "npm-exec"
 	let g:neomake_javascript_jscs_args = [ "jscs", "--no-color", "--reporter", "inline" ]
+	autocmd neomake_commands BufWritePost *.js Neomake
 
-	let g:neomake_typescript_enabled_makers = [ "tslint" ]
+	let g:neomake_typescript_enabled_makers = [ "tsc", "tslint" ]
 	let g:neomake_typescript_tslint_exe = "npm-exec"
 	let g:neomake_typescript_tslint_args = [ "tslint" ]
-
-	autocmd neomake_commands BufWritePost *.ts Neomake
-	autocmd neomake_commands BufWritePost *.js Neomake
+	autocmd neomake_commands BufWritePost *.ts,*.tsx Neomake
 endfunction
 
 " UltiSnips
@@ -157,6 +159,7 @@ let g:UltiSnipsSnippetDirectories=["ultisnips"]
 " NERDTree
 let g:NERDTreeHighlightCursorline=1
 let g:NERDTreeShowHidden=1
+let g:NERDTreeMinimalUI=1
 let g:NERDTreeWinSize=40
 
 " CtrlP
@@ -173,10 +176,17 @@ let g:ctrlp_custom_ignore = {
 	\ 'file': '\v(\~$|[._].*\.swp|core\.\d+|\.exe|\.so|\.bak|\.png|\.jpg|\.js\.map|\.gif|\.zip|\.rar|\.tar|\.gz)$'
 \ }
 
+" fzf
+let g:fzf_buffers_jump = 0
+
+
 " HTML indent
 let g:html_indent_inctags = "body,head,tbody"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
+
+" vim-js-indent
+let g:js_indent_flat_switch = 1
 
 " vim-json
 let g:vim_json_syntax_conceal = 0
@@ -188,9 +198,13 @@ let g:BufKillCreateMappings = 0
 let g:solarized_visibility = 'low'
 
 " Tsuquyomi
+let g:tsuquyomi_completion_case_sensitive = 1
 " let g:tsuquyomi_disable_quickfix = 1
 " let g:tsuquyomi_use_dev_node_module = 2
 " let g:tsuquyomi_tsserver_path = '/Users/bryan/.nvm/versions/node/v0.12.3/bin/ntsserver'
+
+" vim-tss
+" let g:tss_debug_tsserver = 1
 
 " typescript-vim
 let g:typescript_indent_disable = 1
@@ -204,13 +218,6 @@ vmap <C-v> <Plug>(expand_region_shrink)
 "===========
 
 source ~/.vim/plug.vim
-
-"=========
-" Vundle
-"=========
-
-" The following file handles rtp modification and filetype calls
-" source ~/.vim/bundles.vim
 
 "====================
 " Syntax highlighting
@@ -332,7 +339,13 @@ nnoremap ,f :NERDTreeToggle<CR>
 nnoremap ,F :NERDTreeFocus<CR>
 
 " CtrlP
-noremap <leader>b :CtrlPBuffer<cr>
+" noremap <leader>b :CtrlPBuffer<cr>
+
+" fzf
+if executable('fzf') && has('nvim')
+	noremap <leader>t :Files<cr>
+	noremap <leader>b :Buffers<cr>
+endif
 
 " Ack.vim
 noremap <leader>a :Ack!<space>--follow<space>
