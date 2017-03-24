@@ -1,0 +1,23 @@
+#!/bin/bash
+
+NEW_WINDOW=0
+CURRENT_PATH="#{pane_current_path}"
+
+if [[ "$1" == "-n" ]]; then
+	NEW_WINDOW=1
+	shift
+fi
+
+if [[ -n "$1" ]]; then
+	CURRENT_PATH="$1"
+	shift
+fi
+
+if (( $NEW_WINDOW )); then
+	tmux new-window -c "$CURRENT_PATH"
+elif [[ "$CURRENT_PATH" != "#{pane_current_path}" ]]; then
+	cd "$CURRENT_PATH"
+fi
+
+tmux split-window -d -p 25 -c "$CURRENT_PATH"
+tmux split-window -d -b -h -t "{bottom}" -c "$CURRENT_PATH"
