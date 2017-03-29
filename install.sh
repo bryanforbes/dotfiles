@@ -26,8 +26,8 @@ case "$(uname)" in
 	Linux)
 		# TODO: add linux commands
 		echo "Installing packages"
-		sudo apt-add-repository ppa:git-core/ppa
-		sudo apt-add-repository ppa:neovim-ppa/stable
+		sudo apt-add-repository -y ppa:git-core/ppa
+		sudo apt-add-repository -y ppa:neovim-ppa/stable
 		sudo apt-get update
 		sudo apt-get install -y git zsh tmux neovim python-dev python-pip python-setuptools python3-dev python3-pip python3-setuptools  || true
 		pip2 install --user --upgrade neovim || true
