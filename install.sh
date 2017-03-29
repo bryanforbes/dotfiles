@@ -27,8 +27,11 @@ case "$(uname)" in
 		# TODO: add linux commands
 		echo "Installing packages"
 		sudo apt-add-repository ppa:git-core/ppa
+		sudo apt-add-repository ppa:neovim-ppa/stable
 		sudo apt-get update
-		sudo apt-get install git zsh vim || true
+		sudo apt-get install -y git zsh tmux neovim python-dev python-pip python-setuptools python3-dev python3-pip python3-setuptools  || true
+		pip2 install --update neovim || true
+		pip3 install --update neovim || true
 		ZSHPATH=$(which zsh)
 		;;
 esac
@@ -56,22 +59,20 @@ ln -s ~/.dotfiles/tmux ~/.tmux
 ln -s ~/.dotfiles/tmux.conf ~/.tmux.conf
 ln -s ~/.dotfiles/vim ~/.vim
 ln -s ~/.dotfiles/vimrc ~/.vimrc
-
-echo "Setting up ViM environment"
-true | vim -u ~/.dotfiles/install.vim +PluginInstall +qa 2>/dev/null
-
-echo "Setting up tmux environment"
-tmux start-server
-tmux new-session -d
-true | ~/.dotfiles/tmux/plugins/tpm/scripts/install_plugins >/dev/null 2>&1
-tmux kill-server
+mkdir ~/.config
+ln -s ~/.dotfiles/vim ~/.config/nvim
 
 echo "Installing nvm"
 git clone https://github.com/creationix/nvm.git ~/.nvm
 source ~/.nvm/nvm.sh
 
 echo "Installing node"
-nvm install 0.10
-nvm alias default 0.10
+nvm install --lts
+
+echo "Setting up ViM environment"
+true | vim -u ~/.dotfiles/install.vim +PlugInstall +qa 2>/dev/null
+
+echo "Setting up tmux environment"
+true | ~/.dotfiles/tmux/plugins/tpm/bin/install_plugins > /dev/null 2>&1
 
 chsh -s $ZSHPATH

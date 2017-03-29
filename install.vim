@@ -1,2 +1,2 @@
 set nocompatible
-source ~/.vim/bundles.vim
+source ~/.vim/plug.vim
