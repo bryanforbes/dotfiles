@@ -30,8 +30,8 @@ case "$(uname)" in
 		sudo apt-add-repository ppa:neovim-ppa/stable
 		sudo apt-get update
 		sudo apt-get install -y git zsh tmux neovim python-dev python-pip python-setuptools python3-dev python3-pip python3-setuptools  || true
-		pip2 install --update neovim || true
-		pip3 install --update neovim || true
+		pip2 install --user --upgrade neovim || true
+		pip3 install --user --upgrade neovim || true
 		ZSHPATH=$(which zsh)
 		;;
 esac
