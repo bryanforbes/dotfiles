@@ -11,6 +11,9 @@ augroup filetypedetect
 	" Cython
 	autocmd BufNewFile,BufRead *.pyx,*.pxd,*.pxi				setfiletype pyrex
 
+	" mypy stub files
+	autocmd BufNewFile,BufRead *.pyi							setfiletype python
+
 	" JSON
 	autocmd BufNewFile,BufRead *.json,*.smd						setfiletype javascript
 

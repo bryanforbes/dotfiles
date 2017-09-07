@@ -6,10 +6,12 @@
 	ci = commit -v
 	co = checkout
 	br = branch
+	pr = "!f() { git fetch -fu ${2:-upstream} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+	pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
 [core]
 	autocrlf = input
 	excludesfile = ~/.gitignore
-	editor = vim
+	editor = zsh ~/.zprezto/functions/vi
 [color]
 	ui = auto
 [url "git@github.com:"]

@@ -55,10 +55,13 @@ set textwidth=0						" don't auto-wrap lines except for specific filetypes
 set wildmenu						" enhanced command line completion
 set wildmode=list:longest			" complete files like a shell
 set completeopt+=longest
+set completeopt-=preview
 
 set fileformats=unix,mac,dos		" support all three filetypes in this order
 set spelllang=en
 set foldlevelstart=20
+
+set signcolumn=yes
 
 " Turn 'list off by default, but define characters to use
 " when it's turned on.
@@ -81,14 +84,15 @@ endif
 " Yank to the system clipboard
 set clipboard=unnamed
 
-" Ensure we're using 256 colors
-set t_Co=256
+" Ensure we're using 16 colors
+set t_Co=16
 
 "====================================
 " Swap and undo files and directories
 "====================================
 
 set nobackup						" do not keep backup files
+set backupcopy=yes
 set directory^=~/.vim/.tmp//		" swap directory
 set updatecount=20					" update the swap file every 20 characters
 
@@ -102,58 +106,28 @@ endif
 " Plugin Configuration
 "=====================
 
-" Airline
-" let g:airline_powerline_fonts=1
-" let g:airline_theme='solarized'
+" Ale
+let g:ale_linters = {
+	\ 'javascript': ['eslint'],
+	\'typescript': []
+\ }
+let g:ale_change_sign_column_color = 1
+" let g:ale_sign_column_always = 1
+let g:ale_sign_error = '✖'
+let g:ale_sign_warning = '⚠'
+" hi! ALESignColumnWithErrors cterm=NONE ctermfg=1 ctermbg=12
+" hi! ALESignColumnWithoutErrors cterm=NONE ctermfg=1 ctermbg=NONE
 
 " lightline
 source ~/.vim/lightline.vim
 
-" Syntastic
-let g:syntastic_check_on_open=0
-let g:syntastic_enable_signs=1
-let g:syntastic_javascript_checkers=["jshint", "jscs"]
-let g:syntastic_javascript_jshint_exe="npm-exec jshint"
-let g:syntastic_javascript_jscs_exe="npm-exec jscs"
-let g:syntastic_typescript_checkers=["tslint"]
-let g:syntastic_typescript_tslint_exe="npm-exec tslint"
-" The original arguments output AMD and put it in the same directory as the tsc file
-let g:syntastic_typescript_tsc_args="--module amd --target ES5 --noImplicitAny"
-let g:syntastic_typescript_tsc_post_args="--outDir /tmp/tsc"
-
 " EditorConfig
 let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 
-" Neomake
-augroup load_neomake
-	autocmd!
-	autocmd BufRead * call NeomakeInit()
-	autocmd BufWrite * call NeomakeInit()
-augroup END
-augroup neomake_commands
-	autocmd!
-augroup END
-function! NeomakeInit()
-	autocmd! load_neomake
-	call plug#load("neomake")
-
-	let g:neomake_javascript_enabled_makers = [ "jshint", "jscs" ]
-	let g:neomake_javascript_jshint_exe = "npm-exec"
-	let g:neomake_javascript_jshint_args = [ "jshint", "--verbose" ]
-	let g:neomake_javascript_jscs_exe = "npm-exec"
-	let g:neomake_javascript_jscs_args = [ "jscs", "--no-color", "--reporter", "inline" ]
-	autocmd neomake_commands BufWritePost *.js Neomake
-
-	let g:neomake_typescript_enabled_makers = [ "tsc", "tslint" ]
-	let g:neomake_typescript_tslint_exe = "npm-exec"
-	let g:neomake_typescript_tslint_args = [ "tslint" ]
-	autocmd neomake_commands BufWritePost *.ts,*.tsx Neomake
-endfunction
-
 " UltiSnips
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsExpandTrigger="<c-j>"
+" let g:UltiSnipsJumpForwardTrigger="<tab>"
+" let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 let g:UltiSnipsSnippetDirectories=["ultisnips"]
 
 " NERDTree
@@ -161,20 +135,7 @@ let g:NERDTreeHighlightCursorline=1
 let g:NERDTreeShowHidden=1
 let g:NERDTreeMinimalUI=1
 let g:NERDTreeWinSize=40
-
-" CtrlP
-let g:ctrlp_map = '<leader>t'
-let g:ctrlp_by_filename=1
-let g:ctrlp_match_window_reversed=0
-let g:ctrlp_switch_buffer='vt'
-let g:ctrlp_extensions = ['undo', 'changes']
-let g:ctrlp_root_markers = ['.git/']
-let g:ctrlp_use_caching = 0
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
-let g:ctrlp_custom_ignore = {
-	\ 'dir': '\v[\/](\.git|\.hg|\.svn|\.bzr|CVS|node_modules)$',
-	\ 'file': '\v(\~$|[._].*\.swp|core\.\d+|\.exe|\.so|\.bak|\.png|\.jpg|\.js\.map|\.gif|\.zip|\.rar|\.tar|\.gz)$'
-\ }
+let g:NERDTreeIgnore=['\~$', '\.pyc', '__pycache__']
 
 " fzf
 let g:fzf_buffers_jump = 0
@@ -196,15 +157,11 @@ let g:BufKillCreateMappings = 0
 
 " solarized
 let g:solarized_visibility = 'low'
-
-" Tsuquyomi
-let g:tsuquyomi_completion_case_sensitive = 1
-" let g:tsuquyomi_disable_quickfix = 1
-" let g:tsuquyomi_use_dev_node_module = 2
-" let g:tsuquyomi_tsserver_path = '/Users/bryan/.nvm/versions/node/v0.12.3/bin/ntsserver'
+let g:solarized_termcolors = 16
 
 " vim-tss
 " let g:tss_debug_tsserver = 1
+" let g:tss_verbose = 1
 
 " typescript-vim
 let g:typescript_indent_disable = 1
@@ -212,6 +169,23 @@ let g:typescript_indent_disable = 1
 " vim-expand-region
 vmap v <Plug>(expand_region_expand)
 vmap <C-v> <Plug>(expand_region_shrink)
+
+" YouCompleteMe
+let g:ycm_error_symbol = '✖'
+let g:ycm_warning_symbol = '⚠'
+let g:ycm_filetype_blacklist = {
+	\ 'tagbar' : 1,
+	\ 'qf' : 1,
+	\ 'notes' : 1,
+	\ 'markdown' : 1,
+	\ 'unite' : 1,
+	\ 'text' : 1,
+	\ 'vimwiki' : 1,
+	\ 'pandoc' : 1,
+	\ 'infolog' : 1,
+	\ 'mail' : 1,
+	\ 'gitcommit': 1
+\ }
 
 "===========
 " vim-plug
@@ -242,8 +216,8 @@ endif
 
 " This must be set after vim-plug because it is brought
 " in as a bundle
-set background=dark
-colorscheme solarized
+colorscheme flattened_light
+hi! NonText cterm=bold ctermfg=7
 
 "==============
 " Autocommands
@@ -263,9 +237,11 @@ if has("autocmd") && !exists("autocommands_loaded")
 	" most local filetype autocommands and customizations.
 	filetype plugin indent on
 
-	" When .vimrc or .vim_local_autocmds is edited, reload it
+	" When .vimrc (or aliases) or .vim_local_autocmds is edited, reload it
 	autocmd BufWritePost .vimrc source $MYVIMRC
 	autocmd BufWritePost .vim_local_autocmds source $MYVIMRC
+	autocmd BufWritePost ~/.dotfiles/vimrc source $MYVIMRC
+	autocmd BufWritePost ~/.dotfiles/vim/init.vim source $MYVIMRC
 
 	" ~/.vim_local_autocmds should act like a vim config file
 	autocmd BufRead,BufNewFile ~/.vim_local_autocmds setl filetype=vim
@@ -274,6 +250,8 @@ if has("autocmd") && !exists("autocommands_loaded")
 	if filereadable($HOME . "/.vim_local_autocmds")
 		source ~/.vim_local_autocmds
 	endif
+
+	autocmd FileType tagbar,nerdtree setlocal signcolumn=no
 endif " has("autocmd")
 
 "==============
@@ -319,8 +297,8 @@ nmap gV `[v`]
 nmap <leader>l :set list!<cr>
 
 " Remap code completion from Ctrl+x, Ctrl+o to Ctrl+Space
-inoremap <C-Space> <C-x><C-o>
-inoremap <C-@> <C-x><C-o>
+" inoremap <C-Space> <C-x><C-o>
+" inoremap <C-@> <C-x><C-o>
 
 " surround.vim
 nmap <silent> dsf ds)db
@@ -338,17 +316,25 @@ noremap <leader>y :SyntasticCheck<cr>
 nnoremap ,f :NERDTreeToggle<CR>
 nnoremap ,F :NERDTreeFocus<CR>
 
-" CtrlP
-" noremap <leader>b :CtrlPBuffer<cr>
-
 " fzf
 if executable('fzf') && has('nvim')
-	noremap <leader>t :Files<cr>
+	if isdirectory(".git")
+		noremap <leader>t :GFiles --cached --others --exclude-standard<cr>
+	else
+		noremap <leader>t :Files<cr>
+	endif
+	noremap <leader>T :Files<cr>
 	noremap <leader>b :Buffers<cr>
+	noremap <leader>/ :BLines<cr>
 endif
 
 " Ack.vim
 noremap <leader>a :Ack!<space>--follow<space>
+
+" YouCompleteMe
+map <buffer> <C-]> :YcmCompleter GoToDefinition<CR>
+nnoremap <buffer> <NUL> :YcmCompleter GetType<CR>
+nnoremap <buffer> <C-space> :YcmCompleter GetType<CR>
 
 source ~/.vim/my_functions.vim
 
