@@ -6,7 +6,7 @@ endif
 
 augroup filetypedetect
 	" ZSH
-	autocmd BufNewFile,BufRead ~/.zprezto/**,~/.dotfiles/zsh/**	setfiletype zsh
+	autocmd BufNewFile,BufRead ~/.zprezto/**,~/.dotfiles/zsh/**,~/.dotfiles/bin/**	setfiletype zsh
 
 	" Cython
 	autocmd BufNewFile,BufRead *.pyx,*.pxd,*.pxi				setfiletype pyrex

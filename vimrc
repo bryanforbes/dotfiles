@@ -62,6 +62,11 @@ set spelllang=en
 set foldlevelstart=20
 
 set signcolumn=yes
+set lazyredraw						" redraw less frequently
+set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
+			\,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor
+			\,sm:block-blinkwait175-blinkoff150-blinkon175
+set updatetime=100					" More responsive UI updates
 
 " Turn 'list off by default, but define characters to use
 " when it's turned on.
@@ -102,6 +107,19 @@ if v:version >= 703					" options only for Vim >= 7.3
 	set undodir=~/.vim/.undo		" undo file directory
 endif
 
+" If we're in a git project and there's a node_modules/.bin in the project
+" root, add it to the beginning of the path so that it's apps will be used for
+" commands started by vim. In particular this is useful for YCM + TypeScript
+" since YCM doesn't automatically look for a local TypeScript install.
+let project_root=system('git rev-parse --show-toplevel 2> /dev/null')
+if !empty(project_root)
+    let project_root=substitute(project_root, '\n\+$', '', '')
+    let bindir=project_root . '/node_modules/.bin'
+    if !empty(glob(bindir))
+        let $PATH=bindir . ':' . $PATH
+    endif
+endif
+
 "=====================
 " Plugin Configuration
 "=====================
@@ -137,6 +155,13 @@ let g:NERDTreeMinimalUI=1
 let g:NERDTreeWinSize=40
 let g:NERDTreeIgnore=['\~$', '\.pyc', '__pycache__']
 
+let g:WebDevIconsOS = 'Darwin'
+let g:WebDevIconsUnicodeDecorateFolderNodes = 1
+let g:DevIconsEnableFoldersOpenClose = 1
+let g:DevIconsEnableFolderExtensionPatternMatching = 1
+let NERDTreeDirArrowExpandable = "\u00a0" " make arrows invisible
+let NERDTreeDirArrowCollapsible = "\u00a0" " make arrows invisible
+
 " fzf
 let g:fzf_buffers_jump = 0
 
@@ -171,6 +196,10 @@ vmap v <Plug>(expand_region_expand)
 vmap <C-v> <Plug>(expand_region_shrink)
 
 " YouCompleteMe
+" let g:ycm_log_level = 'debug'
+" let g:ycm_auto_trigger = 0
+" let g:ycm_min_num_of_chars_for_completion = 99
+let g:ycm_confirm_extra_conf = 0
 let g:ycm_error_symbol = '✖'
 let g:ycm_warning_symbol = '⚠'
 let g:ycm_filetype_blacklist = {
@@ -186,6 +215,14 @@ let g:ycm_filetype_blacklist = {
 	\ 'mail' : 1,
 	\ 'gitcommit': 1
 \ }
+
+" vim-autoprettier
+let g:autoprettier_types = [
+	\ 'typescript',
+	\ 'javascript',
+	\ ]
+let g:autoprettier_exclude = [
+\ ]
 
 "===========
 " vim-plug
@@ -309,8 +346,8 @@ noremap <leader>gc :Gcommit -v<cr>
 noremap <leader>gs :Gstatus<cr>
 
 " Syntastic
-nmap <leader>err :Errors<CR><C-W>j
-noremap <leader>y :SyntasticCheck<cr>
+" nmap <leader>err :Errors<CR><C-W>j
+" noremap <leader>y :SyntasticCheck<cr>
 
 " NERDTree
 nnoremap ,f :NERDTreeToggle<CR>
@@ -332,9 +369,10 @@ endif
 noremap <leader>a :Ack!<space>--follow<space>
 
 " YouCompleteMe
-map <buffer> <C-]> :YcmCompleter GoToDefinition<CR>
-nnoremap <buffer> <NUL> :YcmCompleter GetType<CR>
-nnoremap <buffer> <C-space> :YcmCompleter GetType<CR>
+map <C-]> :YcmCompleter GoToDefinition<CR>
+nnoremap <NUL> :YcmCompleter GetType<CR>
+nnoremap <C-space> :YcmCompleter GetType<CR>
+nmap <leader>e :YcmDiags<CR><C-W>j
 
 source ~/.vim/my_functions.vim
 

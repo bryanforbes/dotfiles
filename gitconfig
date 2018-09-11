@@ -20,3 +20,7 @@
 	insteadOf = gitpub:
 [push]
 	default = simple
+[pull]
+	rebase = true
+[rebase]
+	autostash = true

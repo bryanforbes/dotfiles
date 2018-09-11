@@ -1,6 +1,8 @@
 #!/bin/sh
 
-case "$(uname)" in
+UNAME="$(uname)"
+
+case "$UNAME" in
 	Darwin)
 		echo "Requesting Installation of Command Line Tools"
 		xcode-select --install
@@ -10,7 +12,7 @@ case "$(uname)" in
 			ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
 		fi
 
-		echo "Installing packages"
+		echo "Installing homebrew packages"
 		brew install git --without-completions
 		brew install hub --without-completions
 		brew install vim zsh tmux coreutils gnu-sed gnupg reattach-to-user-namespace ack fasd todo-txt nginx dnsmasq
@@ -18,6 +20,9 @@ case "$(uname)" in
 		brew tap homebrew/versions
 		brew tap homebrew/php
 		brew install php55 --with-fpm
+
+		mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.installed
+		mv /usr/local/etc/dnsmasq.conf /usr/local/etc/dnsmasq.conf.installed
 
 		ZSHPATH=/usr/local/bin/zsh
 		echo "Adding $ZSHPATH to /etc/shells"
@@ -40,14 +45,13 @@ echo "Cloning dotfiles"
 git clone --recursive https://github.com/bryanforbes/dotfiles ~/.dotfiles
 
 echo "Installing prezto"
-git clone --recursive https://github.com/bryanforbes/prezto.git --branch bryanforbes ~/.zprezto
-
-ln -s ~/.zprezto/runcoms/zlogin ~/.zlogin
-ln -s ~/.zprezto/runcoms/zlogout ~/.zlogout
-ln -s ~/.zprezto/runcoms/zpreztorc ~/.zpreztorc
-ln -s ~/.zprezto/runcoms/zprofile ~/.zprofile
-ln -s ~/.zprezto/runcoms/zshenv ~/.zshenv
-ln -s ~/.zprezto/runcoms/zshrc ~/.zshrc
+ln -s ~/.dotfiles/zsh ~/.zprezto
+ln -s ~/.dotfiles/zsh/runcoms/zlogin ~/.zlogin
+ln -s ~/.dotfiles/zsh/runcoms/zlogout ~/.zlogout
+ln -s ~/.dotfiles/zsh/runcoms/zpreztorc ~/.zpreztorc
+ln -s ~/.dotfiles/zsh/runcoms/zprofile ~/.zprofile
+ln -s ~/.dotfiles/zsh/runcoms/zshenv ~/.zshenv
+ln -s ~/.dotfiles/zsh/runcoms/zshrc ~/.zshrc
 
 echo "Linking dotfiles"
 ln -s ~/.dotfiles/editorconfig ~/.editorconfig
@@ -61,6 +65,26 @@ ln -s ~/.dotfiles/vim ~/.vim
 ln -s ~/.dotfiles/vimrc ~/.vimrc
 mkdir ~/.config
 ln -s ~/.dotfiles/vim ~/.config/nvim
+
+case "$UNAME" in
+	Darwin)
+		ln -s ~/.dotfiles/osx/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf
+		ln -s ~/.dotfiles/osx/nginx/common /usr/local/etc/nginx/common
+		ln -s ~/.dotfiles/osx/nginx/fpm /usr/local/etc/nginx/fpm
+		ln -s ~/.dotfiles/osx/nginx/sites-enabled/test /usr/local/etc/nginx/sites-enabled/test
+
+		mkdir /usr/local/etc/dnsmasq.d
+		ln -s ~/.dotfiles/osx/dnsmasq/dnsmasq.conf /usr/local/etc/dnsmasq.conf
+		ln -s ~/.dotfiles/osx/dnsmasq/hosts.dnsmasq /usr/local/etc/hosts.dnsmasq
+		ln -s ~/.dotfiles/osx/dnsmasq/dnsmasq.d/test.conf /usr/local/etc/dnsmasq.d/test.conf
+
+		sudo ln -s ~/.dotfiles/osx/test.resolver /etc/resolver/test
+
+		sudo brew services dnsmasq start
+		sudo brew services nginx start
+		brew services start php55
+	;;
+esac
 
 echo "Installing nvm"
 git clone https://github.com/creationix/nvm.git ~/.nvm

@@ -28,16 +28,16 @@ if [[ $LIST_HOSTS -eq 1 ]]; then
 	ls -l "$HOME/Hosts" | sed -e '/^total [0-9]*$/ d' \
 							-e 's/.*[0-9] \([a-zA-Z.]* ->.*\)$/\1/g'
 elif [[ $REMOVE_HOST -eq 1 ]]; then
-	rm "$HOME/Hosts/$1.dev"
-	echo "$1.dev removed"
-elif [[ -e "$HOME/Hosts/$1.dev" ]] && [[ $FORCE_HOST -eq 0 ]]; then
-	echo "$1.dev already exists as a host, exiting"
+	rm "$HOME/Hosts/$1.test"
+	echo "$1.test removed"
+elif [[ -e "$HOME/Hosts/$1.test" ]] && [[ $FORCE_HOST -eq 0 ]]; then
+	echo "$1.test already exists as a host, exiting"
 	return 1
 else
 	if [[ $FORCE_HOST -eq 1 ]]; then
-		rm "$HOME/Hosts/$1.dev"
+		rm "$HOME/Hosts/$1.test"
 	fi
-	ln -s "$(pwd)" "$HOME/Hosts/$1.dev"
-	echo "$1.dev created, now loading..."
-	open "http://$1.dev/"
+	ln -s "$(pwd)" "$HOME/Hosts/$1.test"
+	echo "$1.test created, now loading..."
+	open "http://$1.test/"
 fi
