@@ -15,11 +15,7 @@ case "$UNAME" in
 		echo "Installing homebrew packages"
 		brew install git --without-completions
 		brew install hub --without-completions
-		brew install vim zsh tmux coreutils gnu-sed gnupg reattach-to-user-namespace ack fasd todo-txt nginx dnsmasq
-		brew tap homebrew/dupes
-		brew tap homebrew/versions
-		brew tap homebrew/php
-		brew install php55 --with-fpm
+		brew install vim git-archive-all zsh tmux coreutils gnu-sed gnupg reattach-to-user-namespace ack fasd nginx dnsmasq mobile-shell python neovim
 
 		mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.installed
 		mv /usr/local/etc/dnsmasq.conf /usr/local/etc/dnsmasq.conf.installed
@@ -68,17 +64,17 @@ ln -s ~/.dotfiles/vim ~/.config/nvim
 
 case "$UNAME" in
 	Darwin)
-		ln -s ~/.dotfiles/osx/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf
-		ln -s ~/.dotfiles/osx/nginx/common /usr/local/etc/nginx/common
-		ln -s ~/.dotfiles/osx/nginx/fpm /usr/local/etc/nginx/fpm
-		ln -s ~/.dotfiles/osx/nginx/sites-enabled/test /usr/local/etc/nginx/sites-enabled/test
+		ln -sf ~/.dotfiles/osx/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf
+		ln -sf ~/.dotfiles/osx/nginx/common /usr/local/etc/nginx/common
+		ln -sf ~/.dotfiles/osx/nginx/fpm /usr/local/etc/nginx/fpm
+		ln -sf ~/.dotfiles/osx/nginx/servers/test /usr/local/etc/nginx/servers/test
 
 		mkdir /usr/local/etc/dnsmasq.d
-		ln -s ~/.dotfiles/osx/dnsmasq/dnsmasq.conf /usr/local/etc/dnsmasq.conf
-		ln -s ~/.dotfiles/osx/dnsmasq/hosts.dnsmasq /usr/local/etc/hosts.dnsmasq
-		ln -s ~/.dotfiles/osx/dnsmasq/dnsmasq.d/test.conf /usr/local/etc/dnsmasq.d/test.conf
+		ln -sf ~/.dotfiles/osx/dnsmasq/dnsmasq.conf /usr/local/etc/dnsmasq.conf
+		ln -sf ~/.dotfiles/osx/dnsmasq/hosts.dnsmasq /usr/local/etc/hosts.dnsmasq
+		ln -sf ~/.dotfiles/osx/dnsmasq/dnsmasq.d/test.conf /usr/local/etc/dnsmasq.d/test.conf
 
-		sudo ln -s ~/.dotfiles/osx/test.resolver /etc/resolver/test
+		sudo ln -sf ~/.dotfiles/osx/test.resolver /etc/resolver/test
 
 		sudo brew services dnsmasq start
 		sudo brew services nginx start

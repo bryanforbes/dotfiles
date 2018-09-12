@@ -1,0 +1,4 @@
+nameserver 127.0.0.1
+port 53
+domain test
+search_order 1

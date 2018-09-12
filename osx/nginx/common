@@ -1,0 +1,29 @@
+index index.php index.html index.htm index.json;
+
+if_modified_since before;
+
+location ~ /\.(svn|git|ht) {
+    deny all;
+}
+
+location ~ \.svgz$ {
+    add_header Content-Encoding gzip;
+}
+
+location ~ \.(?:woff|ttf|otf|svgz)$ {
+    expires max;
+}
+
+#ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
+#ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
+
+ssl_protocols SSLv3 TLSv1;
+ssl_ciphers HIGH:!ADH;
+ssl_prefer_server_ciphers on;
+
+gzip on;
+gzip_comp_level 9;
+gzip_min_length 128;
+gzip_types text/javascript text/css application/x-javascript application/javascript application/json;
+gzip_vary on;
+gzip_proxied any;

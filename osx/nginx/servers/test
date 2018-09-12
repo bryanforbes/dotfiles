@@ -1,0 +1,17 @@
+# Catch any request for *.test
+server {
+	listen 80;
+	server_name *.test;
+	root /Users/bryan/Hosts/$host;
+
+	include common;
+	include fpm;
+
+	autoindex on;
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+}
+
+include /Users/bryan/Hosts/*.nginx;

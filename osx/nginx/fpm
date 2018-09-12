@@ -1,0 +1,21 @@
+location ~ \.php(/|$) {
+	fastcgi_pass  unix:/usr/local/var/run/php-fpm.socket;
+	fastcgi_index index.php;
+
+	if ($uri ~ '\.php(/.*)$') {
+		set $path_info $1;
+	}
+
+	if ($scheme = 'https') {
+		set $fastcgi_https on;
+	}
+
+	if ($scheme = 'http') {
+		set $fastcgi_https off;
+	}
+
+	fastcgi_param PATH_INFO $path_info;
+	fastcgi_param HTTPS $fastcgi_https;
+	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	include fastcgi_params;
+}
