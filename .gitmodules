@@ -3,4 +3,4 @@
 	url = https://github.com/tmux-plugins/tpm
 [submodule "zsh"]
 	path = zsh
-	url = git@github.com:bryanforbes/prezto.git
+	url = https://github.com/bryanforbes/prezto.git
