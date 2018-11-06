@@ -48,6 +48,8 @@ Plug 'ianks/vim-tsx', { 'for': 'typescript' }
 " Plug 'jason0x43/vim-tss', { 'for': [ 'typescript', 'javascript' ], 'do': 'npm install' }
 " Plug 'briancollins/vim-jst', { 'for': [ 'jst' ] }
 Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python' }
+Plug 'ambv/black', { 'for': 'python' }
+Plug 'cespare/vim-toml'
 
 if has('nvim')
 	if isdirectory('/usr/local/opt/fzf')

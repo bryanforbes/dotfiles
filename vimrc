@@ -136,6 +136,9 @@ let g:ale_sign_warning = '⚠'
 " hi! ALESignColumnWithErrors cterm=NONE ctermfg=1 ctermbg=12
 " hi! ALESignColumnWithoutErrors cterm=NONE ctermfg=1 ctermbg=NONE
 
+" black
+let g:black_skip_string_normalization = 1
+
 " lightline
 source ~/.vim/lightline.vim
 
