@@ -6,3 +6,4 @@
 " nnoremap <buffer> <C-space> :TssQuickInfo<CR>
 
 " setl omnifunc=tss#omnicomplete
+let g:ale_completion_enabled = 0

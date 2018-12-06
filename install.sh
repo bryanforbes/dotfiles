@@ -16,6 +16,7 @@ case "$UNAME" in
 		brew install git --without-completions
 		brew install hub --without-completions
 		brew install vim git-archive-all zsh tmux coreutils gnu-sed gnupg reattach-to-user-namespace ack fasd nginx dnsmasq mobile-shell python python2 neovim
+		brew install yarn --without-node
 
 		pip2 install --user --upgrade neovim || true
 		pip3 install --user --upgrade neovim || true

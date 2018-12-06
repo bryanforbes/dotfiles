@@ -162,8 +162,8 @@ let g:WebDevIconsOS = 'Darwin'
 let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 let g:DevIconsEnableFoldersOpenClose = 1
 let g:DevIconsEnableFolderExtensionPatternMatching = 1
-let NERDTreeDirArrowExpandable = "\u00a0" " make arrows invisible
-let NERDTreeDirArrowCollapsible = "\u00a0" " make arrows invisible
+" let NERDTreeDirArrowExpandable = "\u00a0" " make arrows invisible
+" let NERDTreeDirArrowCollapsible = "\u00a0" " make arrows invisible
 
 " fzf
 let g:fzf_buffers_jump = 0

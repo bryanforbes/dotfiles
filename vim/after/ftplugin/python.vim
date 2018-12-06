@@ -2,4 +2,4 @@ if executable('yapf')
 	setlocal equalprg=yapf
 endif
 
-autocmd BufWritePre *.py,*.pyi execute ':Black'
+autocmd BufWritePre <buffer> execute ':Black'
