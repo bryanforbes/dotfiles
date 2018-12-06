@@ -9,7 +9,7 @@ case "$UNAME" in
 
 		if [ ! -d "/usr/local/Cellar" ]; then
 			echo "Installing Homebrew"
-			ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+			/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 		fi
 
 		echo "Installing homebrew packages"
@@ -82,7 +82,6 @@ case "$UNAME" in
 
 		sudo brew services dnsmasq start
 		sudo brew services nginx start
-		brew services start php55
 	;;
 esac
 
