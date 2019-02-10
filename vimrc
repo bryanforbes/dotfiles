@@ -140,7 +140,7 @@ let g:ale_sign_warning = '⚠'
 let g:black_skip_string_normalization = 1
 
 " lightline
-source ~/.vim/lightline.vim
+runtime settings/lightline.vim
 
 " EditorConfig
 let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
@@ -231,7 +231,7 @@ let g:autoprettier_exclude = [
 " vim-plug
 "===========
 
-source ~/.vim/plug.vim
+runtime settings/plug.vim
 
 "====================
 " Syntax highlighting
@@ -318,15 +318,12 @@ map <leader>spell :setlocal spell!<cr>
 " Change directory to current buffer
 map <leader>cd :cd %:p:h<cr>
 
-" noremap <leader>t :tabnew<cr>
-" noremap <C-j> :bn<CR>
-" noremap <C-k> :bp<CR>
 noremap <leader>d :BW!<cr>
 noremap <leader>. <C-^>
-noremap <silent> <C-h> :call WinMove('h')<cr>
-noremap <silent> <C-j> :call WinMove('j')<cr>
-noremap <silent> <C-k> :call WinMove('k')<cr>
-noremap <silent> <C-l> :call WinMove('l')<cr>
+map <silent> <C-h> <Plug>WinMoveLeft
+map <silent> <C-j> <Plug>WinMoveDown
+map <silent> <C-k> <Plug>WinMoveUp
+map <silent> <C-l> <Plug>WinMoveRight
 noremap <leader>q :wincmd q<cr>
 
 

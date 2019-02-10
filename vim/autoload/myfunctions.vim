@@ -1,10 +1,10 @@
 " Clean up a line of code by removing trailing '//' comments, and trimming
 " whitespace
-fu myfunctions#Trim(line)
+function! myfunctions#Trim(line)
   return substitute(substitute(a:line, '// .*', '', ''), '^\s*\|\s*$', '', 'g')
-endf
+endfunction
 
-fu myfunctions#GetJsIndent(lnum)
+function! myfunctions#GetJsIndent(lnum)
   let num = a:lnum
   let line = myfunctions#Trim(getline(num))
 
@@ -34,4 +34,21 @@ fu myfunctions#GetJsIndent(lnum)
   endif
 
   return ind
-endf
+endfunction
+
+function! myfunctions#EscapeTags()
+	s/</\&lt;/eg
+	s/>/\&gt;/eg
+endfunction
+
+function! myfunctions#UnEscapeTags()
+	s/&lt;/</eg
+	s/&gt;/>/eg
+endfunction
+
+function! myfunctions#PrettifyXML()
+	set ft=xml
+	:%s/></>\r</g
+	:0
+	:norm =G
+endfunction
