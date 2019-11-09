@@ -7,7 +7,7 @@ filetype off
 set termencoding=utf-8
 set encoding=utf-8
 
-set shortmess+=I					" Don't show the Vim welcome screen.
+set shortmess+=Ic					" Don't show the Vim welcome screen.
 
 set autoindent						" copy indent from current line for new line
 set nosmartindent					" 'smartindent' breaks right-shifting of # lines
@@ -19,6 +19,7 @@ set history=1000					" sets how many lines of history VIM has to remember
 
 set ruler							" always show current position
 set showcmd							" show typed commands
+set cmdheight=2						" better display for messages
 set showmode						" display the mode you're in
 set incsearch						" go to search results as typing
 set hlsearch						" highlight search things
@@ -54,8 +55,9 @@ set textwidth=0						" don't auto-wrap lines except for specific filetypes
 
 set wildmenu						" enhanced command line completion
 set wildmode=list:longest			" complete files like a shell
-set completeopt+=longest
-set completeopt-=preview
+set completeopt+=noinsert
+set completeopt+=menuone
+set completeopt+=noselect
 
 set fileformats=unix,mac,dos		" support all three filetypes in this order
 set spelllang=en
@@ -66,7 +68,7 @@ set lazyredraw						" redraw less frequently
 set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
 			\,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor
 			\,sm:block-blinkwait175-blinkoff150-blinkon175
-set updatetime=100					" More responsive UI updates
+set updatetime=300					" More responsive UI updates
 
 " Turn 'list off by default, but define characters to use
 " when it's turned on.
@@ -133,6 +135,7 @@ let g:ale_change_sign_column_color = 1
 " let g:ale_sign_column_always = 1
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'
+let g:ale_python_flake8_change_directory = 0
 " hi! ALESignColumnWithErrors cterm=NONE ctermfg=1 ctermbg=12
 " hi! ALESignColumnWithoutErrors cterm=NONE ctermfg=1 ctermbg=NONE
 
@@ -152,7 +155,7 @@ let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsSnippetDirectories=["ultisnips"]
 
 " NERDTree
-let g:NERDTreeHighlightCursorline=1
+" let g:NERDTreeHighlightCursorline=1
 let g:NERDTreeShowHidden=1
 let g:NERDTreeMinimalUI=1
 let g:NERDTreeWinSize=40
@@ -256,8 +259,10 @@ endif
 
 " This must be set after vim-plug because it is brought
 " in as a bundle
-colorscheme flattened_light
+set termguicolors
+colorscheme flattened_dark
 hi! NonText cterm=bold ctermfg=7
+let &t_ut=''
 
 "==============
 " Autocommands
@@ -373,8 +378,6 @@ map <C-]> :YcmCompleter GoToDefinition<CR>
 nnoremap <NUL> :YcmCompleter GetType<CR>
 nnoremap <C-space> :YcmCompleter GetType<CR>
 nmap <leader>e :YcmDiags<CR><C-W>j
-
-source ~/.vim/my_functions.vim
 
 " Add python system tags
 set tags+=$HOME/.vim/tags/python.ctags

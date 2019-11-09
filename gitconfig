@@ -24,3 +24,5 @@
 	rebase = true
 [rebase]
 	autostash = true
+[diff]
+	algorithm = histogram
