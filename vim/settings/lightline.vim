@@ -3,8 +3,7 @@ let g:lightline = {
 	\ 'active': {
 	\	'left': [
 	\		[ 'mode', 'paste' ],
-	\		[ 'fugitive', 'filename' ],
-	\		[ 'ctrlpmark' ]
+	\		[ 'cocstatus', 'fugitive', 'filename' ]
 	\	]
 	\ },
 	\ 'component_function': {
@@ -15,6 +14,7 @@ let g:lightline = {
 	\	'fileencoding': 'LightlineFileencoding',
 	\	'mode': 'LightlineMode',
 	\	'ctrlpmark': 'LightlineCtrlPMark',
+	\	'cocstatus': 'coc#status',
 	\ },
 	\ 'component': {
 	\	'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'

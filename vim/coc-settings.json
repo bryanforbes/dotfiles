@@ -1,0 +1,36 @@
+{
+  "coc.preferences.currentFunctionSymbolAutoUpdate": true,
+  "coc.preferences.formatOnSaveFiletypes": [
+    "python",
+    "typescript",
+    "typescriptreact"
+  ],
+
+  "codeLens.enable": true,
+  "diagnostic.errorSign": "",
+  "diagnostic.infoSign": "",
+  "diagnostic.warningSign": "",
+  "diagnostic.maxWindowHeight": 20,
+  "diagnostic.refreshOnInsertMode": true,
+  "diagnostic.virtualText": false,
+  "suggest.enablePreview": true,
+  "suggest.maxPreviewWidth": 100,
+
+  "eslint.enable": false,
+  "eslint.filetypes": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+
+  "python.formatting.provider": "black",
+  "python.jediEnabled": false,
+  "python.linting.pylintEnabled": false,
+
+  "javascript.referencesCodeLens.enable": false,
+  "javascript.suggestionActions.enabled": false,
+
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.referencesCodeLens.enable": false
+}

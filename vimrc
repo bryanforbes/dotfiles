@@ -227,8 +227,14 @@ let g:autoprettier_types = [
 	\ 'typescript',
 	\ 'javascript',
 	\ ]
-let g:autoprettier_exclude = [
-\ ]
+
+" coc.nvim
+let g:coc_status_error_sign = 'E'
+let g:coc_status_warning_sign = 'W'
+
+command! -nargs=0 OrganizeImports :CocCommand editor.action.organizeImport
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+command! -nargs=0 Format :call CocAction('format')
 
 "===========
 " vim-plug
@@ -297,6 +303,9 @@ if has("autocmd") && !exists("autocommands_loaded")
 	endif
 
 	autocmd FileType tagbar,nerdtree setlocal signcolumn=no
+
+	autocmd CursorHold * silent call CocActionAsync('highlight')
+	autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 endif " has("autocmd")
 
 "==============
@@ -338,10 +347,6 @@ nmap gV `[v`]
 " Shortcut to rapidly toggle `set list`
 nmap <leader>l :set list!<cr>
 
-" Remap code completion from Ctrl+x, Ctrl+o to Ctrl+Space
-" inoremap <C-Space> <C-x><C-o>
-" inoremap <C-@> <C-x><C-o>
-
 " surround.vim
 nmap <silent> dsf ds)db
 
@@ -349,10 +354,6 @@ nmap <silent> dsf ds)db
 noremap <leader>gd :Gdiff<cr>
 noremap <leader>gc :Gcommit -v<cr>
 noremap <leader>gs :Gstatus<cr>
-
-" Syntastic
-" nmap <leader>err :Errors<CR><C-W>j
-" noremap <leader>y :SyntasticCheck<cr>
 
 " NERDTree
 nnoremap ,f :NERDTreeToggle<CR>
@@ -373,11 +374,53 @@ endif
 " Ack.vim
 noremap <leader>a :Ack!<space>--follow<space>
 
-" YouCompleteMe
-map <C-]> :YcmCompleter GoToDefinition<CR>
-nnoremap <NUL> :YcmCompleter GetType<CR>
-nnoremap <C-space> :YcmCompleter GetType<CR>
-nmap <leader>e :YcmDiags<CR><C-W>j
+" coc.nvim
+
+" Tab for cycling forwards through matches in a completion popup (taken
+" from coc help)
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+inoremap <silent><expr> <Tab>
+    \ pumvisible() ? "\<C-n>" :
+    \ <SID>check_back_space() ? "\<Tab>" :
+    \ coc#refresh()
+
+" Shift-Tab for cycling backwards through matches in a completion popup
+inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+" Enter to confirm completion
+inoremap <silent><expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+" inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use `[c` and `]c` to navigate diagnostics
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+map <silent> <leader>e :CocList diagnostics<cr>
+nmap <silent> <C-]> <Plug>(coc-definition)
+nmap <silent> <leader>r <Plug>(coc-rename)
+nmap <silent> <leader>j <Plug>(coc-references)
+nmap <leader>x <Plug>(coc-codeaction)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+
+" Use K to show documentation in preview window
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 " Add python system tags
 set tags+=$HOME/.vim/tags/python.ctags
