@@ -2,6 +2,7 @@
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
   "coc.preferences.formatOnSaveFiletypes": [
     "python",
+    "pythonstub",
     "typescript",
     "typescriptreact"
   ],
@@ -15,6 +16,7 @@
   "diagnostic.virtualText": false,
   "suggest.enablePreview": true,
   "suggest.maxPreviewWidth": 100,
+  "tsserver.npm": "/usr/local/bin/npm",
 
   "eslint.enable": false,
   "eslint.filetypes": [
@@ -32,5 +34,104 @@
   "javascript.suggestionActions.enabled": false,
 
   "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.referencesCodeLens.enable": false
+  "typescript.referencesCodeLens.enable": false,
+
+  "diagnostic-languageserver.filetypes": {
+    "python": ["flake8", "mypy"],
+    "pythonstub": ["flake8", "mypy"]
+  },
+
+  "diagnostic-languageserver.formatFiletypes": {
+    "python": ["isort", "black"],
+    "pythonstub": ["isort", "blackpyi"],
+    "typescript": []
+  },
+
+  "diagnostic-languageserver.linters": {
+    "flake8": {
+      "command": "flake8",
+      "rootPatterns": [".flake8", "setup.cfg", "tox.ini"],
+      "args": ["--stdin-display-name", "%filepath", "-"],
+      "offsetLine": 0,
+      "offsetColumn": 0,
+      "sourceName": "flake8",
+      "formatLines": 1,
+      "formatPattern": [
+        "^([^:]+):(\\d+):(\\d+):\\s+([A-Z]\\d+)\\s+(.*)$",
+        {
+          "sourceName": 1,
+          "sourceNameFilter": true,
+          "line": 2,
+          "column": 3,
+          "endLine": 2,
+          "endColumn": 3,
+          "message": [5, " [", 4, "]"]
+        }
+      ],
+      "requiredFiles": [".flake8", "setup.cfg", "tox.ini"]
+    },
+    "mypy": {
+      "command": "mypy",
+      "rootPatterns": ["mypy.ini", ".mypy.ini", "setup.cfg"],
+      "args": ["--show-column-numbers", "--show-error-codes", "--shadow-file", "%filepath", "%tempfile", "%filepath"],
+      "offsetLine": 0,
+      "offsetColumn": 0,
+      "sourceName": "mypy",
+      "formatLines": 1,
+      "formatPattern": [
+        "^([^:]+):(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
+        {
+          "sourceName": 1,
+          "sourceNameFilter": true,
+          "line": 2,
+          "column": 3,
+          "endLine": 2,
+          "endColumn": 3,
+          "security": 4,
+          "message": [5]
+        }
+      ],
+      "requiredFiles": ["mypy.ini", ".mypy.ini", "setup.cfg"]
+    },
+    "dmypy": {
+      "command": "dmypy",
+      "rootPatterns": ["mypy.ini", ".mypy.ini", "setup.cfg"],
+      "args": ["run", "--", "--show-column-numbers", "--show-error-codes", "--shadow-file", "%filepath", "%tempfile", "%filepath"],
+      "offsetLine": 0,
+      "offsetColumn": 0,
+      "sourceName": "dmypy",
+      "formatLines": 1,
+      "formatPattern": [
+        "^([^:]+):(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
+        {
+          "sourceName": 1,
+          "sourceNameFilter": true,
+          "line": 2,
+          "column": 3,
+          "endLine": 2,
+          "endColumn": 3,
+          "security": 4,
+          "message": [5]
+        }
+      ],
+      "requiredFiles": ["mypy.ini", ".mypy.ini", "setup.cfg"]
+    }
+  },
+  "diagnostic-languageserver.formatters": {
+    "black": {
+      "command": "black",
+      "args": ["--quiet", "-"],
+      "rootPatterns": ["pyproject.toml"]
+    },
+    "blackpyi": {
+      "command": "black",
+      "args": ["--quiet", "--pyi", "-"],
+      "rootPatterns": ["pyproject.toml"]
+    },
+    "isort": {
+      "command": "isort",
+      "args": ["--stdout", "-"],
+      "rootPatterns": ["pyproject.toml"]
+    }
+  }
 }

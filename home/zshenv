@@ -1,0 +1,124 @@
+#
+# Defines environment variables before .zshrc is sourced
+#
+# This file should be kept light and fast. Anything that's slow or involves
+# user interaction should go in zshrc.
+
+# Dotfiles
+# ----------------------------------------------------------------------------
+export DOTFILES=$HOME/.dotfiles
+
+# Language
+# ----------------------------------------------------------------------------
+[[ -z "$LANG" ]] && eval "$(locale)"
+[[ -z "$LANG" ]] && export LANG=en_US.UTF-8
+[[ -z "$LC_ALL" ]] && export LC_ALL=$LANG
+
+# Cache and temp files
+# ----------------------------------------------------------------------------
+export CACHEDIR="$HOME/.cache"
+[[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
+
+export ZCACHEDIR="$CACHEDIR/zsh"
+[[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
+
+export DATADIR="$HOME/.local/share"
+[[ -d "$DATADIR" ]] || mkdir -p "$DATADIR"
+
+export ZDATADIR="$DATADIR/zsh"
+[[ -d "$ZDATADIR" ]] || mkdir -p "$ZDATADIR"
+
+export ZFUNCDIR="$ZDATADIR/functions"
+[[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
+
+if [[ -d "$TMPDIR" ]]; then
+    export TMPPREFIX="${TMPDIR%/}/zsh"
+    [[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
+fi
+
+# General paths
+# ----------------------------------------------------------------------------
+typeset -gU path mailpath
+
+if [[ -d /home/linuxbrew ]]; then
+    export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
+else
+    export HOMEBREW_BASE=/usr/local
+fi
+
+# Terminal
+# --------------------------------------------------------------------------
+if [[ -z $TERM_PROGRAM ]]; then
+    if [[ -n $GNOME_TERMINAL_SCREEN ]]; then
+        export TERM_PROGRAM=gnome-terminal
+    elif [[ -n $KITTY_LISTEN_ON ]]; then
+        export TERM_PROGRAM=kitty
+    fi
+fi
+
+# Tmux
+# --------------------------------------------------------------------------
+export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
+
+# Path
+# --------------------------------------------------------------------------
+path=(
+    $HOMEBREW_BASE/bin
+    /usr/local/bin
+    $HOMEBREW_BASE/sbin
+    ${path:#/usr/local/bin}
+)
+
+# coreutils and gnu-sed
+case "$OSTYPE" in
+    darwin*)
+        # path and manpath for homebrew
+        path=(
+            /usr/local/opt/{coreutils,gnu-sed}/libexec/gnubin
+            $path
+        )
+        manpath=(
+            /usr/local/opt/{coreutils,gnu-sed}/libexec/gnuman
+            $manpath
+        )
+        ;;
+esac
+
+# Python
+if [[ -d $HOMEBREW_BASE/opt/python3 ]]; then
+    # Put python at the end of the path since some of its programs, like pip,
+    # will eventually be overridden with things in $HOMEBREW_BASE/bin
+    # https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
+    path=(
+        $path
+        $HOMEBREW_BASE/opt/python3/libexec/bin
+    )
+fi
+
+if [[ -d $HOME/.poetry/bin ]]; then
+    path=(
+        $HOME/.poetry/bin
+        $path
+    )
+fi
+
+# VMware
+if [[ -e /Applications/VMware\ Fusion.app/Contents/Library ]]; then
+    path=(
+        $path
+        /Applications/VMware\ Fusion.app/Contents/Library
+    )
+fi
+
+path=(
+    $HOME/.local/bin
+    $HOME/bin
+    $DOTFILES/bin
+    $path
+)
+
+# Disable global zprofile, which messes with the path
+unsetopt GLOBAL_RCS
+
+# Treat these characters as part of a word.
+WORDCHARS='*?_-.[]~&;!#$%^(){}<>'

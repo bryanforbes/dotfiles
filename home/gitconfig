@@ -8,10 +8,11 @@
 	br = branch
 	pr = "!f() { git fetch -fu ${2:-upstream} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
 	pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
+	forget = "!git fetch -p origin && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 [core]
 	autocrlf = input
 	excludesfile = ~/.gitignore
-	editor = zsh ~/.zprezto/functions/vi
+	editor = zsh ~/.dotfiles/zsh/functions/vi
 [color]
 	ui = auto
 [url "git@github.com:"]

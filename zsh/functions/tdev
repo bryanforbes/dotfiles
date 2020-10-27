@@ -1,0 +1,33 @@
+local new_window directories
+
+zparseopts -E -D n=new_window
+
+# copy $@ to $directories
+directories=("${@[@]}")
+
+if [[ -n "$new_window" ]]; then
+	new_window=1
+else
+	new_window=0
+fi
+
+if [[ -z "$directories" ]]; then
+	directories=($PWD)
+fi
+
+for directory in $directories; do
+	if (( $new_window )); then
+		tmux new-window -c "$directory" -n "$(basename $directory)"
+	else
+		if [[ "$directory" != "$PWD" ]]; then
+			cd "$directory"
+		fi
+		tmux rename-window "$(basename $directory)"
+	fi
+
+	tmux split-window -d -p 25 -c "$directory"
+	tmux split-window -d -b -h -t "{bottom}" -c "$directory"
+
+	new_window=1
+done
+

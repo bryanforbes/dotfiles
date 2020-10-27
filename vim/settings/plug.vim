@@ -1,4 +1,4 @@
-call plug#begin('~/.vim/plugged')
+call plug#begin('$CACHEDIR/vim/plugins')
 
 " Colorschemes
 Plug 'romainl/flattened'
@@ -37,13 +37,9 @@ Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python' }
 Plug 'cespare/vim-toml'
 Plug 'thinca/vim-themis'
 
-if has('nvim')
-	if isdirectory('/usr/local/opt/fzf')
-		Plug '/usr/local/opt/fzf'
-	else
-		Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-	endif
-
+if has('nvim') && isdirectory($FZF_PATH)
+	" Need to include both the plugin in fzf itself and the standalone plugin
+	Plug $FZF_PATH
 	Plug 'junegunn/fzf.vim'
 endif
 
