@@ -13,6 +13,7 @@ brew "neovim"
 brew "node"
 brew "python@3.8"
 brew "tmux"
+brew "yarn"
 brew "zsh"
 brew "coreutils" if OS.mac?
 brew "gnu-sed" if OS.mac?
