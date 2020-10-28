@@ -8,7 +8,7 @@ brew "bat"
 brew "direnv"
 brew "fzf"
 brew "git"
-brew "mosh"
+brew "mosh", args: ["HEAD"]
 brew "neovim"
 brew "node"
 brew "python@3.8"
