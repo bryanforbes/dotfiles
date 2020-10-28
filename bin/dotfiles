@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 autoload colors; colors
 
@@ -114,58 +114,12 @@ function dotfiles-home {
 function dotfiles-brew {
     log "Updating brew packages..."
 
-    if [[ "$OSTYPE" == linux* ]]; then
-        if (( ! $+commands[git] )) || (( ! $+commands[gcc] )) || (( ! $+commands[curl] )); then
-            lobSub "Installing system requirements..."
-
-            sudo apt-get update
-            sudo apt-get install -y build-essential curl file git || true
-        fi
-    fi
-
-    if ! hash brew; then
-        logSub "Installing homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-        rehash
-    fi
-
     logSub "Checking for missing brew packages..."
-    brew_packages=(
-        'ack'         # grep-lick tool
-        'asdf'        # for managing devtools
-        'bash'        # update from system stock version
-        'bat'         # better cat
-        'direnv'      # automatic project env setup
-        'fzf'         # fuzzy finder
-        'git'         # update from system stock git
-        'mosh'        # better ssh
-        'neovim'      # better vim
-        'node'        # NodeJS
-        'python@3.8'  # update from system stock Python3
-        'tmux'        # terminal manager
-        'zsh'
-    )
+    brew bundle check --file=$dotfiles/Brewfile &> /dev/null
 
-    if [[ "$OSTYPE" == darwin* ]]; then
-        brew_packages=(
-            $brew_packages
-            'coreutils'
-            'gnu-sed'
-            'gnu-tar'
-            'gnupg'
-            'mas'
-            'reattach-to-user-namespace'
-        )
+    if (( $? )); then
+        brew bundle install --file=$dotfiles/Brewfile
     fi
-
-    local installed_packages=("${(@f)$(brew ls --versions $brew_packages | awk '{ print $1 }')}")
-
-    for pkg in $brew_packages; do
-        if ((! $installed_packages[(Ie)$pkg])); then
-            logSub "Installing $pkg..."
-            brew install $pkg
-        fi
-    done
 
     logSub "Updating installed brew packages..."
     brew upgrade
@@ -290,6 +244,8 @@ function dotfiles-tmux {
         err "TMUX_PLUGIN_MANAGER_PATH not defined"
         return
     fi
+
+    $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins > /dev/null 2>&1
 
     cd $TMUX_PLUGIN_MANAGER_PATH
     for plugin in *; do
