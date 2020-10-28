@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ "$OSTYPE" == linux* ]]; then
-    if [[ ! command -v git || ! command -v gcc || ! command -v curl ]]; then
+    if ! command -v git > /dev/null || ! command -v gcc > /dev/null || ! command -v curl > /dev/null; then
         echo "Installing system requirements..."
         sudo apt-add-repository -y ppa:git-core/ppa
         sudo apt-get update

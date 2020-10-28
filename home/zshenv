@@ -122,3 +122,14 @@ unsetopt GLOBAL_RCS
 
 # Treat these characters as part of a word.
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
+
+if [[ -z "$TMUX" && -z "$EMACS" && -z "$VIM" && -z "$INSIDE_EMACS" && "$TERM_PROGRAM" != "vscode" && -n "$SSH_TTY" ]]; then
+    tmux start-server
+
+    if ! tmux has-session 2> /dev/null; then
+        tmux new-session -d -s default \; set-option -t default destroy-unattached off &> /dev/null
+    fi
+
+    # Attach to the last session used. (detach first)
+    exec tmux attach-session -d
+fi
