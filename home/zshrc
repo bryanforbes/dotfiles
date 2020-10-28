@@ -666,6 +666,21 @@ bindkey -M viins "$key_info[Down]" history-substring-search-down
 autoload -U promptinit; promptinit
 prompt pure
 
+# tmux
+# --------------------------------------------------------------------------
+if [[ -n "$SSH_TTY" ]]; then
+    if [[ -z "$TMUX" && -z "$EMACS" && -z "$VIM" && -z "$INSIDE_EMACS" && "$TERM_PROGRAM" != "vscode" ]]; then
+        tmux start-server
+
+        if ! tmux has-session 2> /dev/null; then
+            tmux new-session -d -s default \; set-option -t default destroy-unattached off &> /dev/null
+        fi
+
+        # Attach to the last session used. (detach first)
+        exec tmux attach-session -d
+    fi
+fi
+
 # Local config
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
