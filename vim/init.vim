@@ -156,7 +156,7 @@ if !empty(project_root)
 	endif
 endif
 
-let g:node_host_prog = '/usr/local/bin/neovim-node-host'
+let g:node_host_prog = $HOMEBREW_BASE . '/bin/neovim-node-host'
 
 "=====================
 " Plugin Configuration
