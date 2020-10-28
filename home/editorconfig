@@ -7,6 +7,15 @@ insert_final_newline = true
 indent_style = tab
 indent_size = 4
 
+[**/zsh/functions/*]
+indent_style = space
+
+[.dotfiles/home/zsh*]
+indent_style = space
+
+[.dotfiles/bin/*]
+indent_style = space
+
 [*.json]
 indent_style = space
 indent_size = 2

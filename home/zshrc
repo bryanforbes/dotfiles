@@ -7,7 +7,6 @@ typeset -gU cdpath fpath manpath
 # The fpath should be initialized before trying to load plugins (with zfetch)
 # or trying to initialize completions
 fpath=(
-    $ZFUNCDIR
     $DOTFILES/zsh/functions
     $fpath
 )
@@ -98,6 +97,14 @@ Prp="${TC}35m";
 Cyn="${TC}36m";
 Wht="${TC}37m";
 
+# Colorize ls
+if (( $+commands[dircolors] )); then
+    eval "$(dircolors --sh)"
+else
+    export LSCOLORS='exfxcxdxbxGxDxabagacad'
+    export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
+fi
+
 # Completions
 # ------------------------------------------------------------------------
 # The completion system should be configured and enabled before sourcing
@@ -109,9 +116,11 @@ export ZCOMPFILE=$ZCACHEDIR/zcompdump
 
 # Completion directories should be added to the fpath before compinit is called
 fpath=(
-    $ZPLUGDIR/sindresorhus/pure
-    $ZPLUGDIR/zsh-users/zsh-completions/src
+    $ZFUNCDIR
     $ZCOMPDIR
+    $DOTFILES/zsh/functions
+    $ZPLUGDIR/zsh-users/zsh-completions/src
+    $ZPLUGDIR/sindresorhus/pure
     $HOMEBREW_BASE/share/zsh-completions
     $fpath
 )
@@ -120,15 +129,22 @@ fpath=(
 # Note that fpath should be configured before calling compinit.
 # (https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh)
 autoload -Uz compinit
-if [[ $HOME =~ "/Users" ]] then
+if [[ ! -f $ZCOMPFILE ]]; then
+    compinit -i -d $ZCOMPFILE
+elif [[ $OSTYPE == linux* ]]; then
     # Only try to rebuild the comp dump once a day
-    if [[ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' $ZCOMPFILE) ]] then
+    if [[ $(date +'%j') != $(date --date="$(stat --printf='%y' $ZCOMPFILE)" +'%j') ]]; then
         compinit -i -d $ZCOMPFILE
     else
         compinit -C -i -d $ZCOMPFILE
     fi
 else
-    compinit -i -d $ZCOMPFILE
+    # Only try to rebuild the comp dump once a day
+    if [[ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' $ZCOMPFILE) ]]; then
+        compinit -i -d $ZCOMPFILE
+    else
+        compinit -C -i -d $ZCOMPFILE
+    fi
 fi
 
 # Compile the zcompfile in the background
@@ -158,7 +174,7 @@ fi
 
 # Use caching to make completion for commands such as dpkg and apt usable.
 zstyle ':completion::complete:*' use-cache on
-zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompcache"
+zstyle ':completion::complete:*' cache-path "${ZCACHEDIR}/zcompcache"
 
 # Case-insensitive (all), partial-word, and then substring completion.
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
@@ -256,35 +272,37 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<-
 # Define friendly names for keycodes
 typeset -gA key_info
 key_info=(
-    'Control'      '\C-'
-    'ControlLeft'  '\e[1;5D \e[5D \e\e[D \eOd'
-    'ControlRight' '\e[1;5C \e[5C \e\e[C \eOc'
-    'Escape'       '\e'
-    'Meta'         '\M-'
-    'Backspace'    "^?"
-    'Delete'       "^[[3~"
-    'F1'           "$terminfo[kf1]"
-    'F2'           "$terminfo[kf2]"
-    'F3'           "$terminfo[kf3]"
-    'F4'           "$terminfo[kf4]"
-    'F5'           "$terminfo[kf5]"
-    'F6'           "$terminfo[kf6]"
-    'F7'           "$terminfo[kf7]"
-    'F8'           "$terminfo[kf8]"
-    'F9'           "$terminfo[kf9]"
-    'F10'          "$terminfo[kf10]"
-    'F11'          "$terminfo[kf11]"
-    'F12'          "$terminfo[kf12]"
-    'Insert'       "$terminfo[kich1]"
-    'Home'         "$terminfo[khome]"
-    'PageUp'       "$terminfo[kpp]"
-    'End'          "$terminfo[kend]"
-    'PageDown'     "$terminfo[knp]"
-    'Up'           "$terminfo[kcuu1]"
-    'Left'         "$terminfo[kcub1]"
-    'Down'         "$terminfo[kcud1]"
-    'Right'        "$terminfo[kcuf1]"
-    'BackTab'      "$terminfo[kcbt]"
+    'Control'         '\C-'
+    'ControlLeft'     '\e[1;5D \e[5D \e\e[D \eOd'
+    'ControlRight'    '\e[1;5C \e[5C \e\e[C \eOc'
+    'ControlPageUp'   '\e[5;5~'
+    'ControlPageDown' '\e[6;5~'
+    'Escape'          '\e'
+    'Meta'            '\M-'
+    'Backspace'       "^?"
+    'Delete'          "^[[3~"
+    'F1'              "$terminfo[kf1]"
+    'F2'              "$terminfo[kf2]"
+    'F3'              "$terminfo[kf3]"
+    'F4'              "$terminfo[kf4]"
+    'F5'              "$terminfo[kf5]"
+    'F6'              "$terminfo[kf6]"
+    'F7'              "$terminfo[kf7]"
+    'F8'              "$terminfo[kf8]"
+    'F9'              "$terminfo[kf9]"
+    'F10'             "$terminfo[kf10]"
+    'F11'             "$terminfo[kf11]"
+    'F12'             "$terminfo[kf12]"
+    'Insert'          "$terminfo[kich1]"
+    'Home'            "$terminfo[khome]"
+    'PageUp'          "$terminfo[kpp]"
+    'End'             "$terminfo[kend]"
+    'PageDown'        "$terminfo[knp]"
+    'Up'              "$terminfo[kcuu1]"
+    'Left'            "$terminfo[kcub1]"
+    'Down'            "$terminfo[kcud1]"
+    'Right'           "$terminfo[kcuf1]"
+    'BackTab'         "$terminfo[kcbt]"
 )
 
 # Set empty $key_info values to an invalid UTF-8 sequence to induce silent
@@ -295,12 +313,27 @@ for key in "${(k)key_info[@]}"; do
     fi
 done
 
-# Toggles emacs overwrite mode and updates editor information.
-function overwrite-mode {
-    zle .overwrite-mode
-    zle editor-info
+# Enables terminal application mode and updates editor information.
+function zle-line-init {
+    # The terminal must be in application mode when ZLE is active for $terminfo
+    # values to be valid.
+    if (( $+terminfo[smkx] )); then
+        # Enable terminal application mode.
+        echoti smkx
+    fi
 }
-zle -N overwrite-mode
+zle -N zle-line-init
+
+# Disables terminal application mode and updates editor information.
+function zle-line-finish {
+    # The terminal must be in application mode when ZLE is active for $terminfo
+    # values to be valid.
+    if (( $+terminfo[rmkx] )); then
+        # Disable terminal application mode.
+        echoti rmkx
+    fi
+}
+zle -N zle-line-finish
 
 # Expands .... to ../..
 function expand-dot-to-parent-directory-path {
@@ -342,13 +375,6 @@ for key in "$key_info[Escape]"{E,e}
 
 bindkey -M emacs "." expand-dot-to-parent-directory-path
 bindkey -M isearch . self-insert 2> /dev/null
-
-if [[ "$key_info[Up]" != "" ]]; then
-    bindkey "$key_info[Up]" up-line-or-search  # start typing + [Up-Arrow] - fuzzy find history forward
-fi
-if [[ "$key_info[Down]" != "" ]]; then
-    bindkey "$key_info[Down]" down-line-or-search  # start typing + [Down-Arrow] - fuzzy find history backward
-fi
 
 # Aliases
 # ------------------------------------------------------------------------
@@ -402,11 +428,8 @@ alias tks='tmux kill-session -t'
 
 # Colorize ls
 if (( $+commands[dircolors] )); then
-    eval "$(dircolors --sh)"
     alias ls="${aliases[ls]:-ls} --group-directories-first --color=auto"
 else
-    export LSCOLORS='exfxcxdxbxGxDxabagacad'
-    export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
     alias ls="${aliases[ls]:-ls} -G"
 fi
 
@@ -550,7 +573,6 @@ if (( ${+commands[fzf]} )); then
         --color info:3,prompt:3,pointer:15,marker:15,spinner:3
         --color preview-fg:-1
     '
-    # export FZF_DEFAULT_OPTS='--color=bg:-1,fg:8,bg+:-1,fg+:-1,hl:1,hl+:1,gutter:-1,spinner:14,info:14'
 fi
 
 # ack
@@ -591,17 +613,30 @@ fi
 
 # Line editor
 # ------------------------------------------------------------------------
+# Syntax highlighting
+# --------------------------------------------------------------------------
+# This should be near the end (preferably at the end) of the zshrc
+# https://github.com/zsh-users/zsh-syntax-highlighting
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
+
 # History substring search -- load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=magenta,fg=white,bold'
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
+HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 # autosuggest -- load this after zsh-syntax-highlighting and
 # zsh-history-substring-search (https://github.com/tarruda/zsh-autosuggestions)
-source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=magenta,fg=white,bold'
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
-HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+# Use a solarized-friendly background color
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=15'
+
+# Make autosuggest faster
+# export ZSH_AUTOSUGGEST_USE_ASYNC=1
+
+source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # History substring keybinds
 # Emacs
@@ -618,17 +653,11 @@ bindkey -M vicmd "j" history-substring-search-down
 bindkey -M viins "$key_info[Up]" history-substring-search-up
 bindkey -M viins "$key_info[Down]" history-substring-search-down
 
-# Use a solarized-friendly background color
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=15'
-
-# Make autosuggest faster
-export ZSH_AUTOSUGGEST_USE_ASYNC=1
-
 # Configure autosuggest to work properly with history substring search;
 # without this, trying to history-substring-search with an empty line will
 # hang zsh
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
+# ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
+# ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
 
 # Prompt
 # --------------------------------------------------------------------------
@@ -638,10 +667,3 @@ prompt pure
 # Local config
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
-
-# Syntax highlighting
-# --------------------------------------------------------------------------
-# This should be near the end (preferably at the end) of the zshrc
-# https://github.com/zsh-users/zsh-syntax-highlighting
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh

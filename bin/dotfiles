@@ -47,6 +47,25 @@ function link {
     fi
 }
 
+# Fix terminal config
+function fixterm {
+    if [[ $TERM == "xterm-kitty" && $(uname -s) == "Darwin" && ! -d $HOME/.terminfo/78/xterm-kitty ]]; then
+        local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
+        infocmp xterm-kitty > $tmpfile
+        tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
+        rm $tmpfile
+    fi
+
+    # Fix terminal definition so C-H works properly in neovim
+    kbs=$(infocmp $TERM | grep -o 'kbs=[^,]\+')
+    if [[ $kbs =~ "kbs=^[hH]" ]]; then
+        logSub "Fixing backspace code in terminfo..."
+        infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > /tmp/$TERM.ti
+        tic /tmp/$TERM.ti
+        rm /tmp/$TERM.ti
+    fi
+}
+
 # Rebuild bat cache
 function dotfiles-bat {
     log "Rebuilding bat cache..."
@@ -77,13 +96,19 @@ function dotfiles-home {
     makedir $cachedir/vim/swap
     makedir $cachedir/vim/backup
     makedir $cachedir/vim/undo
-    makedir $cachedir/zsh
+    makedir $cachedir/zsh/completions
+    makedir $cachedir/zsh/plugins
+    makedir $datadir/zsh/functions
     makedir $datadir/direnv/allow
 
     makedir $configdir
     link $dotfiles/vim $configdir/nvim
 
     link $dotfiles/vim $HOME/.vim
+
+    # Fix the terminal definition so that C-H works properly in neovim. This
+    # function may also need to be run for the tmux terminal type.
+    fixterm
 }
 
 function dotfiles-brew {
@@ -191,6 +216,17 @@ function dotfiles-python {
         pip3 install --upgrade --user pynvim neovim-remote > /dev/null
         logSub "Updated Python 3 packages"
     fi
+
+    if [[ ! -d $HOME/.poetry ]]; then
+        log "Installing poetry..."
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
+    else
+        log "Updating poetry..."
+        $HOME/.poetry/bin/poetry self update
+    fi
+
+    log "Updating poetry completions..."
+    $HOME/.poetry/bin/poetry completions zsh > $cachedir/zsh/completions/_poetry
 }
 
 # Update global npm packages
@@ -321,7 +357,7 @@ function dotfiles-vim {
             logSub "Updated vim-plug"
         fi
 
-        cd $CACHEDIR/vim/plugins
+        cd $cachedir/vim/plugins
         for plugin in *; do
             cd $plugin 
             head=$(git rev-parse HEAD)

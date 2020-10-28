@@ -4,16 +4,16 @@ remote=$1
 branch=$2
 
 if [ -z $remote ] && [ -z $branch ]; then
-	remote="upstream"
-	branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+    remote="upstream"
+    branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
 elif [ -n $remote ] && [ -z $branch ]; then
-	branch=$remote
-	remote="upstream"
+    branch=$remote
+    remote="upstream"
 fi
 
 if [[ $branch == "" ]]; then
-	echo Not on a branch
-	exit 1
+    echo Not on a branch
+    exit 1
 fi
 
 git pull --rebase=true $remote $branch

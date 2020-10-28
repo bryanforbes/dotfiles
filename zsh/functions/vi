@@ -1,7 +1,7 @@
 if (( $+commands[nvim] )); then
-	nvim $*
+    nvim $*
 elif (( $+commands[vim] )); then
-	vim $*
+    vim $*
 else
-	command vi $*
+    command vi $*
 fi
