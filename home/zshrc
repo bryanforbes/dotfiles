@@ -594,6 +594,8 @@ if (( ${+commands[direnv]} )); then
     # Wrap tmux to avoid environment loading issues
     # See https://github.com/direnv/direnv/wiki/Tmux
     tmux() { direnv exec / tmux $*; }
+
+    dotfiles() { direnv exec / dotfiles $*; }
 fi
 
 # asdf
