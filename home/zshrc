@@ -56,7 +56,7 @@ cdpath=(
 # Brew
 # ----------------------------------------------------------------------------
 if [[ -d /home/linuxbrew ]]; then
-    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
 # manpath
@@ -163,7 +163,7 @@ fi
 # Docker completions
 if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
     for f in /Applications/Docker.app/Contents/Resources/etc/*.zsh-completion; do
-        dest=$ZCOMPDIR/_$(basename -s .zsh-completion $f)
+        dest=$ZCOMPDIR/_$f:t:r
         if [[ ! -f $dest || $f -nt $dest ]]; then
             cp $f $dest
             chmod a-x $dest
