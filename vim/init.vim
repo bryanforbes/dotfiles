@@ -134,7 +134,7 @@ if exists('$CACHEDIR')
 	set backupdir=$CACHEDIR/vim/backup//
 
 	if !has('nvim')
-		set viminfo+=n$CACHEDIR/vim/viminfo
+		set viminfo+=$CACHEDIR/vim/viminfo
 	endif
 endif
 
