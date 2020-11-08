@@ -260,19 +260,23 @@ function dotfiles-tmux {
         return
     fi
 
-    $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins > /dev/null 2>&1
+    if [[ -d $TMUX_PLUGIN_MANAGER_PATH/tpm ]]; then
+        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins > /dev/null 2>&1
+    fi
 
-    cd $TMUX_PLUGIN_MANAGER_PATH
-    for plugin in *; do
-        cd $plugin 
-        head=$(git rev-parse HEAD)
-        git pull -q --recurse-submodules
-        git submodule update --remote -q
-        if [[ $(git rev-parse HEAD) != $head ]]; then 
-            logSub "Updated $plugin"
-        fi
-        cd ..
-    done
+    if [[ -d $TMUX_PLUGIN_MANAGER_PATH ]]; then
+        cd $TMUX_PLUGIN_MANAGER_PATH
+        for plugin in *; do
+            cd $plugin
+            head=$(git rev-parse HEAD)
+            git pull -q --recurse-submodules
+            git submodule update --remote -q
+            if [[ $(git rev-parse HEAD) != $head ]]; then
+                logSub "Updated $plugin"
+            fi
+            cd ..
+        done
+    fi
 }
 
 # Update asdf plugins
