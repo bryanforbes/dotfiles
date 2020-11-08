@@ -1,0 +1,2 @@
+# add pyi files
+--type-add=pyi:*.pyi
