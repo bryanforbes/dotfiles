@@ -72,23 +72,23 @@ function dotfiles-bat {
     bat cache --build
 }
 
-# Link dotfiles into $HOME, update terminfo
+# Link dotfiles into $HOME and $configdir, update terminfo
 function dotfiles-home {
     log "Updating home directory files..."
+
+    for file in $HOME/.[a-z]*(@) $configdir/[a-zA-Z]*(@); do
+        if [[ ! -e $file ]]; then
+            rm $file
+            logSub "Removed invalid link $file"
+        fi
+    done
 
     for file in $dotfiles/home/*(.); do
         link $file $HOME/.$file:t
     done
 
     for file in $dotfiles/config/*(.,/); do
-        link $file $HOME/.config/$file:t
-    done
-
-    for file in $HOME/.[a-z]*(@); do
-        if [[ ! -e $file ]]; then
-            rm $file
-            logSub "Removed $file"
-        fi
+        link $file $configdir/$file:t
     done
 
     makedir $cachedir/tmux
@@ -147,13 +147,13 @@ function dotfiles-zsh {
 
     cd $ZPLUGDIR
     for org in *; do
-        cd $org 
+        cd $org
         for plugin in *; do
             cd $plugin
             head=$(git rev-parse HEAD)
             git pull -q --recurse-submodules
             git submodule update --remote
-            if [[ $(git rev-parse HEAD) != $head ]]; then 
+            if [[ $(git rev-parse HEAD) != $head ]]; then
                 logSub "Updated $org/$plugin"
             fi
             cd ..
@@ -317,10 +317,10 @@ function dotfiles-vim {
 
         cd $cachedir/vim/plugins
         for plugin in *; do
-            cd $plugin 
+            cd $plugin
             head=$(git rev-parse HEAD)
             git pull -q --recurse-submodules
-            if (( $? != 0 )); then 
+            if (( $? != 0 )); then
                 err "Problem updating $plugin"
             else
                 # If the current head is different than the original head,
