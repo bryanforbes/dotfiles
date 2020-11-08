@@ -165,9 +165,9 @@ function dotfiles-zsh {
 # Update user python2 and python3 packages
 function dotfiles-python {
     log "Updating python packages..."
-    if hash pip3; then
-        pip3 install --upgrade pip setuptools > /dev/null
-        pip3 install --upgrade --user pynvim neovim-remote > /dev/null
+    if [[ -f $homebrew_base/bin/pip3 ]]; then
+        $homebrew_base/bin/pip3 install --upgrade pip setuptools > /dev/null
+        $homebrew_base/bin/pip3 install --upgrade --user pynvim neovim-remote > /dev/null
         logSub "Updated Python 3 packages"
     fi
 
