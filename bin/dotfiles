@@ -112,6 +112,11 @@ function dotfiles-home {
 }
 
 function dotfiles-brew {
+    if [[ ! -w $homebrew_base/bin ]]; then
+        log "Skipping homebrew update (no write permissions)"
+        return
+    fi
+
     log "Updating brew packages..."
 
     logSub "Checking for missing brew packages..."
@@ -164,6 +169,11 @@ function dotfiles-zsh {
 
 # Update user python2 and python3 packages
 function dotfiles-python {
+    if [[ ! -w $homebrew_base/bin ]]; then
+        log "Skipping python update (no write permissions)"
+        return
+    fi
+
     log "Updating python packages..."
     if [[ -f $homebrew_base/bin/pip3 ]]; then
         $homebrew_base/bin/pip3 install --upgrade pip setuptools > /dev/null
@@ -185,6 +195,11 @@ function dotfiles-python {
 
 # Update global npm packages
 function dotfiles-node {
+    if [[ ! -w $homebrew_base/bin ]]; then
+        log "Skipping node update (no write permissions)"
+        return
+    fi
+
     local node_path=$1
     if [[ -z $node_path ]]; then
         log "Updating global node packages..."
