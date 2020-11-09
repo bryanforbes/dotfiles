@@ -3,8 +3,8 @@
 autoload colors; colors
 
 dotfiles=$HOME/.dotfiles
-configdir=$HOME/.config
 cachedir=$HOME/.cache
+configdir=$HOME/.config
 datadir=$HOME/.local/share
 
 if [[ "$OSTYPE" == darwin* ]]; then

@@ -19,11 +19,6 @@ fi
 
 # Plugin init
 # ----------------------------------------------------------------------------
-export ZPLUGDIR="$ZCACHEDIR/plugins"
-if [[ ! -d "$ZPLUGDIR" ]]; then
-    mkdir -p "$ZPLUGDIR"
-fi
-
 zfetch $ZPLUGDIR zsh-users/zsh-completions 0.32.0
 zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting 0.7.1
 zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search v1.0.2
@@ -109,9 +104,6 @@ fi
 # ------------------------------------------------------------------------
 # The completion system should be configured and enabled before sourcing
 # completion plugins
-
-export ZCOMPDIR="$ZCACHEDIR/completions"
-[[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
 export ZCOMPFILE=$ZCACHEDIR/zcompdump
 
 # Completion directories should be added to the fpath before compinit is called
