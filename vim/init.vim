@@ -143,6 +143,16 @@ set updatecount=20					" update the swap file every 20 characters
 set undofile
 set undolevels=1000
 
+if has('nvim')
+	" Tell Neovim.app which Python to use
+	if executable(expand('$HOMEBREW_BASE/bin/python2'))
+		let g:python_host_prog='$HOMEBREW_BASE/bin/python2'
+	endif
+	if executable(expand('$HOMEBREW_BASE/bin/python3'))
+		let g:python3_host_prog='$HOMEBREW_BASE/bin/python3'
+	endif
+endif
+
 " If we're in a git project and there's a node_modules/.bin in the project
 " root, add it to the beginning of the path so that it's apps will be used for
 " commands started by vim. In particular this is useful for YCM + TypeScript
