@@ -52,6 +52,8 @@ typeset -gU path mailpath
 
 if [[ -d /home/linuxbrew ]]; then
     export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
+elif [[ -d $HOME/.linuxbrew ]]; then
+    export HOMEBREW_BASE=$HOME/.linuxbrew
 else
     export HOMEBREW_BASE=/usr/local
 fi
