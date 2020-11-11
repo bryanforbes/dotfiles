@@ -68,7 +68,7 @@ function fixterm {
 # Rebuild bat cache
 function dotfiles-bat {
     log "Rebuilding bat cache..."
-    bat cache --build
+    bat cache --build 2>&1 > /dev/null
 }
 
 # Link dotfiles into $HOME and $configdir, update terminfo
@@ -260,7 +260,7 @@ function dotfiles-tmux {
     fi
 
     if [[ -d $TMUX_PLUGIN_MANAGER_PATH/tpm ]]; then
-        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins > /dev/null 2>&1
+        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins 2>&1 > /dev/null
     fi
 
     if [[ -d $TMUX_PLUGIN_MANAGER_PATH ]]; then
@@ -307,7 +307,7 @@ function dotfiles-asdf {
         logSub "Installed nodejs $VIM_NODE_VERSION"
     fi
 
-    asdf plugin-update --all
+    asdf plugin-update --all 2>&1 > /dev/null
 }
 
 # Update vim plugins
