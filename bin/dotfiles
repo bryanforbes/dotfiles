@@ -2,16 +2,7 @@
 
 autoload colors; colors
 
-dotfiles=$HOME/.dotfiles
-cachedir=$HOME/.cache
-configdir=$HOME/.config
-datadir=$HOME/.local/share
-
-if [[ "$OSTYPE" == darwin* ]]; then
-    homebrew_base=/usr/local
-else
-    homebrew_base=/home/linuxbrew/.linuxbrew
-fi
+source $HOME/.dotfiles/common.zsh
 
 # Log output
 function log {
@@ -71,39 +62,39 @@ function dotfiles-bat {
     bat cache --build 2>&1 > /dev/null
 }
 
-# Link dotfiles into $HOME and $configdir, update terminfo
+# Link dotfiles into $HOME and $CONFIGDIR, update terminfo
 function dotfiles-home {
     log "Updating home directory files..."
 
-    for file in $HOME/.[a-z]*(@) $configdir/[a-zA-Z]*(@); do
+    for file in $HOME/.[a-z]*(@) $CONFIGDIR/[a-zA-Z]*(@); do
         if [[ ! -e $file ]]; then
             rm $file
             logSub "Removed invalid link $file"
         fi
     done
 
-    for file in $dotfiles/home/*(.); do
+    for file in $DOTFILES/home/*(.); do
         link $file $HOME/.$file:t
     done
 
-    for file in $dotfiles/config/*(.,/); do
-        link $file $configdir/$file:t
+    for file in $DOTFILES/config/*(.,/); do
+        link $file $CONFIGDIR/$file:t
     done
 
-    makedir $cachedir/tmux
-    makedir $cachedir/vim/sessions
-    makedir $cachedir/vim/swap
-    makedir $cachedir/vim/backup
-    makedir $cachedir/vim/undo
-    makedir $cachedir/zsh/completions
-    makedir $cachedir/zsh/plugins
-    makedir $datadir/zsh/functions
-    makedir $datadir/direnv/allow
+    makedir $CACHEDIR/tmux
+    makedir $CACHEDIR/vim/sessions
+    makedir $CACHEDIR/vim/swap
+    makedir $CACHEDIR/vim/backup
+    makedir $CACHEDIR/vim/undo
+    makedir $ZCOMPDIR
+    makedir $ZPLUGDIR
+    makedir $ZFUNCDIR
+    makedir $DATADIR/direnv/allow
 
-    makedir $configdir
-    link $dotfiles/vim $configdir/nvim
+    makedir $CONFIGDIR
+    link $DOTFILES/vim $CONFIGDIR/nvim
 
-    link $dotfiles/vim $HOME/.vim
+    link $DOTFILES/vim $HOME/.vim
 
     # Fix the terminal definition so that C-H works properly in neovim. This
     # function may also need to be run for the tmux terminal type.
@@ -111,7 +102,7 @@ function dotfiles-home {
 }
 
 function dotfiles-brew {
-    if [[ ! -w $homebrew_base/bin ]]; then
+    if [[ ! -w $HOMEBREW_BASE/bin ]]; then
         log "Skipping homebrew update (no write permissions)"
         return
     fi
@@ -119,18 +110,18 @@ function dotfiles-brew {
     log "Updating brew packages..."
 
     logSub "Checking for missing brew packages..."
-    brew bundle check --file=$dotfiles/Brewfile &> /dev/null
+    brew bundle check --file=$DOTFILES/Brewfile &> /dev/null
 
     if (( $? )); then
-        brew bundle install --file=$dotfiles/Brewfile
+        brew bundle install --file=$DOTFILES/Brewfile
     fi
 
     logSub "Updating installed brew packages..."
     brew upgrade
 
     # Remove git's included zsh completions in favor of the system completions
-    if [[ -f $homebrew_base/share/zsh/site-functions/_git ]]; then
-        rm -f $homebrew_base/share/zsh/site-functions/_git
+    if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
+        rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
     fi
 }
 
@@ -168,15 +159,15 @@ function dotfiles-zsh {
 
 # Update user python2 and python3 packages
 function dotfiles-python {
-    if [[ ! -w $homebrew_base/bin ]]; then
+    if [[ ! -w $HOMEBREW_BASE/bin ]]; then
         log "Skipping python update (no write permissions)"
         return
     fi
 
     log "Updating python packages..."
-    if [[ -f $homebrew_base/bin/pip3 ]]; then
-        $homebrew_base/bin/pip3 install --upgrade pip setuptools > /dev/null
-        $homebrew_base/bin/pip3 install --upgrade --user pynvim neovim-remote > /dev/null
+    if [[ -f $HOMEBREW_BASE/bin/pip3 ]]; then
+        $HOMEBREW_BASE/bin/pip3 install --upgrade pip setuptools > /dev/null
+        $HOMEBREW_BASE/bin/pip3 install --upgrade --user pynvim neovim-remote > /dev/null
         logSub "Updated Python 3 packages"
     fi
 
@@ -189,12 +180,12 @@ function dotfiles-python {
     fi
 
     log "Updating poetry completions..."
-    $HOME/.poetry/bin/poetry completions zsh > $cachedir/zsh/completions/_poetry
+    $HOME/.poetry/bin/poetry completions zsh > $ZCOMPDIR/_poetry
 }
 
 # Update global npm packages
 function dotfiles-node {
-    if [[ ! -w $homebrew_base/bin ]]; then
+    if [[ ! -w $HOMEBREW_BASE/bin ]]; then
         log "Skipping node update (no write permissions)"
         return
     fi
@@ -202,7 +193,7 @@ function dotfiles-node {
     local node_path=$1
     if [[ -z $node_path ]]; then
         log "Updating global node packages..."
-        node_path=$homebrew_base/bin
+        node_path=$HOMEBREW_BASE/bin
     fi
 
     # if a node_path was provided, the function was called from another
@@ -290,7 +281,7 @@ function dotfiles-asdf {
 
     makedir $HOME/.asdf/installs/direnv/system/env
     makedir $HOME/.asdf/installs/direnv/system/bin
-    link $homebrew_base/bin/direnv $HOME/.asdf/installs/direnv/system/bin/direnv
+    link $HOMEBREW_BASE/bin/direnv $HOME/.asdf/installs/direnv/system/bin/direnv
 
     if (( ! $asdf_plugins[(Ie)nodejs] )); then
         asdf plugin-add nodejs
@@ -314,7 +305,7 @@ function dotfiles-asdf {
 function dotfiles-vim {
     log "Updating vim plugins..."
 
-    local node_path=$homebrew_base/bin
+    local node_path=$HOMEBREW_BASE/bin
     if [[ -n $VIM_NODE_VERSION ]]; then
         node_path=$HOME/.asdf/installs/nodejs/$VIM_NODE_VERSION/bin
         log "Updating vim's node packages..."
@@ -333,7 +324,7 @@ function dotfiles-vim {
             logSub "Updated vim-plug"
         fi
 
-        cd $cachedir/vim/plugins
+        cd $CACHEDIR/vim/plugins
         for plugin in *; do
             cd $plugin
             head=$(git rev-parse HEAD)

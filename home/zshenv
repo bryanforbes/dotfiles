@@ -4,9 +4,7 @@
 # This file should be kept light and fast. Anything that's slow or involves
 # user interaction should go in zshrc.
 
-# Dotfiles
-# ----------------------------------------------------------------------------
-export DOTFILES=$HOME/.dotfiles
+source $HOME/.dotfiles/common.zsh
 
 # Language
 # ----------------------------------------------------------------------------
@@ -17,28 +15,13 @@ export DOTFILES=$HOME/.dotfiles
 # Cache and temp files
 # ----------------------------------------------------------------------------
 
-export CACHEDIR=$HOME/.cache
 [[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
-
-export CONFIGDIR=$HOME/.config
 [[ -d "$CONFIGDIR" ]] || mkdir -p "$CONFIGDIR"
-
-export DATADIR=$HOME/.local/share
 [[ -d "$DATADIR" ]] || mkdir -p "$DATADIR"
-
-export ZCACHEDIR="$CACHEDIR/zsh"
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
-
-export ZDATADIR="$DATADIR/zsh"
 [[ -d "$ZDATADIR" ]] || mkdir -p "$ZDATADIR"
-
-export ZPLUGDIR="$ZCACHEDIR/plugins"
 [[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
-
-export ZCOMPDIR="$ZCACHEDIR/completions"
 [[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
-
-export ZFUNCDIR="$ZDATADIR/functions"
 [[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
 
 if [[ -d "$TMPDIR" ]]; then
@@ -49,14 +32,6 @@ fi
 # General paths
 # ----------------------------------------------------------------------------
 typeset -gU path mailpath
-
-if [[ -d /home/linuxbrew ]]; then
-    export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
-elif [[ -d $HOME/.linuxbrew ]]; then
-    export HOMEBREW_BASE=$HOME/.linuxbrew
-else
-    export HOMEBREW_BASE=/usr/local
-fi
 
 # Terminal
 # --------------------------------------------------------------------------

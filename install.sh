@@ -24,7 +24,7 @@ eval "$($HOMEBREW_BASE/bin/brew shellenv)"
 
 if [[ ! -d "$HOME/.dotfiles" ]]; then
     echo "Cloning dotfiles"
-    git clone --recursive https://github.com/bryanforbes/dotfiles ~/.dotfiles
+    git clone --recursive https://github.com/bryanforbes/dotfiles "$HOME/.dotfiles"
 fi
 
 brew bundle install --file="$HOME/.dotfiles/Brewfile"
