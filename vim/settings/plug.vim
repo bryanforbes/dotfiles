@@ -16,6 +16,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'terryma/vim-expand-region'
 Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'antoinemadec/FixCursorHold.nvim'
 
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 

@@ -274,6 +274,9 @@ let g:autoprettier_types = [
 	\ 'javascript',
 	\ ]
 
+" in millisecond, used for both CursorHold and CursorHoldI,
+let g:cursorhold_updatetime = 100
+
 "===========
 " vim-plug
 "===========
