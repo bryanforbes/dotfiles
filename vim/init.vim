@@ -406,4 +406,4 @@ endif
 noremap <leader>a :Ack!<space>--follow<space>
 
 " Add python system tags
-set tags+=$HOME/.vim/tags/python.ctags
+" set tags+=$HOME/.vim/tags/python.ctags
