@@ -164,6 +164,11 @@ function dotfiles-python {
         return
     fi
 
+    if [[ ! -e $HOMEBREW_BASE/bin/python ]] && [[ -e $HOMEBREW_BASE/bin/python3 ]]; then
+        logSub "Creating python link..."
+        link $HOMEBREW_BASE/bin/python3 $HOMEBREW_BASE/bin/python
+    fi
+
     log "Updating python packages..."
     if [[ -f $HOMEBREW_BASE/bin/pip3 ]]; then
         $HOMEBREW_BASE/bin/pip3 install --upgrade pip setuptools > /dev/null
