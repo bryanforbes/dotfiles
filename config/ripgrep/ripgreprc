@@ -1,2 +1,14 @@
 # add pyi files
 --type-add=pyi:*.pyi
+
+# deterministic output
+--sort=path
+
+# ack color scheme
+--colors=line:fg:yellow
+--colors=line:style:bold
+--colors=path:fg:green
+--colors=path:style:bold
+--colors=match:fg:black
+--colors=match:bg:yellow
+--colors=match:style:nobold
