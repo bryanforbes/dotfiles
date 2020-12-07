@@ -2,7 +2,7 @@
 
 autoload colors; colors
 
-source $HOME/.dotfiles/common.zsh
+source $HOME/.dotfiles/zsh/common.zsh
 
 # Log output
 function log {

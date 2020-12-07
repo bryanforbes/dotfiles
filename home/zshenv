@@ -4,7 +4,7 @@
 # This file should be kept light and fast. Anything that's slow or involves
 # user interaction should go in zshrc.
 
-source $HOME/.dotfiles/common.zsh
+source $HOME/.dotfiles/zsh/common.zsh
 
 # Language
 # ----------------------------------------------------------------------------
