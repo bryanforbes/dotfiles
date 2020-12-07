@@ -1,41 +1,7 @@
 #!/usr/bin/env zsh
 
-autoload colors; colors
-
 source $HOME/.dotfiles/zsh/common.zsh
-
-# Log output
-function log {
-    msg=$1
-    color=${2:-$fg_bold[green]}
-    echo "$color>>>$reset_color $fg_bold[white]$msg$reset_color"
-}
-
-# Log output
-function logSub {
-    log $1 $fg_bold[blue]
-}
-
-# Log error output
-function err {
-    log $1 $fg_bold[red]
-}
-
-# Create a directory
-function makedir {
-    if [[ ! -d $1 ]]; then
-        mkdir -p $1
-        logSub "Created $1/"
-    fi
-}
-
-# Create a symlink
-function link {
-    if [[ ! -r $2 ]]; then
-        ln -s $1 $2
-        logSub "Linked $1 -> $2"
-    fi
-}
+source $HOME/.dotfiles/zsh/utilities.zsh
 
 # Fix terminal config
 function fixterm {

@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+
+source ~/.dotfiles/zsh/utilities.zsh
+
+if (( ! $+commands[blueutil] )); then
+    err "blueutil must be installed to use cycle-bluetooth"
+    exit 1
+fi
+
+log "Cycling bluetooth power"
+
+logSub "Turning bluetooth off"
+blueutil --power 0
+
+logSub -n "Sleeping (3s)"
+dot-sleep 3 "done"
+
+logSub "Turning bluetooth on"
+blueutil --power 1
+
+log "Done"
