@@ -110,11 +110,54 @@ function dotfiles-brew {
     log "Updating brew packages..."
 
     logSub "Checking for missing brew packages..."
-    brew bundle check --file=$DOTFILES/Brewfile &> /dev/null
 
-    if (( $? )); then
-        brew bundle install --file=$DOTFILES/Brewfile
+    local -U brew_packages
+    local -A brew_packages_args
+
+    brew_packages=(
+        'asdf'       # dev tools management
+        'bat'        # better cat
+        'direnv'     # local environment management
+        'fzf'        # fuzzy finder
+        'git'        # update from system stock git
+        'mosh'       # remote terminal application that allows roaming
+        'neovim'     # better vim
+        'node'       # NodeJS
+        'python@3.8' # update from stock Python
+        'ripgrep'    # better grep
+        'tmux'       # terminal multiplexer
+        'yarn'       # node package manager
+        'zsh'        # newer zsh
+    )
+
+    brew_packages_args[mosh]='--HEAD'
+
+    if [[ $OSTYPE == darwin* ]]; then
+        brew_packages=(
+            $brew_packages
+            'coreutils'           # GNU coreutils
+            'blueutil'            # bluetooth CLI
+            'gnu-sed'             # GNU sed
+            'gnu-tar'             # GNU tar
+            'gnupg'               # update from stock gnupg
+            'mas'                 # App Store CLI
+            'font-iosevka'        # iosevka font
+            'font-hack-nerd-font' # hack font with glyphs
+            'kitty'               # GPU based terminal emulator
+        )
     fi
+
+    local installed_packages=(
+        "${(@f)$(brew list --formula -1)}"
+        "${(@f)$(brew list --casks -1)}"
+    )
+
+    for pkg in $brew_packages; do
+        if ((! $installed_packages[(Ie)$pkg])); then
+            logSub "Installing $pkg..."
+            brew install $pkg ${(z)${brew_packages_args[$pkg]:-''}}
+        fi
+    done
 
     logSub "Updating installed brew packages..."
     brew upgrade
