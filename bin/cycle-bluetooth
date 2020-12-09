@@ -13,7 +13,7 @@ logSub "Turning bluetooth off"
 blueutil --power 0
 
 logSub -n "Sleeping (3s)"
-dot-sleep 3 "done"
+dot-sleep 3
 
 logSub "Turning bluetooth on"
 blueutil --power 1

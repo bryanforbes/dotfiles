@@ -2,15 +2,13 @@ autoload colors; colors
 
 # Log output
 function log {
-    local newline color
+    local newline color=('-c' $fg_bold[green])
 
-    zparseopts -E -D n=newline c:=color
-
-    color=${${color:+$color[2]}:-$fg_bold[green]}
+    zparseopts -E -D -K n=newline c:=color
 
     local msg=$1
 
-    echo ${newline:+-n} "$color>>>$reset_color $fg_bold[white]$msg$reset_color"
+    echo ${newline:+-n} "$color[2]>>>$reset_color $fg_bold[white]$msg$reset_color"
 }
 
 # Log output
@@ -40,14 +38,12 @@ function link {
 }
 
 function dot-sleep {
-    local color
+    local color=('-c' $fg_bold[white])
 
-    zparseopts -E -D c:=color
-
-    color=${${color:+$color[2]}:-$fg_bold[white]}
+    zparseopts -E -D -K c:=color
 
     local -i howlong=$1
-    local donemsg=$2
+    local donemsg=${2:-"done"}
 
     local dots=('.   ' '..  ' '... ')
     local -i i
@@ -56,9 +52,9 @@ function dot-sleep {
         if (( $i > 1 )); then
             echo -n "\b\b\b\b"
         fi
-        echo -n "$color${dots[$(( (i - 1) % 3 + 1 ))]}$reset_color"
+        echo -n "$color[2]${dots[$(( (i - 1) % 3 + 1 ))]}$reset_color"
         sleep 0.5
     done
 
-    echo "\b\b\b\b$color... $donemsg$reset_color"
+    echo "\b\b\b\b$color[2]... $donemsg$reset_color"
 }
