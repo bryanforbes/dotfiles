@@ -88,5 +88,5 @@ augroup vimrc
 	" Highlight the symbol and its references when holding the cursor.
 	autocmd CursorHold * silent call CocActionAsync('highlight')
 
-	autocmd BufWritePre <buffer> Format
+	autocmd BufWritePre <buffer> :Format
 augroup END
