@@ -217,6 +217,13 @@ let g:DevIconsEnableFolderExtensionPatternMatching = 1
 " fzf
 let g:fzf_buffers_jump = 0
 
+" fern.vim
+let g:fern#renderer = "nerdfont"
+
+augroup vimrc
+	autocmd FileType fern call glyph_palette#apply()
+augroup END
+
 
 " HTML indent
 let g:html_indent_inctags = "body,head,tbody"
@@ -387,8 +394,11 @@ noremap <leader>gc :Gcommit -v<cr>
 noremap <leader>gs :Gstatus<cr>
 
 " NERDTree
-nnoremap ,f :NERDTreeToggle<CR>
-nnoremap ,F :NERDTreeFocus<CR>
+" nnoremap ,f :NERDTreeToggle<CR>
+" nnoremap ,F :NERDTreeFocus<CR>
+
+" fern.vim
+nnoremap ,f :Fern . -reveal=%<CR>
 
 " fzf
 if has('nvim') && isdirectory($FZF_PATH)
@@ -400,10 +410,11 @@ if has('nvim') && isdirectory($FZF_PATH)
 	noremap <leader>T :Files<cr>
 	noremap <leader>b :Buffers<cr>
 	noremap <leader>/ :BLines<cr>
+	noremap <leader>a :Rg<space>
 endif
 
 " Ack.vim
-noremap <leader>a :Ack!<space>--follow<space>
+" noremap <leader>a :Ack!<space>--follow<space>
 
 " Add python system tags
 " set tags+=$HOME/.vim/tags/python.ctags

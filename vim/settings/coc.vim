@@ -2,6 +2,7 @@
 let $npm_config_registry='https://registry.npmjs.org'
 
 let g:coc_node_path = $HOMEBREW_BASE . '/bin/node'
+let g:coc_channel_timeout = 60
 
 call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
 
@@ -54,16 +55,6 @@ function! s:show_documentation()
 endfunction
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
-augroup vimrc
-	if exists('CocActionAsync')
-		" Update signature help on jump placeholder.
-		autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-	endif
-
-	" Highlight the symbol and its references when holding the cursor.
-	autocmd CursorHold * silent call CocActionAsync('highlight')
-augroup END
-
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
 
@@ -79,6 +70,9 @@ nmap <leader>x <Plug>(coc-codeaction)
 " nmap <silent> gy <Plug>(coc-type-definition)
 " nmap <silent> gi <Plug>(coc-implementation)
 
+" nnoremap ,f :CocCommand explorer --toggle<CR>
+" nnoremap ,F :CocCommand explorer --no-toggle --focus<CR>
+
 command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')
 command! -nargs=0 Prettier :call CocAction('runCommand', 'prettier.formatFile')
 command! -nargs=0 Format :call CocAction('format')
@@ -87,3 +81,12 @@ let g:coc_status_error_sign = 'E'
 let g:coc_status_warning_sign = 'W'
 let g:coc_disable_startup_warning = 1
 
+augroup vimrc
+	" Update signature help on jump placeholder.
+	autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+
+	" Highlight the symbol and its references when holding the cursor.
+	autocmd CursorHold * silent call CocActionAsync('highlight')
+
+	autocmd BufWritePre <buffer> Format
+augroup END

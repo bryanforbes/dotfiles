@@ -1,11 +1,11 @@
 {
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
-  "coc.preferences.formatOnSaveFiletypes": [
+  /*"coc.preferences.formatOnSaveFiletypes": [
     "python",
     "pythonstub",
     "typescript",
     "typescriptreact"
-  ],
+  ],*/
 
   "codeLens.enable": true,
   "diagnostic.errorSign": "",
@@ -14,6 +14,20 @@
   "diagnostic.maxWindowHeight": 20,
   "diagnostic.refreshOnInsertMode": true,
   "diagnostic.virtualText": false,
+
+  "explorer.git.icon.status.added": "✚",
+  "explorer.git.icon.status.deleted": "✖",
+  "explorer.git.icon.status.renamed": "➜",
+  "explorer.git.icon.status.unmerged": "═",
+  "explorer.git.icon.status.untracked": "?",
+  "explorer.git.icon.status.modified": "✹",
+  "explorer.git.icon.status.ignored": "☒",
+  "explorer.icon.enableNerdfont": true,
+  "explorer.keyMappings.global": {
+    "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]
+  },
+  "explorer.previewAction.onHover": false,
+
   "suggest.enablePreview": true,
   "suggest.maxPreviewWidth": 100,
   "tsserver.npm": "/usr/local/bin/npm",
@@ -36,6 +50,8 @@
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enable": false,
 
+  "diagnostic-languageserver.trace.server": "verbose",
+
   "diagnostic-languageserver.filetypes": {
     "python": ["flake8", "mypy"],
     "pythonstub": ["flake8", "mypy"]
@@ -43,64 +59,66 @@
 
   "diagnostic-languageserver.formatFiletypes": {
     "python": ["isort", "black"],
-    "pythonstub": ["isort", "blackpyi"],
-    "typescript": []
+    "pythonstub": ["isort", "blackpyi"]
   },
+
+  "diagnostic-languageserver.mergeConfig": true,
 
   "diagnostic-languageserver.linters": {
     "flake8": {
-      "command": "flake8",
       "rootPatterns": [".flake8", "setup.cfg", "tox.ini"],
-      "args": ["--stdin-display-name", "%filepath", "-"],
-      "offsetLine": 0,
-      "offsetColumn": 0,
-      "sourceName": "flake8",
-      "formatLines": 1,
-      "formatPattern": [
-        "^([^:]+):(\\d+):(\\d+):\\s+([A-Z]\\d+)\\s+(.*)$",
-        {
-          "sourceName": 1,
-          "sourceNameFilter": true,
-          "line": 2,
-          "column": 3,
-          "endLine": 2,
-          "endColumn": 3,
-          "message": [5, " [", 4, "]"]
-        }
+      "requiredFiles": [".flake8", "setup.cfg", "tox.ini"],
+      "args": [
+        "--format=%(row)d,%(col)d,%(code).1s,%(code)s: %(text)s",
+        "--stdin-display-name",
+        "%filepath",
+        "-"
       ],
-      "requiredFiles": [".flake8", "setup.cfg", "tox.ini"]
+      "securities": {
+        "W": "warning",
+        "E": "error",
+        "F": "error",
+        "C": "error",
+        "N": "error",
+        "B": "error",
+        "Y": "error"
+      }
     },
     "mypy": {
-      "command": "mypy",
-      "rootPatterns": ["mypy.ini", ".mypy.ini", "setup.cfg"],
-      "args": ["--show-column-numbers", "--show-error-codes", "--shadow-file", "%filepath", "%tempfile", "%filepath"],
-      "offsetLine": 0,
-      "offsetColumn": 0,
       "sourceName": "mypy",
-      "formatLines": 1,
+      "command": "mypy",
+      "debounce": 100,
+      "rootPatterns": ["mypy.ini", ".mypy.ini", "setup.cfg"],
+      "requiredFiles": ["mypy.ini", ".mypy.ini", "setup.cfg"],
+      "args": [
+        "--no-color-output",
+        "--no-error-summary",
+        "--show-column-numbers",
+        "--show-error-codes",
+        "--shadow-file", "%filepath", "%tempfile", "%filepath"
+      ],
       "formatPattern": [
-        "^([^:]+):(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
+        "^([^:]+):(\\d+):(\\d+):\\s+([a-z]+):\\s+(.*)$",
         {
           "sourceName": 1,
           "sourceNameFilter": true,
           "line": 2,
           "column": 3,
-          "endLine": 2,
-          "endColumn": 3,
           "security": 4,
-          "message": [5]
+          "message": 5
         }
       ],
-      "requiredFiles": ["mypy.ini", ".mypy.ini", "setup.cfg"]
+      "securities": {
+        "error": "error",
+        "note": "info"
+      }
     },
     "dmypy": {
+      "sourceName": "dmypy",
       "command": "dmypy",
       "rootPatterns": ["mypy.ini", ".mypy.ini", "setup.cfg"],
+      "requiredFiles": ["mypy.ini", ".mypy.ini", "setup.cfg"],
       "args": ["run", "--", "--show-column-numbers", "--show-error-codes", "--shadow-file", "%filepath", "%tempfile", "%filepath"],
-      "offsetLine": 0,
-      "offsetColumn": 0,
-      "sourceName": "dmypy",
-      "formatLines": 1,
       "formatPattern": [
         "^([^:]+):(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
         {
@@ -108,29 +126,25 @@
           "sourceNameFilter": true,
           "line": 2,
           "column": 3,
-          "endLine": 2,
-          "endColumn": 3,
           "security": 4,
-          "message": [5]
+          "message": 5
         }
-      ],
-      "requiredFiles": ["mypy.ini", ".mypy.ini", "setup.cfg"]
+      ]
     }
   },
   "diagnostic-languageserver.formatters": {
     "black": {
-      "command": "black",
-      "args": ["--quiet", "-"],
+      "requiredFiles": ["pyproject.toml"],
       "rootPatterns": ["pyproject.toml"]
     },
     "blackpyi": {
       "command": "black",
       "args": ["--quiet", "--pyi", "-"],
+      "requiredFiles": ["pyproject.toml"],
       "rootPatterns": ["pyproject.toml"]
     },
     "isort": {
-      "command": "isort",
-      "args": ["--stdout", "-"],
+      "requiredFiles": ["pyproject.toml"],
       "rootPatterns": ["pyproject.toml"]
     }
   }
