@@ -28,6 +28,7 @@ Plug 'thinca/vim-themis'
 
 " Filetype plugins
 Plug 'sheerun/vim-polyglot'
+Plug 'neoclide/jsonc.vim'
 
 if executable('fzf') && has('nvim')
 	" Need to include both the plugin in fzf itself and the standalone plugin
