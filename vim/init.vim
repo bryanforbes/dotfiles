@@ -401,7 +401,7 @@ noremap <leader>gs :Gstatus<cr>
 nnoremap ,f :Fern . -reveal=%<CR>
 
 " fzf
-if has('nvim') && isdirectory($FZF_PATH)
+if executable('fzf') && has('nvim')
 	if isdirectory(".git")
 		noremap <leader>t :GFiles --cached --others --exclude-standard<cr>
 	else

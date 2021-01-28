@@ -29,9 +29,9 @@ Plug 'thinca/vim-themis'
 " Filetype plugins
 Plug 'sheerun/vim-polyglot'
 
-if has('nvim') && isdirectory($FZF_PATH)
+if executable('fzf') && has('nvim')
 	" Need to include both the plugin in fzf itself and the standalone plugin
-	Plug $FZF_PATH
+	set rtp+=/usr/local/opt/fzf
 	Plug 'junegunn/fzf.vim'
 endif
 
