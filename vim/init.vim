@@ -193,6 +193,7 @@ runtime settings/lightline.vim
 
 " EditorConfig
 let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
+let g:EditorConfig_max_line_indicator = 'fill'
 
 " UltiSnips
 let g:UltiSnipsExpandTrigger="<c-j>"
