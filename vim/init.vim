@@ -218,13 +218,6 @@ let g:DevIconsEnableFolderExtensionPatternMatching = 1
 " fzf
 let g:fzf_buffers_jump = 0
 
-" fern.vim
-let g:fern#renderer = "nerdfont"
-
-augroup vimrc
-	autocmd FileType fern call glyph_palette#apply()
-augroup END
-
 
 " HTML indent
 let g:html_indent_inctags = "body,head,tbody"
@@ -390,13 +383,6 @@ nmap <silent> dsf ds)db
 noremap <leader>gd :Gdiff<cr>
 noremap <leader>gc :Gcommit -v<cr>
 noremap <leader>gs :Gstatus<cr>
-
-" NERDTree
-" nnoremap ,f :NERDTreeToggle<CR>
-" nnoremap ,F :NERDTreeFocus<CR>
-
-" fern.vim
-nnoremap ,f :Fern . -reveal=%<CR>
 
 " fzf
 if executable('fzf') && has('nvim')
