@@ -241,8 +241,7 @@ let g:vim_json_syntax_conceal = 0
 let g:BufKillCreateMappings = 0
 
 " solarized
-let g:solarized_visibility = 'low'
-let g:solarized_termcolors = 16
+let g:solarized_extra_hi_groups = 1
 
 " vim-tss
 " let g:tss_debug_tsserver = 1
@@ -315,9 +314,7 @@ endif
 " This must be set after vim-plug because it is brought
 " in as a bundle
 set termguicolors
-colorscheme flattened_dark
-hi! NonText cterm=bold ctermfg=7
-let &t_ut=''
+colorscheme solarized8
 
 "==============
 " Autocommands

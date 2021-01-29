@@ -1,7 +1,7 @@
 call plug#begin('$CACHEDIR/vim/plugins')
 
 " Colorschemes
-Plug 'romainl/flattened'
+Plug 'lifepillar/vim-solarized8'
 
 Plug 'qpkorr/vim-bufkill'
 Plug 'mileszs/ack.vim'
