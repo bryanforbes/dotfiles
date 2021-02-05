@@ -23,6 +23,7 @@
   "explorer.keyMappings.global": {
     "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]
   },
+  "explorer.openAction.strategy": "sourceWindow",
   "explorer.position": "floating",
   "explorer.previewAction.onHover": false,
   "explorer.sources": [
