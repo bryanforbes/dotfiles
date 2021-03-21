@@ -54,6 +54,10 @@ nmap <leader>x <Plug>(coc-codeaction)
 " nmap <silent> gy <Plug>(coc-type-definition)
 " nmap <silent> gi <Plug>(coc-implementation)
 
+" navigate chunks of current buffer
+nmap [g <Plug>(coc-git-prevchunk)
+nmap ]g <Plug>(coc-git-nextchunk)
+
 command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')
 command! -nargs=0 Prettier :call CocAction('runCommand', 'prettier.formatFile')
 command! -nargs=0 Format :call CocAction('format')
