@@ -104,6 +104,11 @@ path=(
     $path
 )
 
+# Homebrew
+# ----------------------------------------------------------------------------
+# Use Bootsnap to speed up repeated brew calls
+export HOMEBREW_BOOTSNAP=1
+
 # Disable global zprofile, which messes with the path
 unsetopt GLOBAL_RCS
 
