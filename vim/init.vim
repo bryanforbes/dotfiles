@@ -215,9 +215,6 @@ let g:DevIconsEnableFolderExtensionPatternMatching = 1
 " let NERDTreeDirArrowExpandable = "\u00a0" " make arrows invisible
 " let NERDTreeDirArrowCollapsible = "\u00a0" " make arrows invisible
 
-" fzf
-let g:fzf_buffers_jump = 0
-
 
 " HTML indent
 let g:html_indent_inctags = "body,head,tbody"
@@ -386,15 +383,7 @@ noremap <leader>gs :Gstatus<cr>
 
 " fzf
 if executable('fzf') && has('nvim')
-	if isdirectory(".git")
-		noremap <leader>t :GFiles --cached --others --exclude-standard<cr>
-	else
-		noremap <leader>t :Files<cr>
-	endif
-	noremap <leader>T :Files<cr>
-	noremap <leader>b :Buffers<cr>
-	noremap <leader>/ :BLines<cr>
-	noremap <leader>a :Rg<space>
+	runtime settings/fzf.vim
 endif
 
 " Ack.vim
