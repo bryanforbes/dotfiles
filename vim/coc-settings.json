@@ -33,6 +33,14 @@
     }
   ],
 
+  "git.addGBlameToBufferVar": true,
+  "git.addGBlameToVirtualText": false,
+  "git.addedSign.text": "┃",
+  "git.branchCharacter": "",
+  "git.changeRemovedSign.text": "┃",
+  "git.changedSign.text": "┃",
+  "git.removedSign.text": "┃",
+
   "suggest.enablePreview": true,
   "suggest.maxPreviewWidth": 100,
   "tsserver.npm": "/usr/local/bin/npm",
@@ -49,12 +57,15 @@
   "python.jediEnabled": false,
   "python.linting.pylintEnabled": false,
 
+  "javascript.format.enabled": false,
   "javascript.referencesCodeLens.enable": false,
   "javascript.suggestionActions.enabled": false,
 
+  "typescript.format.enabled": false,
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enable": false,
 
+  "diagnostic-languageserver.debug": true,
   "diagnostic-languageserver.trace.server": "verbose",
 
   "diagnostic-languageserver.filetypes": {
