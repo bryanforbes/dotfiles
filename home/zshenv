@@ -33,6 +33,15 @@ fi
 # ----------------------------------------------------------------------------
 typeset -gU path mailpath
 
+# Path
+# --------------------------------------------------------------------------
+path=(
+    $HOMEBREW_BASE/bin
+    /usr/local/bin
+    $HOMEBREW_BASE/sbin
+    $path
+)
+
 # Terminal
 # --------------------------------------------------------------------------
 if [[ -z $TERM_PROGRAM ]]; then
@@ -46,15 +55,6 @@ fi
 # Tmux
 # --------------------------------------------------------------------------
 export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
-
-# Path
-# --------------------------------------------------------------------------
-path=(
-    $HOMEBREW_BASE/bin
-    /usr/local/bin
-    $HOMEBREW_BASE/sbin
-    $path
-)
 
 # coreutils and gnu-sed
 case "$OSTYPE" in
