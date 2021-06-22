@@ -1,7 +1,6 @@
 {
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
   "coc.preferences.hoverTarget": "float",
-
   "codeLens.enable": true,
   "diagnostic.errorSign": "",
   "diagnostic.infoSign": "",
@@ -9,7 +8,6 @@
   "diagnostic.maxWindowHeight": 20,
   "diagnostic.refreshOnInsertMode": true,
   "diagnostic.virtualText": false,
-
   "explorer.floating.width": 60,
   "explorer.floating.position": "center",
   "explorer.git.icon.status.added": "✚",
@@ -21,7 +19,15 @@
   "explorer.git.icon.status.ignored": "☒",
   "explorer.icon.enableNerdfont": true,
   "explorer.keyMappings.global": {
-    "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]
+    "<cr>": [
+      "expandable?",
+      [
+        "expanded?",
+        "collapse",
+        "expand"
+      ],
+      "open"
+    ]
   },
   "explorer.openAction.strategy": "sourceWindow",
   "explorer.position": "floating",
@@ -32,7 +38,6 @@
       "expand": true
     }
   ],
-
   "git.addGBlameToBufferVar": true,
   "git.addGBlameToVirtualText": false,
   "git.addedSign.text": "┃",
@@ -40,11 +45,9 @@
   "git.changeRemovedSign.text": "┃",
   "git.changedSign.text": "┃",
   "git.removedSign.text": "┃",
-
   "suggest.enablePreview": true,
   "suggest.maxPreviewWidth": 100,
   "tsserver.npm": "/usr/local/bin/npm",
-
   "eslint.enable": false,
   "eslint.filetypes": [
     "javascript",
@@ -52,38 +55,50 @@
     "typescript",
     "typescriptreact"
   ],
-
   "python.formatting.provider": "black",
   "python.jediEnabled": false,
   "python.linting.pylintEnabled": false,
-
   "javascript.format.enabled": false,
   "javascript.referencesCodeLens.enable": false,
   "javascript.suggestionActions.enabled": false,
-
   "typescript.format.enabled": false,
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enable": false,
-
   "diagnostic-languageserver.debug": true,
   "diagnostic-languageserver.trace.server": "verbose",
-
   "diagnostic-languageserver.filetypes": {
-    "python": ["flake8", "mypy"],
-    "pythonstub": ["flake8", "mypy"]
+    "python": [
+      "flake8",
+      "mypy"
+    ],
+    "pythonstub": [
+      "flake8",
+      "mypy"
+    ]
   },
-
   "diagnostic-languageserver.formatFiletypes": {
-    "python": ["isort", "black"],
-    "pythonstub": ["isort", "blackpyi"]
+    "python": [
+      "isort",
+      "black"
+    ],
+    "pythonstub": [
+      "isort",
+      "blackpyi"
+    ]
   },
-
   "diagnostic-languageserver.mergeConfig": true,
-
   "diagnostic-languageserver.linters": {
     "flake8": {
-      "rootPatterns": [".flake8", "setup.cfg", "tox.ini"],
-      "requiredFiles": [".flake8", "setup.cfg", "tox.ini"],
+      "rootPatterns": [
+        ".flake8",
+        "setup.cfg",
+        "tox.ini"
+      ],
+      "requiredFiles": [
+        ".flake8",
+        "setup.cfg",
+        "tox.ini"
+      ],
       "args": [
         "--format=%(row)d,%(col)d,%(code).1s,%(code)s: %(text)s",
         "--stdin-display-name",
@@ -103,15 +118,26 @@
     "mypy": {
       "sourceName": "mypy",
       "command": "mypy",
-      "debounce": 100,
-      "rootPatterns": ["mypy.ini", ".mypy.ini", "setup.cfg"],
-      "requiredFiles": ["mypy.ini", ".mypy.ini", "setup.cfg"],
+      "debounce": 500,
+      "rootPatterns": [
+        "mypy.ini",
+        ".mypy.ini",
+        "setup.cfg"
+      ],
+      "requiredFiles": [
+        "mypy.ini",
+        ".mypy.ini",
+        "setup.cfg"
+      ],
       "args": [
         "--no-color-output",
         "--no-error-summary",
         "--show-column-numbers",
         "--show-error-codes",
-        "--shadow-file", "%filepath", "%tempfile", "%filepath"
+        "--shadow-file",
+        "%filepath",
+        "%tempfile",
+        "%filepath"
       ],
       "formatPattern": [
         "^([^:]+):(\\d+):(\\d+):\\s+([a-z]+):\\s+(.*)$",
@@ -132,9 +158,26 @@
     "dmypy": {
       "sourceName": "dmypy",
       "command": "dmypy",
-      "rootPatterns": ["mypy.ini", ".mypy.ini", "setup.cfg"],
-      "requiredFiles": ["mypy.ini", ".mypy.ini", "setup.cfg"],
-      "args": ["run", "--", "--show-column-numbers", "--show-error-codes", "--shadow-file", "%filepath", "%tempfile", "%filepath"],
+      "rootPatterns": [
+        "mypy.ini",
+        ".mypy.ini",
+        "setup.cfg"
+      ],
+      "requiredFiles": [
+        "mypy.ini",
+        ".mypy.ini",
+        "setup.cfg"
+      ],
+      "args": [
+        "run",
+        "--",
+        "--show-column-numbers",
+        "--show-error-codes",
+        "--shadow-file",
+        "%filepath",
+        "%tempfile",
+        "%filepath"
+      ],
       "formatPattern": [
         "^([^:]+):(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
         {
@@ -150,18 +193,40 @@
   },
   "diagnostic-languageserver.formatters": {
     "black": {
-      "requiredFiles": ["pyproject.toml"],
-      "rootPatterns": ["pyproject.toml"]
+      "args": [
+        "--quiet",
+        "--stdin-filename",
+        "%filepath",
+        "-"
+      ],
+      "requiredFiles": [
+        "pyproject.toml"
+      ],
+      "rootPatterns": [
+        "pyproject.toml"
+      ]
     },
     "blackpyi": {
       "command": "black",
-      "args": ["--quiet", "--pyi", "-"],
-      "requiredFiles": ["pyproject.toml"],
-      "rootPatterns": ["pyproject.toml"]
+      "args": [
+        "--quiet",
+        "--pyi",
+        "-"
+      ],
+      "requiredFiles": [
+        "pyproject.toml"
+      ],
+      "rootPatterns": [
+        "pyproject.toml"
+      ]
     },
     "isort": {
-      "requiredFiles": ["pyproject.toml"],
-      "rootPatterns": ["pyproject.toml"]
+      "requiredFiles": [
+        "pyproject.toml"
+      ],
+      "rootPatterns": [
+        "pyproject.toml"
+      ]
     }
   }
 }
