@@ -27,3 +27,5 @@
 	autostash = true
 [diff]
 	algorithm = histogram
+[rerere]
+	enabled = true
