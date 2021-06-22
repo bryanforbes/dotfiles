@@ -414,11 +414,6 @@ if [[ -n $1 ]]; then
 else
     dotfiles-home
     dotfiles-brew
-
-    if (( $+commands[mas] )); then
-        dotfiles-mas
-    fi
-
     dotfiles-zsh
     dotfiles-asdf
     dotfiles-python
