@@ -80,18 +80,18 @@ let g:coc_status_error_sign = 'E'
 let g:coc_status_warning_sign = 'W'
 let g:coc_disable_startup_warning = 1
 
-function! s:coc_customize_colors()
-	exec 'hi CocExplorerGitContentChange guifg=#' . g:base16_gui0B
-endfunction
-
-augroup vimrc
-  autocmd ColorScheme * call s:coc_customize_colors()
-augroup END
+" function! s:coc_customize_colors()
+" 	exec 'hi CocExplorerGitContentChange guifg=#' . g:base16_gui0B
+" endfunction
+" 
+" augroup init_colorscheme
+"   autocmd ColorScheme * call s:coc_customize_colors()
+" augroup END
 
 nnoremap ,f :CocCommand explorer --toggle<CR>
 nnoremap ,F :CocCommand explorer --no-toggle --focus<CR>
 
-augroup vimrc
+augroup init_autocommands
 	" Update signature help on jump placeholder.
 	autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
