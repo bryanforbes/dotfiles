@@ -1,11 +1,12 @@
 local fn = vim.fn
 local g = vim.g
+local Path = require('plenary.path')
 local util = require('util')
 
-g.coc_node_path = util.join_paths(vim.env.HOMEBREW_BASE, 'bin', 'node')
+g.coc_node_path = Path:new(vim.env.HOMEBREW_BASE, 'bin', 'node'):absolute()
 g.coc_channel_timeout = 60
 
-fn['coc#config']('session.directory', util.join_paths(vim.env.CACHEDIR, 'vim', 'sessions'))
+fn['coc#config']('session.directory', Path:new(vim.env.CACHEDIR, 'vim', 'sessions'):absolute())
 
 -- Tab for cycling forwards through matches in a completion popup (taken
 -- from coc help)

@@ -2,8 +2,16 @@ local fn = vim.fn
 local util = require('util')
 
 -- bootstrap packer
-local install_path = util.join_paths(fn.stdpath('data'), 'site', 'pack', 'packer', 'start', 'packer.nvim')
-local packer_exists = util.isdirectory(install_path)
+local separator = package.config:sub(1, 1)
+local install_path = table.concat({
+  fn.stdpath('data'),
+  'site',
+  'pack',
+  'packer',
+  'start',
+  'packer.nvim'
+}, separator)
+local packer_exists = fn.isdirectory(install_path) == 1
 
 if not packer_exists then
   fn.system({
@@ -26,6 +34,12 @@ require('packer').startup({
   function(use)
     -- manage the package manager
     use('wbthomason/packer.nvim')
+
+    -- plenary is a common dependency
+    use({
+      'nvim-lua/plenary.nvim',
+      module = {'plenary.'},
+    })
 
     -- Colorschemes
     use({
@@ -59,11 +73,10 @@ require('packer').startup({
         require('settings/editorconfig')
       end,
     })
-    -- use('itchyny/lightline.vim')
     use({
       'hoob3rt/lualine.nvim',
-      after = 'vim-fugitive',
       event = 'VimEnter',
+      after = 'vim-solarized8',
       config = function()
         require('settings/lualine')
       end,
@@ -121,15 +134,23 @@ require('packer').startup({
     })
     use('neoclide/jsonc.vim')
 
-    if util.executable('fzf') then
-      vim.o.rtp = vim.o.rtp .. ',/usr/local/opt/fzf'
-      use({
-        'junegunn/fzf.vim',
-        config = function()
-          require('settings/fzf')
-        end,
-      })
-    end
+    use({
+      '/usr/local/opt/fzf',
+      cond = function()
+        return vim.fn.executable('fzf') == 1
+      end,
+    })
+
+    use({
+      'junegunn/fzf.vim',
+      after = 'fzf',
+      cond = function()
+        return vim.fn.executable('fzf') == 1
+      end,
+      config = function()
+        require('settings/fzf')
+      end,
+    })
 
     -- Native LSP
     use({
@@ -172,7 +193,7 @@ require('packer').startup({
     -- completion
     use({
       'hrsh7th/nvim-compe',
-      event = 'InsertEnter',
+      event = 'InsertEnter *',
       config = function()
         require('settings/nvim-compe')
       end,
@@ -191,7 +212,7 @@ require('packer').startup({
     display = {
       open_fn = function()
         -- show packer output in a float
-        return require('packer.util').float({ border = 'rounded' })
+        return require('packer.util').float({border = 'rounded'})
       end,
     }
   }

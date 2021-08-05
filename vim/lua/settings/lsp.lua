@@ -1,6 +1,7 @@
 local modbase = ...
 local fn = vim.fn
 local util = require('util')
+local tbl = require('plenary.tbl')
 
 -- load the config for a given client, if it exists
 local load_client_config = function(server_name)
@@ -110,4 +111,4 @@ lsp.handlers['textDocument/signatureHelp'] = lsp.with(
   { border = 'rounded' }
 )
 
-return util.readonly(exports)
+return tbl.freeze(exports)

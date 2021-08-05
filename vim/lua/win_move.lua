@@ -1,7 +1,7 @@
 -- Window movement shortcuts
 
 local fn = vim.fn
-local util = require('util')
+local tbl = require('plenary.tbl')
 
 local exports = {}
 
@@ -38,4 +38,4 @@ function exports.right()
   pcall(win_move, 'l')
 end
 
-return util.readonly(exports)
+return tbl.freeze(exports)

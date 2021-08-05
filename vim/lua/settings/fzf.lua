@@ -1,8 +1,9 @@
 local fn = vim.fn
 local g = vim.g
 local util = require('util')
+local Path = require('plenary.path')
 
-if util.isdirectory('.git') then
+if Path:new('.git'):is_dir() then
   util.noremap('<leader>t', ':GFiles --cached --others --exclude-standard<cr>')
 else
   util.noremap('<leader>t', ':Files<cr>')

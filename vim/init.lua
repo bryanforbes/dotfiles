@@ -4,6 +4,11 @@ local g = vim.g
 local fn = vim.fn
 local util = require('util')
 
+local separator = package.config:sub(1, 1)
+local join_paths = function(...)
+  return table.concat({ ... }, separator)
+end
+
 opt.shortmess = opt.shortmess + 'Ic'
 
 opt.autoindent = true
@@ -75,7 +80,7 @@ opt.listchars = {
   -- eol = '$',
 }
 
-if util.has('mouse') then
+if fn.has('mouse') == 1 then
   -- opt.mousehide = true
   opt.mouse = 'a'
 end
@@ -86,10 +91,10 @@ opt.clipboard = {'unnamed'}
 -- cmd('set t_Co=16')
 
 local cachedir = os.getenv('CACHEDIR')
-if util.isdirectory(cachedir) then
-  opt.directory = util.join_paths(cachedir, 'vim', 'swap')
-  opt.undodir = util.join_paths(cachedir, 'vim', 'undo')
-  opt.backupdir = util.join_paths(cachedir, 'vim', 'backup')
+if fn.isdirectory(cachedir) == 1 then
+  opt.directory = join_paths(cachedir, 'vim', 'swap')
+  opt.undodir = join_paths(cachedir, 'vim', 'undo')
+  opt.backupdir = join_paths(cachedir, 'vim', 'backup')
 end
 
 opt.backupcopy = 'yes'
@@ -99,17 +104,17 @@ opt.undolevels = 1000
 
 -- Tell nvim which python to use
 local homebrew_base = os.getenv('HOMEBREW_BASE')
-local python2_path = util.join_paths(homebrew_base, 'bin', 'python2')
-if util.executable(python2_path) then
+local python2_path = join_paths(homebrew_base, 'bin', 'python2')
+if fn.executable(python2_path) == 1 then
   g.python_host_prog = python2_path
 end
 
-local python3_path = util.join_paths(homebrew_base, 'bin', 'python3')
-if util.executable(python3_path) then
+local python3_path = join_paths(homebrew_base, 'bin', 'python3')
+if fn.executable(python3_path) == 1 then
   g.python3_host_prog = python3_path
 end
 
-g.node_host_prog = util.join_paths(homebrew_base, 'bin', 'neovim-node-host')
+g.node_host_prog = join_paths(homebrew_base, 'bin', 'neovim-node-host')
 
 ------------------------
 -- Plugin Configuration
@@ -217,7 +222,7 @@ g.typescript_indent_disable = 1
 ---------------
 -- packer.nvim
 ---------------
-require('settings/packer')
+require('plugins')
 
 -----------------------
 -- Syntax highlighting
@@ -231,10 +236,10 @@ require('settings/packer')
 -- command a chance to trigger loading the menus (vs. letting the filetype
 -- command do it). If do_syntax_sel_menu isn't set beforehand, the syntax menu
 -- won't get populated.
-if tonumber(fn.eval('&t_Co')) > 2 or util.has('gui_running') then
-  cmd('let do_syntax_sel_menu = 0')
-  cmd('syntax on')
-end
+-- if tonumber(fn.eval('&t_Co')) > 2 or fn.has('gui_running') == 1 then
+  -- cmd('let do_syntax_sel_menu = 0')
+  -- cmd('syntax on')
+-- end
 
 ----------------
 -- Color scheme
@@ -242,17 +247,29 @@ end
 
 -- This must be set after vim-plug because it is brought
 -- in as a bundle
-opt.termguicolors = true
+-- opt.termguicolors = true
 -- cmd('colorscheme solarized8')
+
+function ReloadInitLua()
+  require('plenary.reload').reload_module('settings', true)
+  -- require('plenary.reload').reload_module('plugins')
+  -- dofile(join_paths(fn.stdpath('config'), 'init.lua'))
+  -- vim.cmd([[doautoall packer_load_aucmds VimEnter *]])
+  -- vim.cmd([[doautoall packer_load_aucmds BufReadPre *]])
+  -- vim.cmd([[doautoall packer_load_aucmds BufRead *]])
+  -- vim.cmd([[doautoall packer_load_aucmds BufReadPost *]])
+  -- vim.cmd([[doautoall editorconfig BufReadPost *]])
+end
 
 util.augroup('init_autocommands', {
   'BufWritePost .vimrc source $MYVIMRC',
   'BufWritePost .vim_local_autocmds source $MYVIMRC',
   'BufWritePost ~/.dotfiles/vim/vimrc source $MYVIMRC',
   'BufWritePost ~/.dotfiles/vim/init.vim source $MYVIMRC',
+  'BufWritePost ~/.dotfiles/vim/init.lua lua ReloadInitLua()',
   'BufRead,BufNewFile ~/.vim_local_autocmds setl filetype=vim',
   function()
-    if util.filereadable(util.join_paths(vim.env.HOME, '.vim_local_autocmds')) then
+    if fn.filereadable(join_paths(vim.env.HOME, '.vim_local_autocmds')) == 1 then
       vim.cmd('source ~/.vim_local_autocmds')
     end
   end,
@@ -273,7 +290,7 @@ util.nnoremap('\\', ',')
 util.nnoremap('<leader>w', ':up!<cr>')
 
 -- Fast reloading of the .vimrc
-util.noremap('<leader>s', ':source $MYVIMRC<cr>')
+util.noremap('<leader>s', ':lua ReloadInitLua()<cr>')
 
 -- Fast editing of .vimrc
 util.noremap('<leader>v', ':e! $MYVIMRC<cr>')
@@ -307,7 +324,7 @@ util.nmap('<leader>l', ':set list!<cr>')
 -- util.noremap('<leader>gs', ':Gstatus<cr>')
 
 -- fzf
--- if util.executable('fzf') and util.has('nvim') then
+-- if util.executable('fzf') and fn.has('nvim') == 1 then
   -- require('settings/fzf')
 -- end
 

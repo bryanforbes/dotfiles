@@ -1,5 +1,6 @@
 local util = require('util')
 local lspinstall = require('lspinstall')
+local tbl = require('plenary.tbl')
 
 -- Use jedi-language-server for python
 local jedi_config = require('lspinstall/util').extract_config('jedi_language_server')
@@ -49,4 +50,4 @@ setup_servers()
 util.command('LspList', 'lua require("settings/nvim-lspinstall").list_servers()')
 util.command('LspUpdate', 'lua require("settings/nvim-lspinstall").update_servers()')
 
-return util.readonly(exports)
+return tbl.freeze(exports)

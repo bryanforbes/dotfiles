@@ -133,29 +133,6 @@ function exports.augroup(name, commands)
   vim.cmd('augroup END')
 end
 
-function exports.has(name)
-  return fn.has(name) ~= 0
-end
-
-function exports.isdirectory(path)
-  return fn.isdirectory(path) ~= 0
-end
-
-function exports.executable(path)
-  return fn.executable(path) ~= 0
-end
-
-function exports.filereadable(path)
-  return fn.filereadable(path) ~= 0
-end
-
-exports.separator = package.config:sub(1, 1)
-exports.is_windows = exports.separator == '\\'
-
-function exports.join_paths(...)
-  return table.concat({ ... }, exports.separator)
-end
-
 function exports.command(name, argsOrCmd, cmd)
   local args = cmd and argsOrCmd or nil
   cmd = cmd and cmd or argsOrCmd
