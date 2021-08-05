@@ -10,7 +10,7 @@ fn['coc#config']('session.directory', Path:new(vim.env.CACHEDIR, 'vim', 'session
 
 -- Tab for cycling forwards through matches in a completion popup (taken
 -- from coc help)
-local check_back_space = function()
+local function check_back_space()
   local col = vim.api.nvim_win_get_cursor(0)[2]
   return (col == 0 or vim.api.nvim_get_current_line():sub(col, col):match('%s')) and true
 end

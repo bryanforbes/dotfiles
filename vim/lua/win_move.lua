@@ -6,7 +6,7 @@ local tbl = require('plenary.tbl')
 local exports = {}
 
 -- move to the window in the direction shown, or create a new window
-local win_move = function(key)
+local function win_move(key)
   local current_window = fn.winnr()
 
   vim.cmd('wincmd ' .. key)

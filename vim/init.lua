@@ -5,7 +5,7 @@ local fn = vim.fn
 local util = require('util')
 
 local separator = package.config:sub(1, 1)
-local join_paths = function(...)
+local function join_paths(...)
   return table.concat({ ... }, separator)
 end
 
@@ -86,6 +86,7 @@ if fn.has('mouse') == 1 then
 end
 
 opt.clipboard = {'unnamed'}
+opt.termguicolors = true
 
 -- opt.t_Co = 16
 -- cmd('set t_Co=16')
@@ -222,7 +223,51 @@ g.typescript_indent_disable = 1
 ---------------
 -- packer.nvim
 ---------------
-require('plugins')
+-- bootstrap packer
+local install_path = join_paths(
+  fn.stdpath('data'),
+  'site',
+  'pack',
+  'packer',
+  'opt',
+  'packer.nvim'
+)
+local packer_exists = fn.isdirectory(install_path) == 1
+
+if not packer_exists then
+  fn.system({
+    'git',
+    'clone',
+    'https://github.com/wbthomason/packer.nvim',
+    install_path,
+  })
+
+  print('Cloned packer')
+
+  cmd('packadd packer.nvim')
+  require('plugins').install()
+end
+
+function RunPluginsFunction(function_name, bang)
+  cmd('packadd packer.nvim')
+
+  if bang == '!' then
+    require('plenary.reload').reload_module('plugins')
+  end
+
+  require('plugins')[function_name]()
+end
+
+util.command('PackerInstall', '-bang', [[:call v:lua.RunPluginsFunction('install', "<bang>")]])
+util.command('PackerUpdate', '-bang', [[:call v:lua.RunPluginsFunction('update', "<bang>")]])
+util.command('PackerSync', '-bang', [[:call v:lua.RunPluginsFunction('sync', "<bang>")]])
+util.command('PackerClean', '-bang', [[:call v:lua.RunPluginsFunction('clean', "<bang>")]])
+util.command('PackerCompile', '-bang', [[:call v:lua.RunPluginsFunction('compile', "<bang>")]])
+
+util.augroup('init_packer', {
+  'BufWritePost ' .. join_paths('nvim', 'lua', 'plugins.lua')  .. ' PackerCompile!',
+  'BufWritePost ' .. join_paths('vim', 'lua', 'plugins.lua')  .. ' PackerCompile!',
+})
 
 -----------------------
 -- Syntax highlighting
@@ -252,13 +297,9 @@ require('plugins')
 
 function ReloadInitLua()
   require('plenary.reload').reload_module('settings', true)
-  -- require('plenary.reload').reload_module('plugins')
-  -- dofile(join_paths(fn.stdpath('config'), 'init.lua'))
-  -- vim.cmd([[doautoall packer_load_aucmds VimEnter *]])
-  -- vim.cmd([[doautoall packer_load_aucmds BufReadPre *]])
-  -- vim.cmd([[doautoall packer_load_aucmds BufRead *]])
-  -- vim.cmd([[doautoall packer_load_aucmds BufReadPost *]])
-  -- vim.cmd([[doautoall editorconfig BufReadPost *]])
+  require('plenary.reload').reload_module('plugins')
+  dofile(join_paths(fn.stdpath('config'), 'init.lua'))
+  cmd([[EditorConfigReload]])
 end
 
 util.augroup('init_autocommands', {

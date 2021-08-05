@@ -4,7 +4,7 @@ local util = require('util')
 local tbl = require('plenary.tbl')
 
 -- load the config for a given client, if it exists
-local load_client_config = function(server_name)
+local function load_client_config(server_name)
   local status, client_config = pcall(require, modbase .. '/' .. server_name)
   if not status or type(client_config) ~= 'table' then
     return {}
@@ -13,7 +13,7 @@ local load_client_config = function(server_name)
 end
 
 -- configure a client when it's attached to a buffer
-local on_attach = function(client, bufnr)
+local function on_attach(client, bufnr)
   local opts = { buffer = bufnr }
 
   -- run any client-specific attach functions

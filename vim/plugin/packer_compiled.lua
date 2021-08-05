@@ -74,10 +74,6 @@ _G.packer_plugins = {
     needs_bufread = false,
     path = "/Users/bryan/.local/share/nvim/site/pack/packer/opt/FixCursorHold.nvim"
   },
-  ["ack.vim"] = {
-    loaded = true,
-    path = "/Users/bryan/.local/share/nvim/site/pack/packer/start/ack.vim"
-  },
   ["editorconfig-vim"] = {
     config = { "\27LJ\2\n5\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\26settings/editorconfig\frequire\0" },
     loaded = false,
@@ -134,7 +130,7 @@ _G.packer_plugins = {
     path = "/Users/bryan/.local/share/nvim/site/pack/packer/opt/nvim-compe"
   },
   ["nvim-lspconfig"] = {
-    after = { "lsp_signature.nvim", "nvim-lspinstall", "trouble.nvim", "lualine-lsp-progress", "vim-illuminate" },
+    after = { "lsp_signature.nvim", "lualine-lsp-progress", "vim-illuminate", "trouble.nvim", "nvim-lspinstall" },
     config = { "\27LJ\2\n,\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\17settings/lsp\frequire\0" },
     loaded = false,
     needs_bufread = false,
@@ -155,8 +151,9 @@ _G.packer_plugins = {
     path = "/Users/bryan/.local/share/nvim/site/pack/packer/opt/nvim-web-devicons"
   },
   ["packer.nvim"] = {
-    loaded = true,
-    path = "/Users/bryan/.local/share/nvim/site/pack/packer/start/packer.nvim"
+    loaded = false,
+    needs_bufread = false,
+    path = "/Users/bryan/.local/share/nvim/site/pack/packer/opt/packer.nvim"
   },
   ["plenary.nvim"] = {
     loaded = false,
@@ -208,7 +205,7 @@ _G.packer_plugins = {
   },
   ["vim-solarized8"] = {
     after = { "lualine.nvim" },
-    config = { "\27LJ\2\n\\\0\0\3\0\5\0\t6\0\0\0009\0\1\0+\1\2\0=\1\2\0006\0\0\0009\0\3\0'\2\4\0B\0\2\1K\0\1\0\27colorscheme solarized8\bcmd\18termguicolors\bopt\bvim\0" },
+    config = { "\27LJ\2\ng\0\0\3\0\6\0\n6\0\0\0009\0\1\0009\0\2\0\6\0\3\0X\0\4€6\0\0\0009\0\4\0'\2\5\0B\0\2\1K\0\1\0\27colorscheme solarized8\bcmd\15solarized8\16colors_name\6g\bvim\0" },
     loaded = true,
     needs_bufread = false,
     path = "/Users/bryan/.local/share/nvim/site/pack/packer/opt/vim-solarized8"
@@ -254,17 +251,6 @@ if not vim.g.packer_custom_loader_enabled then
   vim.g.packer_custom_loader_enabled = true
 end
 
--- Setup for: vim-polyglot
-time([[Setup for vim-polyglot]], true)
-try_loadstring("\27LJ\2\nB\0\0\2\0\4\0\0056\0\0\0009\0\1\0005\1\3\0=\1\2\0K\0\1\0\1\2\0\0\15autoindent\22polyglot_disabled\6g\bvim\0", "setup", "vim-polyglot")
-time([[Setup for vim-polyglot]], false)
--- Setup for: vim-bufkill
-time([[Setup for vim-bufkill]], true)
-try_loadstring("\27LJ\2\n0\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\21settings/bufkill\frequire\0", "setup", "vim-bufkill")
-time([[Setup for vim-bufkill]], false)
-time([[packadd for vim-bufkill]], true)
-vim.cmd [[packadd vim-bufkill]]
-time([[packadd for vim-bufkill]], false)
 -- Setup for: vim-solarized8
 time([[Setup for vim-solarized8]], true)
 try_loadstring("\27LJ\2\n2\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\23settings/solarized\frequire\0", "setup", "vim-solarized8")
@@ -276,14 +262,25 @@ time([[packadd for vim-solarized8]], false)
 time([[Setup for FixCursorHold.nvim]], true)
 try_loadstring("\27LJ\2\n8\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\29settings/fix-cursor-hold\frequire\0", "setup", "FixCursorHold.nvim")
 time([[Setup for FixCursorHold.nvim]], false)
--- Config for: vim-solarized8
-time([[Config for vim-solarized8]], true)
-try_loadstring("\27LJ\2\n\\\0\0\3\0\5\0\t6\0\0\0009\0\1\0+\1\2\0=\1\2\0006\0\0\0009\0\3\0'\2\4\0B\0\2\1K\0\1\0\27colorscheme solarized8\bcmd\18termguicolors\bopt\bvim\0", "config", "vim-solarized8")
-time([[Config for vim-solarized8]], false)
+-- Setup for: vim-bufkill
+time([[Setup for vim-bufkill]], true)
+try_loadstring("\27LJ\2\n0\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\21settings/bufkill\frequire\0", "setup", "vim-bufkill")
+time([[Setup for vim-bufkill]], false)
+time([[packadd for vim-bufkill]], true)
+vim.cmd [[packadd vim-bufkill]]
+time([[packadd for vim-bufkill]], false)
+-- Setup for: vim-polyglot
+time([[Setup for vim-polyglot]], true)
+try_loadstring("\27LJ\2\nB\0\0\2\0\4\0\0056\0\0\0009\0\1\0005\1\3\0=\1\2\0K\0\1\0\1\2\0\0\15autoindent\22polyglot_disabled\6g\bvim\0", "setup", "vim-polyglot")
+time([[Setup for vim-polyglot]], false)
 -- Config for: vim-expand-region
 time([[Config for vim-expand-region]], true)
 try_loadstring("\27LJ\2\n6\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\27settings/expand-region\frequire\0", "config", "vim-expand-region")
 time([[Config for vim-expand-region]], false)
+-- Config for: vim-solarized8
+time([[Config for vim-solarized8]], true)
+try_loadstring("\27LJ\2\ng\0\0\3\0\6\0\n6\0\0\0009\0\1\0009\0\2\0\6\0\3\0X\0\4€6\0\0\0009\0\4\0'\2\5\0B\0\2\1K\0\1\0\27colorscheme solarized8\bcmd\15solarized8\16colors_name\6g\bvim\0", "config", "vim-solarized8")
+time([[Config for vim-solarized8]], false)
 -- Conditional loads
 time("Condition for { 'fzf', 'fzf.vim' }", true)
 if
@@ -307,10 +304,10 @@ vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
   -- Event lazy-loads
 time([[Defining lazy-load event autocommands]], true)
-vim.cmd [[au VimEnter * ++once lua require("packer.load")({'lualine.nvim', 'FixCursorHold.nvim', 'nvim-web-devicons'}, { event = "VimEnter *" }, _G.packer_plugins)]]
-vim.cmd [[au BufRead * ++once lua require("packer.load")({'vim-repeat', 'vim-fugitive', 'vim-surround'}, { event = "BufRead *" }, _G.packer_plugins)]]
-vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'vim-polyglot', 'nvim-lspconfig', 'editorconfig-vim'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
+vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'editorconfig-vim', 'nvim-lspconfig', 'vim-polyglot'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
+vim.cmd [[au VimEnter * ++once lua require("packer.load")({'FixCursorHold.nvim', 'lualine.nvim', 'nvim-web-devicons'}, { event = "VimEnter *" }, _G.packer_plugins)]]
 vim.cmd [[au InsertEnter * ++once lua require("packer.load")({'nvim-compe'}, { event = "InsertEnter *" }, _G.packer_plugins)]]
+vim.cmd [[au BufRead * ++once lua require("packer.load")({'vim-fugitive', 'vim-surround', 'vim-repeat'}, { event = "BufRead *" }, _G.packer_plugins)]]
 time([[Defining lazy-load event autocommands]], false)
 vim.cmd("augroup END")
 if should_profile then save_profiles() end

@@ -11,7 +11,7 @@ local fn = vim.fn
 --     expr    - if true, set the expr option
 --     buffer  - a buffer number, or true for buffer 0
 --     mode    - a mode; overrides the mode arg
-local map_in_mode = function(mode, key, cmd, opts)
+local function map_in_mode(mode, key, cmd, opts)
   local options = { noremap = false, silent = false }
   local buf
 

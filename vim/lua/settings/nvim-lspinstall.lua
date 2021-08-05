@@ -14,7 +14,7 @@ require('lspinstall/servers').python = vim.tbl_extend('error', jedi_config, {
 })
 
 -- setup all the currently installed servers
-local setup_servers = function()
+local function setup_servers()
   lspinstall.setup()
 
   -- initialize the servers managed by lspinstall
