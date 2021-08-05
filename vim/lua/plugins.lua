@@ -27,7 +27,7 @@ if not packer_exists then
 end
 
 util.augroup('init_packer', {
-  'BufWritePost packer.lua source <afile> | PackerCompile',
+  'BufWritePost plugins.lua source <afile> | PackerCompile',
 })
 
 require('packer').startup({
