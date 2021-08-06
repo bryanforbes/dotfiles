@@ -26,7 +26,7 @@ local function init()
   -- plenary is a common dependency
   use({
     'nvim-lua/plenary.nvim',
-    module = {'plenary.'},
+    module = {'plenary'},
   })
 
   -- Colorschemes

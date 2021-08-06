@@ -130,7 +130,7 @@ _G.packer_plugins = {
     path = "/Users/bryan/.local/share/nvim/site/pack/packer/opt/nvim-compe"
   },
   ["nvim-lspconfig"] = {
-    after = { "lsp_signature.nvim", "lualine-lsp-progress", "vim-illuminate", "trouble.nvim", "nvim-lspinstall" },
+    after = { "lsp_signature.nvim", "lualine-lsp-progress", "nvim-lspinstall", "vim-illuminate", "trouble.nvim" },
     config = { "\27LJ\2\n,\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\17settings/lsp\frequire\0" },
     loaded = false,
     needs_bufread = false,
@@ -224,7 +224,7 @@ _G.packer_plugins = {
 
 time([[Defining packer_plugins]], false)
 local module_lazy_loads = {
-  ["^plenary%."] = "plenary.nvim"
+  ["^plenary"] = "plenary.nvim"
 }
 local lazy_load_called = {['packer.load'] = true}
 local function lazy_load_module(module_name)
@@ -251,17 +251,6 @@ if not vim.g.packer_custom_loader_enabled then
   vim.g.packer_custom_loader_enabled = true
 end
 
--- Setup for: vim-solarized8
-time([[Setup for vim-solarized8]], true)
-try_loadstring("\27LJ\2\n2\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\23settings/solarized\frequire\0", "setup", "vim-solarized8")
-time([[Setup for vim-solarized8]], false)
-time([[packadd for vim-solarized8]], true)
-vim.cmd [[packadd vim-solarized8]]
-time([[packadd for vim-solarized8]], false)
--- Setup for: FixCursorHold.nvim
-time([[Setup for FixCursorHold.nvim]], true)
-try_loadstring("\27LJ\2\n8\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\29settings/fix-cursor-hold\frequire\0", "setup", "FixCursorHold.nvim")
-time([[Setup for FixCursorHold.nvim]], false)
 -- Setup for: vim-bufkill
 time([[Setup for vim-bufkill]], true)
 try_loadstring("\27LJ\2\n0\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\21settings/bufkill\frequire\0", "setup", "vim-bufkill")
@@ -269,10 +258,21 @@ time([[Setup for vim-bufkill]], false)
 time([[packadd for vim-bufkill]], true)
 vim.cmd [[packadd vim-bufkill]]
 time([[packadd for vim-bufkill]], false)
+-- Setup for: vim-solarized8
+time([[Setup for vim-solarized8]], true)
+try_loadstring("\27LJ\2\n2\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\23settings/solarized\frequire\0", "setup", "vim-solarized8")
+time([[Setup for vim-solarized8]], false)
+time([[packadd for vim-solarized8]], true)
+vim.cmd [[packadd vim-solarized8]]
+time([[packadd for vim-solarized8]], false)
 -- Setup for: vim-polyglot
 time([[Setup for vim-polyglot]], true)
 try_loadstring("\27LJ\2\nB\0\0\2\0\4\0\0056\0\0\0009\0\1\0005\1\3\0=\1\2\0K\0\1\0\1\2\0\0\15autoindent\22polyglot_disabled\6g\bvim\0", "setup", "vim-polyglot")
 time([[Setup for vim-polyglot]], false)
+-- Setup for: FixCursorHold.nvim
+time([[Setup for FixCursorHold.nvim]], true)
+try_loadstring("\27LJ\2\n8\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\29settings/fix-cursor-hold\frequire\0", "setup", "FixCursorHold.nvim")
+time([[Setup for FixCursorHold.nvim]], false)
 -- Config for: vim-expand-region
 time([[Config for vim-expand-region]], true)
 try_loadstring("\27LJ\2\n6\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\27settings/expand-region\frequire\0", "config", "vim-expand-region")
@@ -304,10 +304,10 @@ vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
   -- Event lazy-loads
 time([[Defining lazy-load event autocommands]], true)
-vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'editorconfig-vim', 'nvim-lspconfig', 'vim-polyglot'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
-vim.cmd [[au VimEnter * ++once lua require("packer.load")({'FixCursorHold.nvim', 'lualine.nvim', 'nvim-web-devicons'}, { event = "VimEnter *" }, _G.packer_plugins)]]
 vim.cmd [[au InsertEnter * ++once lua require("packer.load")({'nvim-compe'}, { event = "InsertEnter *" }, _G.packer_plugins)]]
 vim.cmd [[au BufRead * ++once lua require("packer.load")({'vim-fugitive', 'vim-surround', 'vim-repeat'}, { event = "BufRead *" }, _G.packer_plugins)]]
+vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'nvim-lspconfig', 'vim-polyglot', 'editorconfig-vim'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
+vim.cmd [[au VimEnter * ++once lua require("packer.load")({'lualine.nvim', 'FixCursorHold.nvim', 'nvim-web-devicons'}, { event = "VimEnter *" }, _G.packer_plugins)]]
 time([[Defining lazy-load event autocommands]], false)
 vim.cmd("augroup END")
 if should_profile then save_profiles() end

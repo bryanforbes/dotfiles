@@ -1,13 +1,18 @@
-local opt = vim.opt
-local cmd = vim.cmd
-local g = vim.g
-local fn = vim.fn
-local util = require('util')
+require('plugins-bootstrap')
 
-local separator = package.config:sub(1, 1)
-local function join_paths(...)
-  return table.concat({ ... }, separator)
-end
+local join_paths = (function()
+  local separator = package.config:sub(1, 1)
+  return function(...)
+    return table.concat({ ... }, separator)
+  end
+end)()
+
+local cmd = vim.cmd
+local env = vim.env
+local fn = vim.fn
+local g = vim.g
+local opt = vim.opt
+local util = require('util')
 
 opt.shortmess = opt.shortmess + 'Ic'
 
@@ -88,9 +93,6 @@ end
 opt.clipboard = {'unnamed'}
 opt.termguicolors = true
 
--- opt.t_Co = 16
--- cmd('set t_Co=16')
-
 local cachedir = os.getenv('CACHEDIR')
 if fn.isdirectory(cachedir) == 1 then
   opt.directory = join_paths(cachedir, 'vim', 'swap')
@@ -117,51 +119,6 @@ end
 
 g.node_host_prog = join_paths(homebrew_base, 'bin', 'neovim-node-host')
 
-------------------------
--- Plugin Configuration
-------------------------
-
--- Ale
--- g.ale_linters = {
---   javascript = {'eslint'},
---   typescript = {}
--- }
--- g.ale_change_sign_column_color = 1
--- g.ale_sign_column_always = 1
--- g.ale_sign_error = '✖'
--- g.ale_sign_warning = '⚠'
--- g.ale_python_flake8_change_directory = 0
-
--- black
--- g.black_skip_string_normalization = 1
-
--- lightline
--- cmd('runtime settings/lightline.vim')
-
--- EditorConfig
--- g.EditorConfig_exclude_patterns = {'fugitive://.*', 'scp://.*'}
--- g.EditorConfig_max_line_indicator = 'fill'
-
--- UltiSnips
--- g.UltiSnipsExpandTrigger = '<c-j>'
--- g.UltiSnipsJumpForwardTrigger='<tab>'
--- g.UltiSnipsJumpBackwardTrigger='<s-tab>'
--- g.UltiSnipsSnippetDirectories = {'ultisnips'}
-
--- NERDTree
--- g.NERDTreeHighlightCursorline = 1
--- g.NERDTreeShowHidden = 1
--- g.NERDTreeMinimalUI = 1
--- g.NERDTreeWinSize = 40
--- g.NERDTreeIgnore = {'\\~$', '\\.pyc', '__pycache__'}
-
--- g.WebDevIconsOS = 'Darwin'
--- g.WebDevIconsUnicodeDecorateFolderNodes = 1
--- g.DevIconsEnableFoldersOpenClose = 1
--- g.DevIconsEnableFolderExtensionPatternMatching = 1
--- g.NERDTreeDirArrowExpandable = '\u00a0' -- make arrows invisible
--- g.NERDTreeDirArrowCollapsible = '\u00a0' -- make arrows invisible
-
 -- HTML indent
 g.html_indent_inctags = 'body,head,tbody'
 g.html_indent_script1 = 'inc'
@@ -173,129 +130,15 @@ g.js_indent_flat_switch = 1
 -- vim-json
 g.vim_json_syntax_conceal = 0
 
--- bufkill.vim
--- g.BufKillCreateMappings = 0
-
--- solarized
--- g.solarized_extra_hi_groups = 1
-
--- vim-tss
--- g.tss_debug_tsserver = 1
--- g.tss_verbose = 1
-
 -- typescript-vim
 g.typescript_indent_disable = 1
 
--- vim-expand-region
--- util.vmap('v', '<Plug>(expand_region_expand)')
--- util.vmap('<C-v>', '<Plug>(expand_region_shrink)')
-
--- YouCompleteMe
--- g.ycm_log_level = 'debug'
--- g.ycm_auto_trigger = 0
--- g.ycm_min_num_of_chars_for_completion = 99
--- g.ycm_confirm_extra_conf = 0
--- g.ycm_error_symbol = '✖'
--- g.ycm_warning_symbol = '⚠'
--- g.ycm_filetype_blacklist = {
---   tagbar = 1,
---   qf = 1,
---   notes = 1,
---   markdown = 1,
---   unite = 1,
---   text = 1,
---   vimwiki = 1,
---   pandoc = 1,
---   infolog = 1,
---   mail = 1,
---   gitcommit = 1
--- }
-
--- vim-autoprettier
--- g.autoprettier_types = {
---   'typescript',
---   'javascript',
--- }
-
--- in millisecond, used for both CursorHold and CursorHoldI,
--- g.cursorhold_updatetime = 100
-
----------------
--- packer.nvim
----------------
--- bootstrap packer
-local install_path = join_paths(
-  fn.stdpath('data'),
-  'site',
-  'pack',
-  'packer',
-  'opt',
-  'packer.nvim'
-)
-local packer_exists = fn.isdirectory(install_path) == 1
-
-if not packer_exists then
-  fn.system({
-    'git',
-    'clone',
-    'https://github.com/wbthomason/packer.nvim',
-    install_path,
-  })
-
-  print('Cloned packer')
-
-  cmd('packadd packer.nvim')
-  require('plugins').install()
-end
-
-function RunPluginsFunction(function_name, bang)
-  cmd('packadd packer.nvim')
-
-  if bang == '!' then
-    require('plenary.reload').reload_module('plugins')
-  end
-
-  require('plugins')[function_name]()
-end
-
-util.command('PackerInstall', '-bang', [[:call v:lua.RunPluginsFunction('install', "<bang>")]])
-util.command('PackerUpdate', '-bang', [[:call v:lua.RunPluginsFunction('update', "<bang>")]])
-util.command('PackerSync', '-bang', [[:call v:lua.RunPluginsFunction('sync', "<bang>")]])
-util.command('PackerClean', '-bang', [[:call v:lua.RunPluginsFunction('clean', "<bang>")]])
-util.command('PackerCompile', '-bang', [[:call v:lua.RunPluginsFunction('compile', "<bang>")]])
-
-util.augroup('init_packer', {
-  'BufWritePost ' .. join_paths('nvim', 'lua', 'plugins.lua')  .. ' PackerCompile!',
-  'BufWritePost ' .. join_paths('vim', 'lua', 'plugins.lua')  .. ' PackerCompile!',
-})
-
------------------------
--- Syntax highlighting
------------------------
-
--- Switch on syntax highlighting when the terminal has colors, or when running
--- in the GUI. Set the do_syntax_sel_menu flag to tell $VIMRUNTIME/menu.vim
--- to expand the syntax menu.
---
--- Note: This happens before the 'Autocommands' section below to give the syntax
--- command a chance to trigger loading the menus (vs. letting the filetype
--- command do it). If do_syntax_sel_menu isn't set beforehand, the syntax menu
--- won't get populated.
--- if tonumber(fn.eval('&t_Co')) > 2 or fn.has('gui_running') == 1 then
-  -- cmd('let do_syntax_sel_menu = 0')
-  -- cmd('syntax on')
--- end
-
 ----------------
--- Color scheme
+-- Autocommands
 ----------------
-
--- This must be set after vim-plug because it is brought
--- in as a bundle
--- opt.termguicolors = true
--- cmd('colorscheme solarized8')
 
 function ReloadInitLua()
+  require('plenary.reload').reload_module('plugins-bootstrap')
   require('plenary.reload').reload_module('settings', true)
   require('plenary.reload').reload_module('plugins')
   dofile(join_paths(fn.stdpath('config'), 'init.lua'))
@@ -310,8 +153,9 @@ util.augroup('init_autocommands', {
   'BufWritePost ~/.dotfiles/vim/init.lua lua ReloadInitLua()',
   'BufRead,BufNewFile ~/.vim_local_autocmds setl filetype=vim',
   function()
-    if fn.filereadable(join_paths(vim.env.HOME, '.vim_local_autocmds')) == 1 then
-      vim.cmd('source ~/.vim_local_autocmds')
+    local vim_local_autocmds = join_paths(env.HOME, '.vim_local_autocmds')
+    if fn.filereadable(vim_local_autocmds) == 1 then
+      cmd('source ' .. vim_local_autocmds)
     end
   end,
   'FileType tagbar,nerdtree setlocal signcolumn=no',
@@ -344,10 +188,10 @@ util.map('<leader>cd', ':cd %:p:h<cr>')
 
 -- util.noremap('<leader>d', ':BW!<cr>')
 util.noremap('<leader>.', '<C-^>')
-util.map('<C-h>', '<Plug>WinMoveLeft', {silent = true})
-util.map('<C-j>', '<Plug>WinMoveDown', {silent = true})
-util.map('<C-k>', '<Plug>WinMoveUp', {silent = true})
-util.map('<C-l>', '<Plug>WinMoveRight', {silent = true})
+util.map('<C-h>', [[:<C-U>lua require('win_move').left()<CR>]], {silent = true})
+util.map('<C-j>', [[:<C-U>lua require('win_move').down()<CR>]], {silent = true})
+util.map('<C-k>', [[:<C-U>lua require('win_move').up()<CR>]], {silent = true})
+util.map('<C-l>', [[:<C-U>lua require('win_move').right()<CR>]], {silent = true})
 util.noremap('<leader>q', ':wincmd q<cr>')
 
 -- Visually select the text that was last edited/pasted
@@ -355,22 +199,3 @@ util.nmap('gV', '`[v`]')
 
 -- Shortcut to rapidly toggle `set list`
 util.nmap('<leader>l', ':set list!<cr>')
-
--- surround.vim
--- util.nmap('dsf', 'ds)db', {silent = true})
-
--- Fugitive
--- util.noremap('<leader>gd', ':Gdiff<cr>')
--- util.noremap('<leader>gc', ':Gcommit -v<cr>')
--- util.noremap('<leader>gs', ':Gstatus<cr>')
-
--- fzf
--- if util.executable('fzf') and fn.has('nvim') == 1 then
-  -- require('settings/fzf')
--- end
-
--- Ack.vim
--- util.noremap('<leader>a', ':Ack!<space>--follow<space>')
-
--- lualine
--- require('settings/lualine')

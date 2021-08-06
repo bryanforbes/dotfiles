@@ -92,4 +92,4 @@ exports.config = {
   },
 }
 
-return require('util').readonly(exports)
+return require('plenary.tbl').freeze(exports)

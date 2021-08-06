@@ -59,15 +59,6 @@ local function map_in_mode(mode, key, cmd, opts)
   end
 end
 
-function exports.readonly(t)
-  return setmetatable(t, {
-    __newindex = function()
-      error("Attempt to modify read-only table")
-    end,
-    __metatable = false
-  })
-end
-
 function exports.termcodes(str)
   return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
@@ -144,4 +135,4 @@ function exports.command(name, argsOrCmd, cmd)
   end
 end
 
-return exports.readonly(exports)
+return exports
