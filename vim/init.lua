@@ -1,4 +1,4 @@
-require('plugins-bootstrap')
+require('plugins-bootstrap').bootstrap()
 
 local join_paths = (function()
   local separator = package.config:sub(1, 1)
@@ -7,12 +7,12 @@ local join_paths = (function()
   end
 end)()
 
+local util = require('util')
 local cmd = vim.cmd
 local env = vim.env
 local fn = vim.fn
 local g = vim.g
 local opt = vim.opt
-local util = require('util')
 
 opt.shortmess = opt.shortmess + 'Ic'
 
