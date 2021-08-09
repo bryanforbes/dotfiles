@@ -327,48 +327,11 @@ function dotfiles-asdf {
 function dotfiles-vim {
     log "Updating vim plugins..."
 
-    local node_path=$HOMEBREW_BASE/bin
-    if [[ -n $VIM_NODE_VERSION ]]; then
-        node_path=$HOME/.asdf/installs/nodejs/$VIM_NODE_VERSION/bin
-        log "Updating vim's node packages..."
-        dotfiles-node $node_path
-    fi
-
-    if [[ -a $HOME/.vim/autoload/plug.vim ]]; then
-        cd $HOME/.vim/autoload
-        existing=$(<plug.vim)
-        current=$(curl -s https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim)
-        if [[ -z "$current" ]]; then
-            err "Problem updating plug.vim"
-        elif [[ "$existing" != "$current" ]]; then
-            mv plug.vim plug.old
-            echo -E "$current" > plug.vim
-            logSub "Updated vim-plug"
-        fi
-
-        cd $CACHEDIR/vim/plugins
-        for plugin in *; do
-            cd $plugin
-            head=$(git rev-parse HEAD)
-            git pull -q --recurse-submodules
-            if (( $? != 0 )); then
-                err "Problem updating $plugin"
-            else
-                # If the current head is different than the original head,
-                # check for a package.json
-                if [[ $(git rev-parse HEAD) != $head ]]; then
-                    if [[ -e package.json ]]; then
-                        if [[ -e yarn.lock ]]; then
-                            $node_path/yarn install --registry=https://registry.npmjs.org --frozen-lockfile --silent
-                        else
-                            $node_path/npm install --registry=https://registry.npmjs.org --silent
-                        fi
-                    fi
-                    logSub "Updated $plugin"
-                fi
-            fi
-            cd ..
-        done
+    if [[ -a $DATADIR/nvim/site/pack/packer/opt/packer.nvim ]]; then
+        nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+    else
+        # If packer doesn't exist, nvim will bootstrap it and compile
+        nvim --headless -c 'autocmd User PackerCompileDone quitall'
     fi
 }
 
