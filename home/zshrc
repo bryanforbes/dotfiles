@@ -607,7 +607,7 @@ if (( ${+commands[asdf]} )); then
         $path
     )
 
-    export ASDF_DIR=$HOMEBREW_BASE/opt/asdf
+    export ASDF_DIR=$HOMEBREW_BASE/opt/asdf/libexec
 
     # alias direnv so we don't have to type asdf exec all the time
     # direnv() { asdf exec direnv $*; }
