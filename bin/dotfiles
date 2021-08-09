@@ -32,6 +32,8 @@ function dotfiles-bat {
 function dotfiles-home {
     log "Updating home directory files..."
 
+    makedir $CONFIGDIR
+
     for file in $HOME/.[a-z]*(@) $CONFIGDIR/[a-zA-Z]*(@); do
         if [[ ! -e $file ]]; then
             rm $file
@@ -48,19 +50,14 @@ function dotfiles-home {
     done
 
     makedir $CACHEDIR/tmux
-    makedir $CACHEDIR/vim/sessions
-    makedir $CACHEDIR/vim/swap
-    makedir $CACHEDIR/vim/backup
-    makedir $CACHEDIR/vim/undo
+    makedir $DATADIR/nvim/sessions
+    makedir $DATADIR/nvim/swap
+    makedir $DATADIR/nvim/backup
+    makedir $DATADIR/nvim/undo
     makedir $ZCOMPDIR
     makedir $ZPLUGDIR
     makedir $ZFUNCDIR
     makedir $DATADIR/direnv/allow
-
-    makedir $CONFIGDIR
-    link $DOTFILES/vim $CONFIGDIR/nvim
-
-    link $DOTFILES/vim $HOME/.vim
 
     # Fix the terminal definition so that C-H works properly in neovim. This
     # function may also need to be run for the tmux terminal type.
