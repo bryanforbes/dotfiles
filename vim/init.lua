@@ -93,11 +93,11 @@ end
 opt.clipboard = {'unnamed'}
 opt.termguicolors = true
 
-local cachedir = os.getenv('CACHEDIR')
-if fn.isdirectory(cachedir) == 1 then
-  opt.directory = join_paths(cachedir, 'vim', 'swap')
-  opt.undodir = join_paths(cachedir, 'vim', 'undo')
-  opt.backupdir = join_paths(cachedir, 'vim', 'backup')
+local datadir = os.getenv('DATADIR')
+if fn.isdirectory(datadir) == 1 then
+  opt.directory = join_paths(datadir, 'nvim', 'swap')
+  opt.undodir = join_paths(datadir, 'nvim', 'undo')
+  opt.backupdir = join_paths(datadir, 'nvim', 'backup')
 end
 
 opt.backupcopy = 'yes'
