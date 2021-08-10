@@ -1,7 +1,5 @@
 local util = require('util')
 
-print('here')
-
 vim.wo.wrap = true
 vim.wo.linebreak = true
 
