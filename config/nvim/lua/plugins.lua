@@ -180,6 +180,13 @@ local function init()
     after = 'nvim-lspconfig',
   })
 
+  use({
+    'kosayoda/nvim-lightbulb',
+    config = function()
+      require('settings/nvim-lightbulb')
+    end,
+  })
+
   -- completion
   use({
     'hrsh7th/nvim-compe',
