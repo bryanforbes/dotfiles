@@ -182,8 +182,18 @@ local function init()
 
   use({
     'kosayoda/nvim-lightbulb',
+    after = 'nvim-lspconfig',
     config = function()
       require('settings/nvim-lightbulb')
+    end,
+  })
+
+  use({
+    'nvim-telescope/telescope.nvim',
+    after = 'nvim-lspconfig',
+    requires = 'plenary.nvim',
+    config = function()
+      require('settings/telescope')
     end,
   })
 

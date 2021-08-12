@@ -61,7 +61,7 @@ util.inoremap('<c-space>', 'coc#refresh()', {silent = true, expr = true})
 util.nmap('[c', '<Plug>(coc-diagnostic-prev)', {silent = true})
 util.nmap(']c', '<Plug>(coc-diagnostic-next)', {silent = true})
 
-util.map('<leader>e', ':CocList diagnostics<cr>', {silent = true})
+util.map('<leader>e', '<cmd>CocList diagnostics<cr>')
 util.nmap('<C-]>', '<Plug>(coc-definition)', {silent = true})
 util.nmap('<leader>r', '<Plug>(coc-rename)', {silent = true})
 util.nmap('<leader>j', '<Plug>(coc-references)', {silent = true})
@@ -95,8 +95,8 @@ g.coc_status_error_sign = 'E'
 g.coc_status_warning_sign = 'W'
 g.coc_disable_startup_warning = 1
 
-util.nnoremap(',f', ':CocCommand explorer --toggle<CR>')
-util.nnoremap(',F', ':CocCommand explorer --no-toggle --focus<CR>')
+util.nnoremap(',f', '<cmd>CocCommand explorer --toggle<cr>')
+util.nnoremap(',F', '<cmd>CocCommand explorer --no-toggle --focus<cr>')
 
 util.augroup('init_coc', {
   -- Update signature help on jump placeholder.

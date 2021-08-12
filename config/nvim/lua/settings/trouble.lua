@@ -9,7 +9,7 @@ require('trouble').setup({
   mode = 'lsp_document_diagnostics',
 })
 
-util.noremap('<leader>e', ':TroubleToggle<cr>')
+util.noremap('<leader>e', '<cmd>TroubleToggle<cr>')
 
 util.augroup('init_trouble', {
   'FileType Trouble setlocal cursorline',

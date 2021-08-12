@@ -4,13 +4,13 @@ local util = require('util')
 local Path = require('plenary.path')
 
 if Path:new('.git'):is_dir() then
-  util.noremap('<leader>t', ':GFiles --cached --others --exclude-standard<cr>')
+  util.noremap('<leader>t', '<cmd>GFiles --cached --others --exclude-standard<cr>')
 else
-  util.noremap('<leader>t', ':Files<cr>')
+  util.noremap('<leader>t', '<cmd>Files<cr>')
 end
-util.noremap('<leader>T', ':Files<cr>')
-util.noremap('<leader>b', ':Buffers<cr>')
-util.noremap('<leader>/', ':BLines<cr>')
+util.noremap('<leader>T', '<cmd>Files<cr>')
+util.noremap('<leader>b', '<cmd>Buffers<cr>')
+util.noremap('<leader>/', '<cmd>BLines<cr>')
 util.noremap('<leader>a', ':Rg<space>')
 
 function FloatingFZF()

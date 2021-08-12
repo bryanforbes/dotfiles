@@ -175,10 +175,10 @@ util.nnoremap('\\', ',')
 util.nnoremap('<leader>w', ':up!<cr>')
 
 -- Fast reloading of the .vimrc
-util.noremap('<leader>s', ':lua ReloadInitLua()<cr>')
+util.noremap('<leader>s', '<cmd>lua ReloadInitLua()<cr>')
 
 -- Fast editing of .vimrc
-util.noremap('<leader>v', ':e! $MYVIMRC<cr>')
+util.noremap('<leader>v', '<cmd>e! $MYVIMRC<cr>')
 
 -- turn on spell checking
 util.map('<leader>spell', ':setlocal spell!<cr>')
@@ -186,13 +186,12 @@ util.map('<leader>spell', ':setlocal spell!<cr>')
 -- Change directory to current buffer
 util.map('<leader>cd', ':cd %:p:h<cr>')
 
--- util.noremap('<leader>d', ':BW!<cr>')
 util.noremap('<leader>.', '<C-^>')
-util.map('<C-h>', [[:<C-U>lua require('win_move').left()<CR>]], {silent = true})
-util.map('<C-j>', [[:<C-U>lua require('win_move').down()<CR>]], {silent = true})
-util.map('<C-k>', [[:<C-U>lua require('win_move').up()<CR>]], {silent = true})
-util.map('<C-l>', [[:<C-U>lua require('win_move').right()<CR>]], {silent = true})
-util.noremap('<leader>q', ':wincmd q<cr>')
+util.map('<C-h>', [[<cmd>lua require('win_move').left()<cr>]], {silent = true})
+util.map('<C-j>', [[<cmd>lua require('win_move').down()<cr>]], {silent = true})
+util.map('<C-k>', [[<cmd>lua require('win_move').up()<cr>]], {silent = true})
+util.map('<C-l>', [[<cmd>lua require('win_move').right()<cr>]], {silent = true})
+util.noremap('<leader>q', '<cmd>wincmd q<cr>')
 
 -- Visually select the text that was last edited/pasted
 util.nmap('gV', '`[v`]')

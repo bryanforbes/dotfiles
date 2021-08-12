@@ -1,7 +1,6 @@
 local modbase = ...
 local fn = vim.fn
 local util = require('util')
-local tbl = require('plenary.tbl')
 
 -- load the config for a given client, if it exists
 local function load_client_config(server_name)
@@ -45,6 +44,10 @@ local function on_attach(client, bufnr)
     util.augroup('format_' .. client.name, {
       'BufWritePre <buffer> :Format'
     })
+  end
+
+  if client.resolved_capabilities.code_action then
+    util.nnoremap('<leader>x', [[<cmd>lua require('telescope.builtin').lsp_code_actions()<cr>]])
   end
 
   if not packer_plugins['trouble.nvim'] then
@@ -111,4 +114,4 @@ lsp.handlers['textDocument/signatureHelp'] = lsp.with(
   { border = 'rounded' }
 )
 
-return tbl.freeze(exports)
+return require('plenary.tbl').freeze(exports)
