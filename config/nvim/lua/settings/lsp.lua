@@ -11,6 +11,16 @@ local function load_client_config(server_name)
   return client_config
 end
 
+-- load the local config for a given client, if it exists
+local function load_local_config(server_name)
+  local status, client_config = pcall(dofile, '.vim/' .. server_name .. '.lua')
+  print(status)
+  if not status or type(client_config) ~= 'table' then
+    return {}
+  end
+  return client_config
+end
+
 -- configure a client when it's attached to a buffer
 local function on_attach(client, bufnr)
   local opts = { buffer = bufnr }
@@ -80,6 +90,11 @@ function exports.setup_server(server)
   local client_config = load_client_config(server)
   if client_config.config then
     config = vim.tbl_extend('force', config, client_config.config)
+  end
+
+  local local_config = load_local_config(server)
+  if local_config.config then
+    config = vim.tbl_extend('force', config, local_config.config)
   end
 
   require('lspconfig')[server].setup(config)

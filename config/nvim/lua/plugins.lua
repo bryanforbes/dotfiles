@@ -197,6 +197,15 @@ local function init()
     end,
   })
 
+  -- tree
+  use({
+    'kyazdani42/nvim-tree.lua',
+    event = {'BufEnter', 'VimEnter'},
+    setup = function()
+      require('settings/nvim-tree')
+    end,
+  })
+
   -- completion
   use({
     'hrsh7th/nvim-compe',
