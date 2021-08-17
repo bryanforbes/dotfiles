@@ -49,6 +49,12 @@ function dotfiles-home {
         link $file $CONFIGDIR/$file:t
     done
 
+    link $DOTFILES/tmux $HOME/.tmux
+
+    if [[ $OSTYPE == darwin* ]]; then
+        link $DOTFILES/hammerspoon $HOME/.hammerspoon
+    fi
+
     makedir $CACHEDIR/tmux
     makedir $DATADIR/nvim/sessions
     makedir $DATADIR/nvim/swap
@@ -107,6 +113,7 @@ function dotfiles-brew {
             'font-iosevka'        # iosevka font
             'font-hack-nerd-font' # hack font with glyphs
             'kitty'               # GPU based terminal emulator
+            'hammerspoon'         # OS X automation via lua
         )
     fi
 
