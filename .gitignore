@@ -1,4 +1,2 @@
-vim/autoload/plug.vim
-vim/autoload/plug.vim.old
-vim/autoload/plug.old
-Brewfile.lock.json
+config/nvim/plugin/packer_compiled.lua
+config/nvim/.netrwhist

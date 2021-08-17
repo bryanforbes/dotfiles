@@ -27,8 +27,6 @@ if [[ ! -d "$HOME/.dotfiles" ]]; then
     git clone --recursive https://github.com/bryanforbes/dotfiles "$HOME/.dotfiles"
 fi
 
-brew bundle install --file="$HOME/.dotfiles/Brewfile"
-
 ZSHPATH="$HOMEBREW_BASE/bin/zsh"
 echo "Adding $ZSHPATH to /etc/shells"
 echo "$ZSHPATH" | sudo tee -a /etc/shells > /dev/null
