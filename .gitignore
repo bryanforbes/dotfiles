@@ -2,3 +2,4 @@ config/nvim/plugin/packer_compiled.lua
 config/nvim/.netrwhist
 /hammerspoon/Spoons/*
 !/hammerspoon/Spoons/BFMuter.spoon
+!/hammerspoon/Spoons/SpoonInstall.spoon

@@ -1,11 +1,18 @@
-hs.hotkey.bind({'cmd', 'shift', 'ctrl'}, 'R', function()
-  hs.reload()
-end)
+hs.loadSpoon('SpoonInstall')
 
-hs.loadSpoon('BFMuter')
+spoon.SpoonInstall.use_syncinstall = true
 
-spoon.BFMuter.hotkeys = {'ctrl', 'alt', 'cmd'}
-spoon.BFMuter.double_press_switches_modes = true
-spoon.BFMuter.push_to_talk = false
+spoon.SpoonInstall:andUse('BFMuter', {
+  config = {
+    hotkeys = {'ctrl', 'alt', 'cmd'},
+    double_press_switches_modes = true,
+    push_to_talk = false,
+  },
+  start = true,
+})
 
-spoon.BFMuter:start()
+spoon.SpoonInstall:andUse('ReloadConfiguration', {
+  hotkeys = {
+    reloadConfiguration = {{'cmd', 'shift', 'ctrl'}, 'R'}
+  }
+})
