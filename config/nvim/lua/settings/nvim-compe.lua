@@ -8,5 +8,5 @@ require('compe').setup({
 
 util.inoremap('<cr>', 'compe#confirm("<cr>")', { expr = true, silent = true })
 util.inoremap('<tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', { expr = true, silent = true })
-util.inoremap('<s-tab>', 'pumvisible() ? "\\<C-j>" : "\\<Tab>"', { expr = true, silent = true })
+util.inoremap('<s-tab>', 'pumvisible() ? "\\<C-p>" : "\\<Tab>"', { expr = true, silent = true })
 util.inoremap('<c-space>', 'compe#complete()', { expr = true, silent = true })
