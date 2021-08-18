@@ -81,19 +81,22 @@ local function on_audio_device_changed(event)
   setup_audio_device()
 end
 
+local set_push_to_talk_true = hs.fnutils.partial(obj.state.set_push_to_talk, obj.state, true)
+local set_push_to_talk_false = hs.fnutils.partial(obj.state.set_push_to_talk, obj.state, false)
+
 local function get_menu_table()
   local push_to_talk = obj.state.push_to_talk
 
   return {
     {
       title = 'Push-to-talk',
-      fn = function() obj.state:set_push_to_talk(true) end,
+      fn = set_push_to_talk_true,
       checked = push_to_talk,
       disabled = push_to_talk,
     },
     {
       title = 'Push-to-mute',
-      fn = function() obj.state:set_push_to_talk(false) end,
+      fn = set_push_to_talk_false,
       checked = not push_to_talk,
       disabled = not push_to_talk,
     },
