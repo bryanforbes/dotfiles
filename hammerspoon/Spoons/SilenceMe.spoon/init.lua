@@ -1,7 +1,7 @@
 local obj = {}
 obj.__index = obj
 
-obj.name = 'BFMuter'
+obj.name = 'SilenceMe'
 obj.version = '0.1'
 obj.author = 'Bryan Forbes <bryan@reigndropsfall.net>'
 obj.homepage = 'https://github.com/Hammerspoon/Spoons'

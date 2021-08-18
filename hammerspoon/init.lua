@@ -2,7 +2,7 @@ hs.loadSpoon('SpoonInstall')
 
 spoon.SpoonInstall.use_syncinstall = true
 
-spoon.SpoonInstall:andUse('BFMuter', {
+spoon.SpoonInstall:andUse('SilenceMe', {
   config = {
     hotkeys = {'ctrl', 'alt', 'cmd'},
     double_press_switches_modes = true,
