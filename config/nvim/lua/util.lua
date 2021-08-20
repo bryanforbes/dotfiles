@@ -1,5 +1,4 @@
-local exports = {}
-local fn = vim.fn
+local M = {}
 
 -- map a key in a particular mode
 --   mode - one or more mode characters
@@ -59,55 +58,55 @@ local function map_in_mode(mode, key, cmd, opts)
   end
 end
 
-function exports.termcodes(str)
+function M.termcodes(str)
   return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
 
-function exports.mixin(target, ...)
+function M.mixin(target, ...)
   return vim.tbl_extend('force', target or vim.empty_dict(), ...)
 end
 
 -- map a key in all modes
-function exports.map(key, cmd, opts)
+function M.map(key, cmd, opts)
   map_in_mode('', key, cmd, opts)
 end
 
 -- map a key in all modes without remapping
-function exports.noremap(key, cmd, opts)
-  map_in_mode('', key, cmd, exports.mixin(opts, {noremap = true}))
+function M.noremap(key, cmd, opts)
+  map_in_mode('', key, cmd, M.mixin(opts, {noremap = true}))
 end
 
 -- map a key in normal mode using the leader key
-function exports.lmap(key, cmd, opts)
+function M.lmap(key, cmd, opts)
   map_in_mode('n', '<leader>' .. key, cmd, opts)
 end
 
 -- map a key in insert mode
-function exports.imap(key, cmd, opts)
+function M.imap(key, cmd, opts)
   map_in_mode('i', key, cmd, opts)
 end
 
 -- map a key in insert mode without remappint
-function exports.inoremap(key, cmd, opts)
-  map_in_mode('i', key, cmd, exports.mixin(opts, {noremap = true}))
+function M.inoremap(key, cmd, opts)
+  map_in_mode('i', key, cmd, M.mixin(opts, {noremap = true}))
 end
 
 -- map a key in normal mode
-function exports.nmap(key, cmd, opts)
+function M.nmap(key, cmd, opts)
   map_in_mode('n', key, cmd, opts)
 end
 
 -- map a key in normal mode without remapping
-function exports.nnoremap(key, cmd, opts)
-  map_in_mode('n', key, cmd, exports.mixin(opts, {noremap = true}))
+function M.nnoremap(key, cmd, opts)
+  map_in_mode('n', key, cmd, M.mixin(opts, {noremap = true}))
 end
 
 -- map a key in visual mode
-function exports.vmap(key, cmd, opts)
+function M.vmap(key, cmd, opts)
   map_in_mode('v', key, cmd, opts)
 end
 
-function exports.augroup(name, commands)
+function M.augroup(name, commands)
   vim.cmd('augroup ' .. name)
   vim.cmd('autocmd!')
 
@@ -124,7 +123,7 @@ function exports.augroup(name, commands)
   vim.cmd('augroup END')
 end
 
-function exports.command(name, argsOrCmd, cmd)
+function M.command(name, argsOrCmd, cmd)
   local args = cmd and argsOrCmd or nil
   cmd = cmd and cmd or argsOrCmd
 
@@ -135,4 +134,4 @@ function exports.command(name, argsOrCmd, cmd)
   end
 end
 
-return exports
+return M

@@ -1,9 +1,8 @@
 -- Window movement shortcuts
 
 local fn = vim.fn
-local tbl = require('plenary.tbl')
 
-local exports = {}
+local M = {}
 
 -- move to the window in the direction shown, or create a new window
 local function win_move(key)
@@ -22,20 +21,20 @@ local function win_move(key)
   end
 end
 
-function exports.left()
+function M.left()
   pcall(win_move, 'h')
 end
 
-function exports.down()
+function M.down()
   pcall(win_move, 'j')
 end
 
-function exports.up()
+function M.up()
   pcall(win_move, 'k')
 end
 
-function exports.right()
+function M.right()
   pcall(win_move, 'l')
 end
 
-return tbl.freeze(exports)
+return M

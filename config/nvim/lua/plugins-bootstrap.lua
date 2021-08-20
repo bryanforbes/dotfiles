@@ -3,9 +3,9 @@ local util = require('util')
 local cmd = vim.cmd
 local fn = vim.fn
 
-local exports = {}
+local M = {}
 
-function exports.bootstrap()
+function M.bootstrap()
   -- bootstrap packer
   local install_path = table.concat({
     fn.stdpath('data'),
@@ -52,13 +52,13 @@ function exports.bootstrap()
   })
 end
 
-function exports.bootstrap_complete()
+function M.bootstrap_complete()
   require('packer.display').quit()
   fn.execute('doautoall <nomodeline> VimEnter', 'silent')
   fn.execute('1,1bufdo! edit!', 'silent')
 end
 
-function exports.run(function_name, bang)
+function M.run(function_name, bang)
   cmd('packadd packer.nvim')
 
   if bang == '!' then
@@ -68,4 +68,4 @@ function exports.run(function_name, bang)
   require('plugins')[function_name]()
 end
 
-return exports
+return M

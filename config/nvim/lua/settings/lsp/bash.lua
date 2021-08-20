@@ -1,7 +1,7 @@
-local exports = {}
+local M = {}
 
-exports.config = {
+M.config = {
   filetypes = {'sh', 'zsh'}
 }
 
-return require('plenary.tbl').freeze(exports)
+return M

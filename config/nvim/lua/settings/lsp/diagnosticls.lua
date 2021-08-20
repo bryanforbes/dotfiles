@@ -1,6 +1,6 @@
-local exports = {}
+local M = {}
 
-exports.config = {
+M.config = {
   filetypes = {'python'},
   init_options = {
     filetypes = {
@@ -92,4 +92,4 @@ exports.config = {
   },
 }
 
-return require('plenary.tbl').freeze(exports)
+return M

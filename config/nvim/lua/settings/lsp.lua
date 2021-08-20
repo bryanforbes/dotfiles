@@ -14,7 +14,6 @@ end
 -- load the local config for a given client, if it exists
 local function load_local_config(server_name)
   local status, client_config = pcall(dofile, '.vim/' .. server_name .. '.lua')
-  print(status)
   if not status or type(client_config) ~= 'table' then
     return {}
   end
@@ -38,7 +37,11 @@ local function on_attach(client, bufnr)
 
   -- perform general setup
   if client.resolved_capabilities.goto_definition then
-    util.nnoremap('<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+    util.nnoremap('<C-]>', [[<cmd>lua require('telescope.builtin').lsp_definitions()<cr>]], opts)
+  end
+
+  if client.resolved_capabilities.find_references then
+    util.nnoremap('<leader>gf', [[<cmd>lua require('telescope.builtin').lsp_references()<cr>]])
   end
 
   if client.resolved_capabilities.hover then
@@ -71,10 +74,10 @@ local function on_attach(client, bufnr)
   })
 end
 
-local exports = {}
+local M = {}
 
 -- style the line diagnostics popup
-function exports.show_line_diagnostics()
+function M.show_line_diagnostics()
   vim.lsp.diagnostic.show_line_diagnostics({
     border = 'rounded',
     max_width = 80,
@@ -82,17 +85,25 @@ function exports.show_line_diagnostics()
 end
 
 -- setup a server
-function exports.setup_server(server)
+function M.setup_server(server)
   -- default config for all servers
   local config = { on_attach = on_attach }
 
   -- add server-specific config if applicable
   local client_config = load_client_config(server)
+  if client_config.disable then
+    return
+  end
+
   if client_config.config then
     config = vim.tbl_extend('force', config, client_config.config)
   end
 
   local local_config = load_local_config(server)
+  if local_config.disable then
+    return
+  end
+
   if local_config.config then
     config = vim.tbl_extend('force', config, local_config.config)
   end
@@ -103,7 +114,7 @@ end
 -- these are servers not managed by lspinstall
 -- local manual_servers = { 'sourcekit' }
 -- for _, server in ipairs(manual_servers) do
---   exports.setup_server(server)
+--   M.setup_server(server)
 -- end
 
 -- UI
@@ -129,4 +140,4 @@ lsp.handlers['textDocument/signatureHelp'] = lsp.with(
   { border = 'rounded' }
 )
 
-return require('plenary.tbl').freeze(exports)
+return M
