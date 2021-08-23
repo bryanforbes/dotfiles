@@ -149,16 +149,13 @@ local function init()
     -- actually loaded; otherwise, the LSP won't be available when the first
     -- buffer is read
     event = 'BufReadPre',
-    config = function()
-      require('settings/lsp')
-    end,
   })
 
   use({
-    'kabouzeid/nvim-lspinstall',
+    'williamboman/nvim-lsp-installer',
     after = 'nvim-lspconfig',
     config = function()
-      require('settings/nvim-lspinstall')
+      require('settings/lsp')
     end,
   })
 
