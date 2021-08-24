@@ -111,7 +111,7 @@ local global_config = {
 local local_config = nil
 local function load_local_config(server_name)
   if local_config == nil then
-    local status, config = pcall(dofile, '.vim/lsp.lua')
+    local status, config = pcall(dofile, '.vim/lsp-config.lua')
     if status and type(config) == 'table' then
       local_config = config
     else
@@ -126,9 +126,9 @@ local configs = {}
 local function load_config(server_name)
   if configs[server_name] == nil then
     configs[server_name] = vim.tbl_deep_extend(
-      'force',
-      global_config[server_name] or {},
-      { config = load_local_config(server_name) }
+      'keep',
+      { config = load_local_config(server_name) or {} },
+      global_config[server_name] or {}
     )
   end
 
@@ -182,22 +182,12 @@ local function on_attach(client, bufnr)
     util.noremap('<leader>e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
   end
 
-  -- util.noremap('<leader>d', '<cmd>lua require("lsp").show_line_diagnostics()<cr>', opts)
-
   util.augroup('init_lsp', {
     'CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false})'
   })
 end
 
 local M = {}
-
--- style the line diagnostics popup
-function M.show_line_diagnostics()
-  vim.lsp.diagnostic.show_line_diagnostics({
-    border = 'rounded',
-    max_width = 80,
-  })
-end
 
 local lsp_installer = require('nvim-lsp-installer')
 local lspserver = require('nvim-lsp-installer.server')
@@ -224,7 +214,7 @@ lsp_installer.on_server_ready(function(server)
     if client_config.config.disable then
       return
     end
-    config = vim.tbl_extend('force', config, client_config.config)
+    config = vim.tbl_deep_extend('keep', client_config.config, config)
   end
 
   server:setup(config)

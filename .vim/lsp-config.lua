@@ -4,7 +4,7 @@ return {
       Lua = {
         diagnostics = {
           globals = {'vim', 'packer_plugins', 'hs', 'spoon'},
-        }
+        },
       },
     },
   },
