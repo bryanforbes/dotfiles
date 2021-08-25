@@ -3,104 +3,98 @@ local util = require('util')
 
 local global_config = {
   bashls = {
-    config = {
-      filetypes = {'sh', 'zsh'},
-    },
+    filetypes = {'sh', 'zsh'},
   },
   jsonls = {
-    config = {
-      filetypes = { 'json', 'jsonc' },
-    },
+    filetypes = { 'json', 'jsonc' },
   },
   diagnosticls = {
-    config = {
-      filetypes = {'python'},
-      init_options = {
-        filetypes = {
-          python = {'flake8', 'mypy'},
-        },
-        formatFiletypes = {
-          python = {'isort', 'black'},
-        },
-        linters = {
-          flake8 = {
-            command = 'flake8',
-            sourceName = 'flake8',
-            debounce = 100,
-            rootPatterns = {'.flake8', 'setup.cfg', 'tox.ini'},
-            requiredFiles = {'.flake8', 'setup.cfg', 'tox.ini'},
-            args = {
-              "--format=%(row)d,%(col)d,%(code).1s,%(code)s: %(text)s",
-              "--stdin-display-name",
-              "%filepath",
-              "-"
-            },
-            formatLines = 1,
-            formatPattern = {
-              '(\\d+),(\\d+),([A-Z]),(.*)(\\r|\\n)*$',
-              {
-                line = 1,
-                column = 2,
-                security = 3,
-                message = 4,
-              },
-            },
-            securities = {
-              W = 'warning',
-              E = 'error',
-              F = 'error',
-              C = 'error',
-              N = 'error',
-              B = 'error',
-              Y = 'error',
+    filetypes = {'python'},
+    init_options = {
+      filetypes = {
+        python = {'flake8', 'mypy'},
+      },
+      formatFiletypes = {
+        python = {'isort', 'black'},
+      },
+      linters = {
+        flake8 = {
+          command = 'flake8',
+          sourceName = 'flake8',
+          debounce = 100,
+          rootPatterns = {'.flake8', 'setup.cfg', 'tox.ini'},
+          requiredFiles = {'.flake8', 'setup.cfg', 'tox.ini'},
+          args = {
+            "--format=%(row)d,%(col)d,%(code).1s,%(code)s: %(text)s",
+            "--stdin-display-name",
+            "%filepath",
+            "-"
+          },
+          formatLines = 1,
+          formatPattern = {
+            '(\\d+),(\\d+),([A-Z]),(.*)(\\r|\\n)*$',
+            {
+              line = 1,
+              column = 2,
+              security = 3,
+              message = 4,
             },
           },
-          mypy = {
-            command = 'mypy',
-            sourceName = 'mypy',
-            debounce = 500,
-            rootPatterns = {'mypy.ini', '.mypy.ini', 'setup.cfg'},
-            requiredFiles = {'mypy.ini', '.mypy.ini', 'setup.cfg'},
-            args = {
-              "--no-color-output",
-              "--no-error-summary",
-              "--show-column-numbers",
-              "--show-error-codes",
-              "--shadow-file",
-              "%filepath",
-              "%tempfile",
-              "%filepath"
-            },
-            formatPattern = {
-              "^([^:]+):(\\d+):(\\d+):\\s+([a-z]+):\\s+(.*)$",
-              {
-                sourceName = 1,
-                sourceNameFilter = true,
-                line = 2,
-                column = 3,
-                security = 4,
-                message = 5,
-              }
-            },
-            securities = {
-              error = "error",
-              note = "info",
-            },
+          securities = {
+            W = 'warning',
+            E = 'error',
+            F = 'error',
+            C = 'error',
+            N = 'error',
+            B = 'error',
+            Y = 'error',
           },
         },
-        formatters = {
-          black = {
-            command = 'black',
-            args = {'--quiet', '--stdin-filename', '%filepath', '-'},
-            requiredFiles = {'pyproject.toml'},
-            rootPatterns = {'pyproject.toml'},
+        mypy = {
+          command = 'mypy',
+          sourceName = 'mypy',
+          debounce = 500,
+          rootPatterns = {'mypy.ini', '.mypy.ini', 'setup.cfg'},
+          requiredFiles = {'mypy.ini', '.mypy.ini', 'setup.cfg'},
+          args = {
+            "--no-color-output",
+            "--no-error-summary",
+            "--show-column-numbers",
+            "--show-error-codes",
+            "--shadow-file",
+            "%filepath",
+            "%tempfile",
+            "%filepath"
           },
-          isort = {
-            command = 'isort',
-            args = {'--quiet', '-'},
-            requiredFiles = {'pyproject.toml'},
-            rootPatterns = {'pyproject.toml'},
+          formatPattern = {
+            "^([^:]+):(\\d+):(\\d+):\\s+([a-z]+):\\s+(.*)$",
+            {
+              sourceName = 1,
+              sourceNameFilter = true,
+              line = 2,
+              column = 3,
+              security = 4,
+              message = 5,
+            }
           },
+          securities = {
+            error = "error",
+            note = "info",
+          },
+        },
+      },
+      formatters = {
+        black = {
+          command = 'black',
+          args = {'--quiet', '--stdin-filename', '%filepath', '-'},
+          requiredFiles = {'pyproject.toml'},
+          rootPatterns = {'pyproject.toml'},
+        },
+        isort = {
+          command = 'isort',
+          args = {'--quiet', '-'},
+          requiredFiles = {'pyproject.toml'},
+          rootPatterns = {'pyproject.toml'},
         },
       },
     },
@@ -122,28 +116,9 @@ local function load_local_config(server_name)
   return local_config[server_name]
 end
 
-local configs = {}
-local function load_config(server_name)
-  if configs[server_name] == nil then
-    configs[server_name] = vim.tbl_deep_extend(
-      'keep',
-      { config = load_local_config(server_name) or {} },
-      global_config[server_name] or {}
-    )
-  end
-
-  return configs[server_name]
-end
-
 -- configure a client when it's attached to a buffer
 local function on_attach(client, bufnr)
   local opts = { buffer = bufnr }
-
-  -- run any client-specific attach functions
-  local client_config = load_config(client.name)
-  if client_config.on_attach then
-    client_config.on_attach(client)
-  end
 
   require('illuminate').on_attach(client)
   require('lsp_signature').on_attach({
@@ -189,43 +164,37 @@ end
 
 local M = {}
 
-local lsp_installer = require('nvim-lsp-installer')
-local lspserver = require('nvim-lsp-installer.server')
-local npm = require('nvim-lsp-installer.installers.npm')
+local configs = {}
+function M.get_server_config(server_name)
+  if configs[server_name] == nil then
+    local global_server_config = global_config[server_name] or {}
+    local local_server_config = load_local_config(server_name) or {}
 
-local diagnosticls_root_dir = lspserver.get_server_root_path('diagnosticls')
-local diagnosticls = lspserver.Server:new({
-  name = 'diagnosticls',
-  root_dir = diagnosticls_root_dir,
-  installer = npm.packages({ 'diagnostic-languageserver' }),
-  default_options = {
-    cmd = { npm.executable(diagnosticls_root_dir, 'diagnostic-languageserver'), '--stdio' }
-  },
-})
+    local base_config = {
+      on_attach = function(client, bufnr)
+        -- run any client-specific attach functions
+        if local_server_config.on_attach then
+          local_server_config.on_attach(client, bufnr)
+        end
 
-lsp_installer.register(diagnosticls)
+        if global_server_config.on_attach then
+          global_server_config.on_attach(client, bufnr)
+        end
 
-lsp_installer.on_server_ready(function(server)
-  -- default config for all servers
-  local config = { on_attach = on_attach }
+        on_attach(client, bufnr)
+      end
+    }
 
-  local client_config = load_config(server.name)
-  if client_config.config then
-    if client_config.config.disable then
-      return
-    end
-    config = vim.tbl_deep_extend('keep', client_config.config, config)
+    configs[server_name] = vim.tbl_deep_extend(
+      'keep',
+      base_config,
+      local_server_config,
+      global_server_config
+    )
   end
 
-  server:setup(config)
-  vim.cmd([[ do User LspAttachBuffers ]])
-end)
-
--- these are servers not managed by lspinstall
--- local manual_servers = { 'sourcekit' }
--- for _, server in ipairs(manual_servers) do
---   M.setup_server(server)
--- end
+  return configs[server_name]
+end
 
 -- UI
 fn.sign_define('LspDiagnosticsSignError', { text = '' })

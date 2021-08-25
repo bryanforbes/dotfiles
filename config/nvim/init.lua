@@ -198,3 +198,29 @@ util.nmap('gV', '`[v`]')
 
 -- Shortcut to rapidly toggle `set list`
 util.nmap('<leader>l', ':set list!<cr>')
+
+-- disable builtin plugins
+for _, plugin in pairs({
+  '2html_plugin',
+  'getscript',
+  'getscriptPlugin',
+  'gzip',
+  'logipat',
+  'matchit',
+  'matchparen',
+  'netrw',
+  'netrwFileHandlers',
+  'netrwPlugin',
+  'netrwSettings',
+  'rrhelper',
+  'spec',
+  'spellfile_plugin',
+  'tar',
+  'tarPlugin',
+  'vimball',
+  'vimballPlugin',
+  'zip',
+  'zipPlugin'
+}) do
+  g['loaded_' .. plugin] = 1
+end

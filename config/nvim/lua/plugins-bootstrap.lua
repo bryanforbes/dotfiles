@@ -47,8 +47,7 @@ function M.bootstrap()
   util.command('PackerCompile', '-bang', [[lua require('plugins-bootstrap').run('compile', "<bang>")]])
 
   util.augroup('init_packer', {
-    'BufWritePost nvim/lua/plugins.lua PackerCompile!',
-    'BufWritePost vim/lua/plugins.lua PackerCompile!',
+    'BufWritePost config/nvim/lua/plugins.lua PackerCompile!',
   })
 end
 

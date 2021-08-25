@@ -33,7 +33,7 @@ local function init()
   use({
     'lifepillar/vim-solarized8',
     setup = function()
-      require('settings/solarized')
+      require('settings.solarized')
     end,
     config = function()
       -- if this runs more than once, it messes up the colors for other plugins
@@ -52,7 +52,7 @@ local function init()
   use({
     'qpkorr/vim-bufkill',
     setup = function()
-      require('settings/bufkill')
+      require('settings.bufkill')
     end,
   })
   -- use('mileszs/ack.vim')
@@ -60,7 +60,7 @@ local function init()
     'editorconfig/editorconfig-vim',
     event = 'BufReadPre',
     config = function()
-      require('settings/editorconfig')
+      require('settings.editorconfig')
     end,
   })
   use({
@@ -68,14 +68,14 @@ local function init()
     event = 'VimEnter',
     after = 'vim-solarized8',
     config = function()
-      require('settings/lualine')
+      require('settings.lualine')
     end,
   })
   use({
     'tpope/vim-fugitive',
     event = 'BufRead',
     config = function()
-      require('settings/fugitive')
+      require('settings.fugitive')
     end,
   })
   use({
@@ -86,13 +86,13 @@ local function init()
     'tpope/vim-surround',
     event = 'BufRead',
     config = function()
-      require('settings/surround')
+      require('settings.surround')
     end,
   })
   use({
     'terryma/vim-expand-region',
     config = function()
-      require('settings/expand-region')
+      require('settings.expand-region')
     end,
   })
   use('tmux-plugins/vim-tmux-focus-events')
@@ -100,29 +100,30 @@ local function init()
     'antoinemadec/FixCursorHold.nvim',
     event = 'VimEnter',
     setup = function()
-      require('settings/fix-cursor-hold')
+      require('settings.fix-cursor-hold')
     end,
   })
-
-  -- use({
-  --   'neoclide/coc.nvim',
-  --   run = 'yarn install --frozen-lockfile',
-  --   config = function()
-  --     require('settings/coc')
-  --   end,
-  -- })
 
   -- use('thinca/vim-themis')
 
   -- Filetype plugins
+  -- use({
+  --   'sheerun/vim-polyglot',
+  --   event = 'BufReadPre',
+  --   setup = function()
+  --     vim.g.polyglot_disabled = {'autoindent'}
+  --   end,
+  -- })
+  use('neoclide/jsonc.vim')
+
   use({
-    'sheerun/vim-polyglot',
-    event = 'BufReadPre',
-    setup = function()
-      vim.g.polyglot_disabled = {'autoindent'}
+    'nvim-treesitter/nvim-treesitter',
+    event = 'BufRead',
+    run = ':TSUpdate',
+    config = function()
+      require('settings.nvim-treesitter')
     end,
   })
-  use('neoclide/jsonc.vim')
 
   use({
     '/usr/local/opt/fzf',
@@ -138,7 +139,7 @@ local function init()
       return vim.fn.executable('fzf') == 1
     end,
     config = function()
-      require('settings/fzf')
+      require('settings.fzf')
     end,
   })
 
@@ -155,7 +156,7 @@ local function init()
     'williamboman/nvim-lsp-installer',
     after = 'nvim-lspconfig',
     config = function()
-      require('settings/lsp')
+      require('settings.nvim-lsp-installer')
     end,
   })
 
@@ -168,7 +169,7 @@ local function init()
     'folke/trouble.nvim',
     after = 'nvim-lspconfig',
     config = function()
-      require('settings/trouble')
+      require('settings.trouble')
     end,
   })
 
@@ -181,7 +182,7 @@ local function init()
     'kosayoda/nvim-lightbulb',
     after = 'nvim-lspconfig',
     config = function()
-      require('settings/nvim-lightbulb')
+      require('settings.nvim-lightbulb')
     end,
   })
 
@@ -190,7 +191,7 @@ local function init()
     after = 'nvim-lspconfig',
     requires = 'plenary.nvim',
     config = function()
-      require('settings/telescope')
+      require('settings.telescope')
     end,
   })
 
@@ -199,17 +200,21 @@ local function init()
     'kyazdani42/nvim-tree.lua',
     event = {'BufEnter', 'VimEnter'},
     setup = function()
-      require('settings/nvim-tree')
+      require('settings.nvim-tree')
     end,
   })
 
   -- completion
   use({
-    'hrsh7th/nvim-compe',
-    event = 'InsertEnter *',
-    config = function()
-      require('settings/nvim-compe')
-    end,
+    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-path',
+    'hrsh7th/cmp-nvim-lua',
+    {
+      'hrsh7th/nvim-cmp',
+      config = function()
+        require('settings.nvim-cmp')
+      end,
+    }
   })
 
   -- highlight current word
@@ -217,8 +222,17 @@ local function init()
     'RRethy/vim-illuminate',
     after = 'nvim-lspconfig',
     -- config = function()
-    --   require('settings/illuminate')
+    --   require('settings.illuminate')
     -- end,
+  })
+
+  -- better start/end matching
+  use({
+    'andymass/vim-matchup',
+    event = 'CursorMoved',
+    config = function()
+      require('settings.vim-matchup')
+    end
   })
 end
 
