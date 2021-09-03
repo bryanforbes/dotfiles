@@ -335,10 +335,10 @@ function dotfiles-vim {
     log "Updating vim plugins..."
 
     if [[ -a $DATADIR/nvim/site/pack/packer/opt/packer.nvim ]]; then
-        nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+        nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' 2>&1 > /dev/null
     else
         # If packer doesn't exist, nvim will bootstrap it and compile
-        nvim --headless -c 'autocmd User PackerCompileDone quitall'
+        nvim --headless -c 'autocmd User PackerCompileDone quitall' 2>&1 > /dev/null
     fi
 }
 

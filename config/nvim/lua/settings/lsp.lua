@@ -118,6 +118,8 @@ end
 
 -- configure a client when it's attached to a buffer
 local function on_attach(client, bufnr)
+  -- print('on_attach: ' .. client.name .. ' ' .. bufnr)
+
   local opts = { buffer = bufnr }
 
   require('illuminate').on_attach(client)
@@ -144,9 +146,7 @@ local function on_attach(client, bufnr)
 
   if client.resolved_capabilities.document_formatting then
     util.command('Format', '-buffer', 'lua vim.lsp.buf.formatting_sync(nil, 1000)')
-    util.augroup('format_' .. client.name, {
-      'BufWritePre <buffer> :Format'
-    })
+    util.autocmd('BufWritePre <buffer> :Format')
   end
 
   if client.resolved_capabilities.code_action then
@@ -158,7 +158,7 @@ local function on_attach(client, bufnr)
   end
 
   util.augroup('init_lsp', {
-    'CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false})'
+    'CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false, focusable = false})'
   })
 end
 

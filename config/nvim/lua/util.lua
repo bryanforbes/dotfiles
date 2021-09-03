@@ -106,6 +106,10 @@ function M.vmap(key, cmd, opts)
   map_in_mode('v', key, cmd, opts)
 end
 
+function M.autocmd(command)
+  vim.cmd('autocmd ' .. command)
+end
+
 function M.augroup(name, commands)
   vim.cmd('augroup ' .. name)
   vim.cmd('autocmd!')
@@ -115,7 +119,7 @@ function M.augroup(name, commands)
       if type(command) == 'function' then
         command()
       else
-        vim.cmd('autocmd ' .. command)
+        M.autocmd(command)
       end
     end
   end

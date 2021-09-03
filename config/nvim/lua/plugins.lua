@@ -107,13 +107,13 @@ local function init()
   -- use('thinca/vim-themis')
 
   -- Filetype plugins
-  -- use({
-  --   'sheerun/vim-polyglot',
-  --   event = 'BufReadPre',
-  --   setup = function()
-  --     vim.g.polyglot_disabled = {'autoindent'}
-  --   end,
-  -- })
+  use({
+    'sheerun/vim-polyglot',
+    event = 'BufReadPre',
+    setup = function()
+      vim.g.polyglot_disabled = {'autoindent'}
+    end,
+  })
   use('neoclide/jsonc.vim')
 
   use({
