@@ -607,7 +607,7 @@ if (( ${+commands[asdf]} )); then
         $path
     )
 
-    export ASDF_DIR=$HOMEBREW_BASE/opt/asdf/libexec
+    # export ASDF_DIR=$HOMEBREW_BASE/opt/asdf/libexec
 
     # alias direnv so we don't have to type asdf exec all the time
     # direnv() { asdf exec direnv $*; }
@@ -684,3 +684,5 @@ fi
 # Local config
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
+
+export PATH="$HOME/.poetry/bin:$PATH"

@@ -23,17 +23,43 @@ function err {
 
 # Create a directory
 function makedir {
+    local quiet=0
+    if [[ "$1" == "-q" ]]; then
+        quiet=1
+        shift
+    fi
+
     if [[ ! -d $1 ]]; then
         mkdir -p $1
-        logSub "Created $1/"
+
+        if (( ! $quiet )); then
+            if [[ -z "$2" ]]; then
+                logSub "Created $1/"
+            else
+                logSub $2
+            fi
+        fi
     fi
 }
 
 # Create a symlink
 function link {
+    local quiet=0
+    if [[ "$1" == "-q" ]]; then
+        quiet=1
+        shift
+    fi
+
     if [[ ! -r $2 ]]; then
         ln -s $1 $2
-        logSub "Linked $1 -> $2"
+
+        if (( ! $quiet )); then
+            if [[ -z "$3" ]]; then
+                logSub "Linked $1 -> $2"
+            else
+                logSub $3
+            fi
+        fi
     fi
 }
 

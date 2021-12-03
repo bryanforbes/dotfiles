@@ -289,45 +289,66 @@ function dotfiles-tmux {
 
 # Update asdf plugins
 function dotfiles-asdf {
+    if (( ! $+commands[asdf] )); then
+        log "Skipping asdf update"
+        return
+    fi
+
     log "Updating asdf..."
 
     local asdf_plugins=(${(@f)$(asdf plugin-list)})
-    if (( ! $asdf_plugins[(Ie)direnv] )); then
-        asdf plugin-add direnv
-        logSub "Installed asdf-direnv"
-    fi
+    local asdf_desired_plugins=(
+        direnv
+        python
+        nodejs
+    )
 
-    makedir $HOME/.asdf/installs/direnv/system/env
-    makedir $HOME/.asdf/installs/direnv/system/bin
-    link $HOMEBREW_BASE/bin/direnv $HOME/.asdf/installs/direnv/system/bin/direnv
+    local -a installed_plugins
 
-    if (( ! $asdf_plugins[(Ie)nodejs] )); then
-        asdf plugin-add nodejs
-        bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
-        logSub "Installed asdf-nodejs"
-    fi
-    if (( ! $asdf_plugins[(Ie)python] )); then
-        asdf plugin-add python
-        logSub "Installed asdf-python"
-    fi
-    # neovim uses node 10 to support at least coc-sh
-    if [[ -n $VIM_NODE_VERSION ]] && [[ ! -d $HOME/.asdf/installs/nodejs/$VIM_NODE_VERSION ]]; then
-        asdf install nodejs $VIM_NODE_VERSION
-        logSub "Installed nodejs $VIM_NODE_VERSION"
-    fi
+    # Add any missing plugins
+    for plugin in $asdf_desired_plugins; do
+        if (( ! $asdf_plugins[(Ie)$plugin] )); then
+            asdf plugin add $plugin > /dev/null
+            installed_plugins+=($plugin)
 
-    for dir in $HOME/.asdf/plugins/*; do
-        local plugin=${dir:t}
-        head=$(git -C $dir rev-parse HEAD)
-        git -C $dir pull -q
-        if (( $? != 0 )); then
-            err "Problem updating $plugin"
-        else
-            if [[ $(git -C $dir rev-parse HEAD) != $head ]]; then
-                logSub "Updated $plugin"
+            if [[ $plugin == "nodejs" ]]; then
+                bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+            fi
+
+            logSub "Installed $plugin plugin"
+        fi
+    done
+
+    # Update all plugins
+    logSub "Updating plugins..."
+    for plugin in $(asdf plugin list); do
+        if (( ! $installed_plugins[(Ie)$plugin] )); then
+            asdf plugin update $plugin > /dev/null
+            if (( $? != 0 )); then
+                err "Problem updating $plugin plugin"
             fi
         fi
     done
+
+    # Setup the "system" install for asdf-direnv
+    local direnv_system=$ASDF_DATA_DIR/installs/direnv/system
+
+    if [[ ! -L $direnv_system/bin/direnv ]]; then
+        # For `asdf exec direnv` to work, asdf needs a direnv shim. For it to
+        # be able to create that, *some* installed version of direnv needs a
+        # binary. If we only want to use the system install, we have to create
+        # a link to the system direnv binary in installs/direnv/system/bin.
+        makedir -q $direnv_system/bin
+        link -q $HOMEBREW_BASE/bin/direnv $direnv_system/bin/direnv
+        asdf reshim
+        logSub "Created direnv link"
+
+        # asdf needs a directory to create environments for each installed
+        # version.
+        makedir $direnv_system/env "Created direnv environment directory"
+
+        asdf global direnv system
+    fi
 }
 
 # Update vim plugins
