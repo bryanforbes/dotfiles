@@ -1,1 +1,1 @@
-require('util').nmap('dsf', 'ds)db', {silent = true})
+require('util').nmap('dsf', 'ds)db', { silent = true })

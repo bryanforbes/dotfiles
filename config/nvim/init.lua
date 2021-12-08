@@ -58,9 +58,9 @@ opt.textwidth = 0
 
 opt.wildmenu = true
 opt.wildmode = 'list:longest'
-opt.completeopt = opt.completeopt + {'noinsert', 'menuone', 'noselect'}
+opt.completeopt = opt.completeopt + { 'noinsert', 'menuone', 'noselect' }
 
-opt.fileformats = {'unix', 'mac', 'dos'}
+opt.fileformats = { 'unix', 'mac', 'dos' }
 opt.spelllang = 'en'
 opt.foldlevelstart = 20
 
@@ -72,7 +72,7 @@ opt.guicursor = {
   'r-cr:hor20',
   'o:hor50',
   'a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor',
-  'sm:block-blinkwait175-blinkoff150-blinkon175'
+  'sm:block-blinkwait175-blinkoff150-blinkon175',
 }
 opt.updatetime = 300
 
@@ -90,7 +90,7 @@ if fn.has('mouse') == 1 then
   opt.mouse = 'a'
 end
 
-opt.clipboard = {'unnamed'}
+opt.clipboard = { 'unnamed' }
 opt.termguicolors = true
 
 local datadir = os.getenv('DATADIR')
@@ -132,6 +132,9 @@ g.vim_json_syntax_conceal = 0
 
 -- typescript-vim
 g.typescript_indent_disable = 1
+
+-- Don't show hints in diagnostic lists (telescope, trouble)
+g.lsp_severity_limit = 3
 
 ----------------
 -- Autocommands
@@ -187,10 +190,22 @@ util.map('<leader>spell', ':setlocal spell!<cr>')
 util.map('<leader>cd', ':cd %:p:h<cr>')
 
 util.noremap('<leader>.', '<C-^>')
-util.map('<C-h>', [[<cmd>lua require('win_move').left()<cr>]], {silent = true})
-util.map('<C-j>', [[<cmd>lua require('win_move').down()<cr>]], {silent = true})
-util.map('<C-k>', [[<cmd>lua require('win_move').up()<cr>]], {silent = true})
-util.map('<C-l>', [[<cmd>lua require('win_move').right()<cr>]], {silent = true})
+util.map(
+  '<C-h>',
+  [[<cmd>lua require('win_move').left()<cr>]],
+  { silent = true }
+)
+util.map(
+  '<C-j>',
+  [[<cmd>lua require('win_move').down()<cr>]],
+  { silent = true }
+)
+util.map('<C-k>', [[<cmd>lua require('win_move').up()<cr>]], { silent = true })
+util.map(
+  '<C-l>',
+  [[<cmd>lua require('win_move').right()<cr>]],
+  { silent = true }
+)
 util.noremap('<leader>q', '<cmd>wincmd q<cr>')
 
 -- Visually select the text that was last edited/pasted
@@ -220,7 +235,7 @@ for _, plugin in pairs({
   'vimball',
   'vimballPlugin',
   'zip',
-  'zipPlugin'
+  'zipPlugin',
 }) do
   g['loaded_' .. plugin] = 1
 end

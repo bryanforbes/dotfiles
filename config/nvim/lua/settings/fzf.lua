@@ -4,7 +4,10 @@ local util = require('util')
 local Path = require('plenary.path')
 
 if Path:new('.git'):is_dir() then
-  util.noremap('<leader>t', '<cmd>GFiles --cached --others --exclude-standard<cr>')
+  util.noremap(
+    '<leader>t',
+    '<cmd>GFiles --cached --others --exclude-standard<cr>'
+  )
 else
   util.noremap('<leader>t', '<cmd>Files<cr>')
 end
@@ -44,5 +47,5 @@ vim.env.FZF_DEFAULT_OPTS = table.concat({
 g.fzf_buffers_jump = 0
 g.fzf_preview_window = {}
 g.fzf_layout = {
-  window = 'call v:lua.FloatingFZF()'
+  window = 'call v:lua.FloatingFZF()',
 }

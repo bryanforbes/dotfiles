@@ -1,3 +1,5 @@
+pcall(require, 'impatient')
+
 local util = require('util')
 
 local cmd = vim.cmd
@@ -13,7 +15,7 @@ function M.bootstrap()
     'pack',
     'packer',
     'opt',
-    'packer.nvim'
+    'packer.nvim',
   }, package.config:sub(1, 1))
   local packer_exists = fn.isdirectory(install_path) == 1
 
@@ -40,11 +42,31 @@ function M.bootstrap()
     require('plugins').install()
   end
 
-  util.command('PackerInstall', '-bang', [[lua require('plugins-bootstrap').run('install', "<bang>")]])
-  util.command('PackerUpdate', '-bang', [[lua require('plugins-bootstrap').run('update', "<bang>")]])
-  util.command('PackerSync', '-bang', [[lua require('plugins-bootstrap').run('sync', "<bang>")]])
-  util.command('PackerClean', '-bang', [[lua require('plugins-bootstrap').run('clean', "<bang>")]])
-  util.command('PackerCompile', '-bang', [[lua require('plugins-bootstrap').run('compile', "<bang>")]])
+  util.command(
+    'PackerInstall',
+    '-bang',
+    [[lua require('plugins-bootstrap').run('install', "<bang>")]]
+  )
+  util.command(
+    'PackerUpdate',
+    '-bang',
+    [[lua require('plugins-bootstrap').run('update', "<bang>")]]
+  )
+  util.command(
+    'PackerSync',
+    '-bang',
+    [[lua require('plugins-bootstrap').run('sync', "<bang>")]]
+  )
+  util.command(
+    'PackerClean',
+    '-bang',
+    [[lua require('plugins-bootstrap').run('clean', "<bang>")]]
+  )
+  util.command(
+    'PackerCompile',
+    '-bang',
+    [[lua require('plugins-bootstrap').run('compile', "<bang>")]]
+  )
 
   util.augroup('init_packer', {
     'BufWritePost config/nvim/lua/plugins.lua PackerCompile!',

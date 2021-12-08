@@ -73,7 +73,7 @@ end
 
 -- map a key in all modes without remapping
 function M.noremap(key, cmd, opts)
-  map_in_mode('', key, cmd, M.mixin(opts, {noremap = true}))
+  map_in_mode('', key, cmd, M.mixin(opts, { noremap = true }))
 end
 
 -- map a key in normal mode using the leader key
@@ -88,7 +88,7 @@ end
 
 -- map a key in insert mode without remappint
 function M.inoremap(key, cmd, opts)
-  map_in_mode('i', key, cmd, M.mixin(opts, {noremap = true}))
+  map_in_mode('i', key, cmd, M.mixin(opts, { noremap = true }))
 end
 
 -- map a key in normal mode
@@ -98,7 +98,7 @@ end
 
 -- map a key in normal mode without remapping
 function M.nnoremap(key, cmd, opts)
-  map_in_mode('n', key, cmd, M.mixin(opts, {noremap = true}))
+  map_in_mode('n', key, cmd, M.mixin(opts, { noremap = true }))
 end
 
 -- map a key in visual mode

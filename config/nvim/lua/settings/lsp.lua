@@ -3,32 +3,33 @@ local util = require('util')
 
 local global_config = {
   bashls = {
-    filetypes = {'sh', 'zsh'},
+    filetypes = { 'sh', 'zsh' },
   },
   jsonls = {
     filetypes = { 'json', 'jsonc' },
   },
   diagnosticls = {
-    filetypes = {'python'},
+    filetypes = { 'python', 'lua' },
     init_options = {
       filetypes = {
-        python = {'flake8', 'mypy'},
+        python = { 'flake8', 'mypy' },
       },
       formatFiletypes = {
-        python = {'isort', 'black'},
+        python = { 'isort', 'black' },
+        lua = { 'stylua' },
       },
       linters = {
         flake8 = {
           command = 'flake8',
           sourceName = 'flake8',
           debounce = 100,
-          rootPatterns = {'.flake8', 'setup.cfg', 'tox.ini'},
-          requiredFiles = {'.flake8', 'setup.cfg', 'tox.ini'},
+          rootPatterns = { '.flake8', 'setup.cfg', 'tox.ini' },
+          requiredFiles = { '.flake8', 'setup.cfg', 'tox.ini' },
           args = {
-            "--format=%(row)d,%(col)d,%(code).1s,%(code)s: %(text)s",
-            "--stdin-display-name",
-            "%filepath",
-            "-"
+            '--format=%(row)d,%(col)d,%(code).1s,%(code)s: %(text)s',
+            '--stdin-display-name',
+            '%filepath',
+            '-',
           },
           formatLines = 1,
           formatPattern = {
@@ -54,20 +55,20 @@ local global_config = {
           command = 'mypy',
           sourceName = 'mypy',
           debounce = 500,
-          rootPatterns = {'mypy.ini', '.mypy.ini', 'setup.cfg'},
-          requiredFiles = {'mypy.ini', '.mypy.ini', 'setup.cfg'},
+          rootPatterns = { 'mypy.ini', '.mypy.ini', 'setup.cfg' },
+          requiredFiles = { 'mypy.ini', '.mypy.ini', 'setup.cfg' },
           args = {
-            "--no-color-output",
-            "--no-error-summary",
-            "--show-column-numbers",
-            "--show-error-codes",
-            "--shadow-file",
-            "%filepath",
-            "%tempfile",
-            "%filepath"
+            '--no-color-output',
+            '--no-error-summary',
+            '--show-column-numbers',
+            '--show-error-codes',
+            '--shadow-file',
+            '%filepath',
+            '%tempfile',
+            '%filepath',
           },
           formatPattern = {
-            "^([^:]+):(\\d+):(\\d+):\\s+([a-z]+):\\s+(.*)$",
+            '^([^:]+):(\\d+):(\\d+):\\s+([a-z]+):\\s+(.*)$',
             {
               sourceName = 1,
               sourceNameFilter = true,
@@ -75,26 +76,37 @@ local global_config = {
               column = 3,
               security = 4,
               message = 5,
-            }
+            },
           },
           securities = {
-            error = "error",
-            note = "info",
+            error = 'error',
+            note = 'info',
           },
         },
       },
       formatters = {
         black = {
           command = 'black',
-          args = {'--quiet', '--stdin-filename', '%filepath', '-'},
-          requiredFiles = {'pyproject.toml'},
-          rootPatterns = {'pyproject.toml'},
+          args = { '--quiet', '--stdin-filename', '%filepath', '-' },
+          requiredFiles = { 'pyproject.toml' },
+          rootPatterns = { 'pyproject.toml' },
         },
         isort = {
           command = 'isort',
-          args = {'--quiet', '-'},
-          requiredFiles = {'pyproject.toml'},
-          rootPatterns = {'pyproject.toml'},
+          args = { '--quiet', '-' },
+          requiredFiles = { 'pyproject.toml' },
+          rootPatterns = { 'pyproject.toml' },
+        },
+        stylua = {
+          command = 'stylua',
+          args = {
+            '--stdin-filepath',
+            '%filepath',
+            '--search-parent-directories',
+            '-',
+          },
+          requiredFiles = { '.stylua.toml' },
+          rootPatterns = { '.stylua.toml' },
         },
       },
     },
@@ -122,18 +134,26 @@ local function on_attach(client, bufnr)
 
   local opts = { buffer = bufnr }
 
-  require('illuminate').on_attach(client)
-  require('lsp_signature').on_attach({
-    max_width = 80,
-  })
+  -- require('illuminate').on_attach(client)
+  -- require('lsp_signature').on_attach({
+  --   max_width = 80,
+  -- })
 
   -- perform general setup
   if client.resolved_capabilities.goto_definition then
-    util.nnoremap('<C-]>', [[<cmd>lua require('telescope.builtin').lsp_definitions()<cr>]], opts)
+    util.nnoremap(
+      '<C-]>',
+      [[<cmd>lua require('telescope.builtin').lsp_definitions()<cr>]],
+      opts
+    )
   end
 
   if client.resolved_capabilities.find_references then
-    util.nnoremap('<leader>gf', [[<cmd>lua require('telescope.builtin').lsp_references()<cr>]], opts)
+    util.nnoremap(
+      '<leader>gf',
+      [[<cmd>lua require('telescope.builtin').lsp_references()<cr>]],
+      opts
+    )
   end
 
   if client.resolved_capabilities.hover then
@@ -145,21 +165,25 @@ local function on_attach(client, bufnr)
   end
 
   if client.resolved_capabilities.document_formatting then
-    util.command('Format', '-buffer', 'lua vim.lsp.buf.formatting_sync(nil, 1000)')
+    util.command(
+      'Format',
+      '-buffer',
+      'lua vim.lsp.buf.formatting_sync(nil, 5000)'
+    )
     util.autocmd('BufWritePre <buffer> :Format')
   end
 
-  if client.resolved_capabilities.code_action then
-    util.nnoremap('<leader>x', [[<cmd>lua require('telescope.builtin').lsp_code_actions()<cr>]], opts)
-  end
+  -- if client.resolved_capabilities.code_action then
+  --   util.nnoremap('<leader>x', [[<cmd>lua require('telescope.builtin').lsp_code_actions()<cr>]], opts)
+  -- end
 
   if not packer_plugins['trouble.nvim'] then
-    util.noremap('<leader>e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
+    util.noremap('<leader>e', '<cmd>lua vim.diagnostic.setloclist()<cr>', opts)
   end
 
-  util.augroup('init_lsp', {
-    'CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false, focusable = false})'
-  })
+  util.autocmd(
+    'CursorHold <buffer> lua require("settings.lsp").show_position_diagnostics()'
+  )
 end
 
 local M = {}
@@ -169,6 +193,12 @@ function M.get_server_config(server_name)
   if configs[server_name] == nil then
     local global_server_config = global_config[server_name] or {}
     local local_server_config = load_local_config(server_name) or {}
+    local capabilities = require('cmp_nvim_lsp').update_capabilities(
+      vim.lsp.protocol.make_client_capabilities()
+    )
+    -- local capabilities = require('coq').lsp_ensure_capabilities(
+    --   vim.lsp.protocol.make_client_capabilities()
+    -- )
 
     local base_config = {
       on_attach = function(client, bufnr)
@@ -182,7 +212,8 @@ function M.get_server_config(server_name)
         end
 
         on_attach(client, bufnr)
-      end
+      end,
+      capabilities = capabilities,
     }
 
     configs[server_name] = vim.tbl_deep_extend(
@@ -196,11 +227,43 @@ function M.get_server_config(server_name)
   return configs[server_name]
 end
 
+function M.show_line_diagnostics()
+  vim.diagnostic.open_float(nil, {
+    scope = 'line',
+    border = 'rounded',
+    max_width = 80,
+    show_header = false,
+    focusable = false,
+  })
+end
+
+function M.show_position_diagnostics()
+  vim.diagnostic.open_float(nil, {
+    scope = 'cursor',
+    border = 'rounded',
+    max_width = 80,
+    show_header = false,
+    focusable = false,
+  })
+end
+
 -- UI
-fn.sign_define('LspDiagnosticsSignError', { text = '' })
-fn.sign_define('LspDiagnosticsSignWarning', { text = '' })
-fn.sign_define('LspDiagnosticsSignInformation', { text = '' })
-fn.sign_define('LspDiagnosticsSignHint', { text = '' })
+fn.sign_define(
+  'DiagnosticSignError',
+  { text = '', texthl = 'DiagnosticSignError' }
+)
+fn.sign_define(
+  'DiagnosticSignWarn',
+  { text = '', texhl = 'DiagnosticSignWarn' }
+)
+fn.sign_define(
+  'DiagnosticSignInfo',
+  { text = '', texthl = 'DiagnosticSignInfo' }
+)
+fn.sign_define(
+  'DiagnosticSignHint',
+  { text = '', texthl = 'DiagnosticSignHint' }
+)
 
 local lsp = vim.lsp
 
