@@ -80,14 +80,13 @@ if [[ -d $HOMEBREW_BASE/opt/python ]]; then
         $HOMEBREW_BASE/opt/python/libexec/bin
         $HOMEBREW_BASE/bin
     )
+
 fi
 
-if [[ -d $HOME/.poetry/bin ]]; then
-    path=(
-        $HOME/.poetry/bin
-        $path
-    )
-fi
+path=(
+    "$(python -c 'import site; print(site.USER_BASE, end="")')/bin"
+    $path
+)
 
 # VMware
 if [[ -e /Applications/VMware\ Fusion.app/Contents/Library ]]; then

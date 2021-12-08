@@ -189,16 +189,18 @@ function dotfiles-python {
         logSub "Updated Python 3 packages"
     fi
 
-    if [[ ! -d $HOME/.poetry ]]; then
+    local python_user_base="$(python3 -c 'import site; print(site.USER_BASE, end="")')"
+
+    if [[ ! -e "$python_user_base/bin/poetry" ]]; then
         log "Installing poetry..."
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
+        curl -sSL https://install.python-poetry.org | python3 -
     else
         log "Updating poetry..."
-        $HOME/.poetry/bin/poetry self update
+        $python_user_base/bin/poetry self update
     fi
 
     log "Updating poetry completions..."
-    $HOME/.poetry/bin/poetry completions zsh > $ZCOMPDIR/_poetry
+    $python_user_base/bin/poetry completions zsh > $ZCOMPDIR/_poetry
 }
 
 # Update global npm packages

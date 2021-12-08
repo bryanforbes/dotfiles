@@ -684,5 +684,3 @@ fi
 # Local config
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
-
-export PATH="$HOME/.poetry/bin:$PATH"
