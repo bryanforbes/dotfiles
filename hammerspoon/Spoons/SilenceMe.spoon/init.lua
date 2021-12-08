@@ -7,7 +7,7 @@ obj.author = 'Bryan Forbes <bryan@reigndropsfall.net>'
 obj.homepage = 'https://github.com/Hammerspoon/Spoons'
 obj.license = 'BSD 3-Clause - https://opensource.org/licenses/BSD-3-Clause'
 
-obj.hotkeys = {'fn'}
+obj.hotkeys = { 'fn' }
 obj.double_press_switches_modes = false
 obj.use_menu = true
 obj.push_to_talk = false
@@ -81,8 +81,16 @@ local function on_audio_device_changed(event)
   setup_audio_device()
 end
 
-local set_push_to_talk_true = hs.fnutils.partial(obj.state.set_push_to_talk, obj.state, true)
-local set_push_to_talk_false = hs.fnutils.partial(obj.state.set_push_to_talk, obj.state, false)
+local set_push_to_talk_true = hs.fnutils.partial(
+  obj.state.set_push_to_talk,
+  obj.state,
+  true
+)
+local set_push_to_talk_false = hs.fnutils.partial(
+  obj.state.set_push_to_talk,
+  obj.state,
+  false
+)
 
 local function get_menu_table()
   local push_to_talk = obj.state.push_to_talk
@@ -104,7 +112,9 @@ local function get_menu_table()
 end
 
 local function on_flags_changed(event)
-  if event:getProperty(hs.eventtap.event.properties.keyboardEventAutorepeat) ~= 0 then
+  if
+    event:getProperty(hs.eventtap.event.properties.keyboardEventAutorepeat) ~= 0
+  then
     return
   end
 
@@ -144,9 +154,7 @@ local function on_flags_changed(event)
   end
 end
 
-
-function obj:init()
-end
+function obj:init() end
 
 function obj:start()
   obj:stop()

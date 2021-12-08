@@ -4,7 +4,7 @@ spoon.SpoonInstall.use_syncinstall = true
 
 spoon.SpoonInstall:andUse('SilenceMe', {
   config = {
-    hotkeys = {'ctrl', 'alt', 'cmd'},
+    hotkeys = { 'ctrl', 'alt', 'cmd' },
     double_press_switches_modes = true,
     push_to_talk = false,
   },
@@ -13,6 +13,6 @@ spoon.SpoonInstall:andUse('SilenceMe', {
 
 spoon.SpoonInstall:andUse('ReloadConfiguration', {
   hotkeys = {
-    reloadConfiguration = {{'cmd', 'shift', 'ctrl'}, 'R'}
-  }
+    reloadConfiguration = { { 'cmd', 'shift', 'ctrl' }, 'R' },
+  },
 })
