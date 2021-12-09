@@ -10,7 +10,7 @@ local config = {
     lualine_a = { 'mode' },
     lualine_b = {
       { 'FugitiveHead', icon = '' },
-      { 'diagnostics', sources = { 'nvim_lsp' } },
+      { 'diagnostics', sources = { 'nvim_diagnostic' } },
     },
     lualine_c = {
       {

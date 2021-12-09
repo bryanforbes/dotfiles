@@ -32,9 +32,7 @@ cmp.setup({
     ['<tab>'] = cmp.mapping(functional.partial(tab_fn, cmp.select_next_item)),
     ['<s-tab>'] = cmp.mapping(functional.partial(tab_fn, cmp.select_prev_item)),
     ['<c-space>'] = cmp.mapping.complete(),
-    ['<cr>'] = cmp.mapping.confirm({
-      select = true,
-    }),
+    ['<cr>'] = cmp.mapping.confirm(),
   },
   sources = cmp.config.sources({
     { name = 'path' },
