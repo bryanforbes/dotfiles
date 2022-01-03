@@ -1,131 +1,33 @@
+local modbase = ...
 local fn = vim.fn
+local req = require('req')
 local util = require('util')
 
-local global_config = {
-  bashls = {
-    filetypes = { 'sh', 'zsh' },
-  },
-  jsonls = {
-    filetypes = { 'json', 'jsonc' },
-  },
-  diagnosticls = {
-    filetypes = { 'python', 'lua' },
-    init_options = {
-      filetypes = {
-        python = { 'flake8', 'mypy' },
-      },
-      formatFiletypes = {
-        python = { 'isort', 'black' },
-        lua = { 'stylua' },
-      },
-      linters = {
-        flake8 = {
-          command = 'flake8',
-          sourceName = 'flake8',
-          debounce = 100,
-          rootPatterns = { '.flake8', 'setup.cfg', 'tox.ini' },
-          requiredFiles = { '.flake8', 'setup.cfg', 'tox.ini' },
-          args = {
-            '--format=%(row)d,%(col)d,%(code).1s,%(code)s: %(text)s',
-            '--stdin-display-name',
-            '%filepath',
-            '-',
-          },
-          formatLines = 1,
-          formatPattern = {
-            '(\\d+),(\\d+),([A-Z]),(.*)(\\r|\\n)*$',
-            {
-              line = 1,
-              column = 2,
-              security = 3,
-              message = 4,
-            },
-          },
-          securities = {
-            W = 'warning',
-            E = 'error',
-            F = 'error',
-            C = 'error',
-            N = 'error',
-            B = 'error',
-            Y = 'error',
-          },
-        },
-        mypy = {
-          command = 'mypy',
-          sourceName = 'mypy',
-          debounce = 500,
-          rootPatterns = { 'mypy.ini', '.mypy.ini', 'setup.cfg' },
-          requiredFiles = { 'mypy.ini', '.mypy.ini', 'setup.cfg' },
-          args = {
-            '--no-color-output',
-            '--no-error-summary',
-            '--show-column-numbers',
-            '--show-error-codes',
-            '--shadow-file',
-            '%filepath',
-            '%tempfile',
-            '%filepath',
-          },
-          formatPattern = {
-            '^([^:]+):(\\d+):(\\d+):\\s+([a-z]+):\\s+(.*)$',
-            {
-              sourceName = 1,
-              sourceNameFilter = true,
-              line = 2,
-              column = 3,
-              security = 4,
-              message = 5,
-            },
-          },
-          securities = {
-            error = 'error',
-            note = 'info',
-          },
-        },
-      },
-      formatters = {
-        black = {
-          command = 'black',
-          args = { '--quiet', '--stdin-filename', '%filepath', '-' },
-          requiredFiles = { 'pyproject.toml' },
-          rootPatterns = { 'pyproject.toml' },
-        },
-        isort = {
-          command = 'isort',
-          args = { '--quiet', '-' },
-          requiredFiles = { 'pyproject.toml' },
-          rootPatterns = { 'pyproject.toml' },
-        },
-        stylua = {
-          command = 'stylua',
-          args = {
-            '--stdin-filepath',
-            '%filepath',
-            '--search-parent-directories',
-            '-',
-          },
-          requiredFiles = { '.stylua.toml' },
-          rootPatterns = { '.stylua.toml' },
-        },
-      },
-    },
-  },
-}
+-- vim.lsp.set_log_level('debug')
+
+-- load the global config, if it exists
+local function load_global_config(server_name)
+  local status, config = pcall(require, modbase .. '.' .. server_name)
+  if status and type(config) == 'table' then
+    return config
+  else
+    return {}
+  end
+end
 
 -- load the local config, if it exists
-local local_config = nil
+local _local_config = nil
 local function load_local_config(server_name)
-  if local_config == nil then
+  if _local_config == nil then
     local status, config = pcall(dofile, '.vim/lsp-config.lua')
     if status and type(config) == 'table' then
-      local_config = config
+      _local_config = config
     else
-      local_config = {}
+      _local_config = {}
     end
   end
 
-  return local_config[server_name]
+  return _local_config[server_name]
 end
 
 -- configure a client when it's attached to a buffer
@@ -168,7 +70,7 @@ local function on_attach(client, bufnr)
     util.command(
       'Format',
       '-buffer',
-      'lua vim.lsp.buf.formatting_sync(nil, 5000)'
+      'lua require("settings.lsp").format_document()'
     )
     util.autocmd('BufWritePre <buffer> :Format')
   end
@@ -188,17 +90,11 @@ end
 
 local M = {}
 
-local configs = {}
+local _configs = {}
 function M.get_server_config(server_name)
-  if configs[server_name] == nil then
-    local global_server_config = global_config[server_name] or {}
+  if _configs[server_name] == nil then
+    local global_server_config = load_global_config(server_name)
     local local_server_config = load_local_config(server_name) or {}
-    local capabilities = require('cmp_nvim_lsp').update_capabilities(
-      vim.lsp.protocol.make_client_capabilities()
-    )
-    -- local capabilities = require('coq').lsp_ensure_capabilities(
-    --   vim.lsp.protocol.make_client_capabilities()
-    -- )
 
     local base_config = {
       on_attach = function(client, bufnr)
@@ -213,10 +109,23 @@ function M.get_server_config(server_name)
 
         on_attach(client, bufnr)
       end,
-      capabilities = capabilities,
     }
 
-    configs[server_name] = vim.tbl_deep_extend(
+    -- add cmp capabilities
+    local cmp = req('cmp_nvim_lsp')
+    if cmp then
+      base_config.capabilities = cmp.update_capabilities(
+        vim.lsp.protocol.make_client_capabilities()
+      )
+    end
+
+    -- add coq capabilities
+    local coq = req('coq')
+    if coq then
+      base_config = coq.lsp_ensure_capabilities(base_config)
+    end
+
+    _configs[server_name] = vim.tbl_deep_extend(
       'keep',
       base_config,
       local_server_config,
@@ -224,7 +133,7 @@ function M.get_server_config(server_name)
     )
   end
 
-  return configs[server_name]
+  return _configs[server_name]
 end
 
 function M.show_line_diagnostics()
@@ -245,6 +154,51 @@ function M.show_position_diagnostics()
     show_header = false,
     focusable = false,
   })
+end
+
+local save_win_data = function(bufnr)
+  local marks = {}
+  for _, m in pairs(vim.fn.getmarklist(bufnr)) do
+    if m.mark:match('%a') then
+      marks[m.mark] = m.pos
+    end
+  end
+
+  local views = {}
+  for _, win in pairs(vim.api.nvim_list_wins() or {}) do
+    views[win] = vim.api.nvim_win_call(win, function()
+      return vim.fn.winsaveview()
+    end)
+  end
+
+  return marks, views
+end
+
+local restore_win_data = function(marks, views, bufnr)
+  -- no need to restore marks that still exist
+  for _, m in pairs(vim.fn.getmarklist(bufnr)) do
+    marks[m.mark] = nil
+  end
+  for mark, pos in pairs(marks) do
+    if pos then
+      vim.fn.setpos(mark, pos)
+    end
+  end
+
+  for win, view in pairs(views) do
+    if vim.api.nvim_win_is_valid(win) then
+      vim.api.nvim_win_call(win, function()
+        vim.fn.winrestview(view)
+      end)
+    end
+  end
+end
+
+function M.format_document()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local marks, views = save_win_data(bufnr)
+  vim.lsp.buf.formatting_sync(nil, 5000)
+  restore_win_data(marks, views, bufnr)
 end
 
 -- UI
