@@ -30,8 +30,8 @@ trouble_lsp.diagnostics = function(_win, buf, cb, options)
 end
 
 require('trouble').setup({
-  mode = 'lsp_document_diagnostics',
-  use_lsp_diagnostic_signs = true,
+  mode = 'document_diagnostics',
+  use_diagnostic_signs = true,
 })
 
 util.noremap('<leader>e', '<cmd>TroubleToggle<cr>')
