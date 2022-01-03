@@ -189,45 +189,6 @@ local function init()
     },
   })
 
-  use({
-    'ms-jpq/coq_nvim',
-    branch = 'coq',
-    run = ':COQdeps',
-    disable = true,
-    setup = function()
-      vim.g.coq_settings = {
-        auto_start = 'shut-up',
-        display = {
-          ghost_text = { enabled = false },
-          pum = { source_context = { '', '' } },
-          preview = {
-            positions = {
-              north = 0,
-              south = 0,
-              west = 0,
-              east = 0,
-            },
-          },
-        },
-      }
-    end,
-    requires = {
-      { 'ms-jpq/coq.thirdparty', branch = '3p' },
-      { 'ms-jpq/coq.artifacts', branch = 'artifacts' },
-    },
-  })
-
-  -- highlight current word
-  use({
-    'RRethy/vim-illuminate',
-    -- disabled because it conflicts with matchup's highlighting for
-    -- function/end and if/end pairs
-    disable = true,
-    -- config = function()
-    --   require('settings.illuminate')
-    -- end,
-  })
-
   -- better start/end matching
   use({
     'andymass/vim-matchup',
