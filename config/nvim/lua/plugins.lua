@@ -1,11 +1,33 @@
 local packer = nil
 
-local function config(module_name)
-  return [[require('settings.]] .. module_name .. [[')]]
-end
+local function make_use(packer_use)
+  local function config(module_name)
+    return [[require('settings.]] .. module_name .. [[')]]
+  end
 
-local function setup(module_name)
-  return config(module_name .. '_setup')
+  local function setup(module_name)
+    return config(module_name .. '_setup')
+  end
+
+  local function use(plugin_spec)
+    local spec_type = type(plugin_spec)
+
+    if spec_type == 'table' and #plugin_spec == 1 then
+      if plugin_spec.config_module ~= nil then
+        plugin_spec.config = config(plugin_spec.config_module)
+        plugin_spec.config_module = nil
+      end
+
+      if plugin_spec.setup_module ~= nil then
+        plugin_spec.setup = setup(plugin_spec.setup_module)
+        plugin_spec.setup_module = nil
+      end
+    end
+
+    packer_use(plugin_spec)
+  end
+
+  return use
 end
 
 local function init()
@@ -22,7 +44,8 @@ local function init()
     })
   end
 
-  local use = packer.use
+  local use = make_use(packer.use)
+
   packer.reset()
 
   -- manage the package manager
@@ -40,8 +63,8 @@ local function init()
   -- Colorschemes
   use({
     'lifepillar/vim-solarized8',
-    setup = setup('solarized'),
-    config = config('solarized'),
+    setup_module = 'solarized',
+    config_module = 'solarized',
   })
 
   -- devicons are needed by many things
@@ -49,27 +72,27 @@ local function init()
 
   use({
     'qpkorr/vim-bufkill',
-    setup = setup('bufkill'),
+    setup_module = 'bufkill',
   })
 
   -- use('mileszs/ack.vim')
 
   use({
     'editorconfig/editorconfig-vim',
-    config = config('editorconfig'),
+    config_module = 'editorconfig',
   })
 
   use({
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
-    config = config('nvim-treesitter'),
+    config_module = 'nvim-treesitter',
   })
 
   use('jeetsukumaran/vim-python-indent-black')
 
   use({
     'nvim-lualine/lualine.nvim',
-    config = config('lualine'),
+    config_module = 'lualine',
     requires = {
       'arkav/lualine-lsp-progress',
       {
@@ -86,26 +109,26 @@ local function init()
 
   use({
     'tpope/vim-fugitive',
-    config = config('fugitive'),
+    config_module = 'fugitive',
   })
 
   use('tpope/vim-repeat')
 
   use({
     'tpope/vim-surround',
-    config = config('surround'),
+    config_module = 'surround',
   })
 
   use({
     'terryma/vim-expand-region',
-    config = config('expand-region'),
+    config_module = 'expand-region',
   })
 
   use('tmux-plugins/vim-tmux-focus-events')
 
   use({
     'antoinemadec/FixCursorHold.nvim',
-    setup = setup('fix-cursor-hold'),
+    setup_module = 'fix-cursor-hold',
   })
 
   -- use('thinca/vim-themis')
@@ -132,7 +155,7 @@ local function init()
     cond = function()
       return vim.fn.executable('fzf') == 1
     end,
-    config = config('fzf'),
+    config_module = 'fzf',
   })
 
   -- Native LSP
@@ -140,31 +163,31 @@ local function init()
 
   use({
     'williamboman/nvim-lsp-installer',
-    config = config('nvim-lsp-installer'),
+    config_module = 'nvim-lsp-installer',
   })
 
   use('ray-x/lsp_signature.nvim')
 
   use({
     'folke/trouble.nvim',
-    config = config('trouble'),
+    config_module = 'trouble',
   })
 
   use({
     'nvim-telescope/telescope.nvim',
-    config = config('telescope'),
+    config_module = 'telescope',
   })
 
   -- tree
   use({
     'kyazdani42/nvim-tree.lua',
-    config = config('nvim-tree'),
+    config_module = 'nvim-tree',
   })
 
   -- completion
   use({
     'hrsh7th/nvim-cmp',
-    config = config('nvim-cmp'),
+    config_module = 'nvim-cmp',
     requires = {
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
@@ -177,7 +200,7 @@ local function init()
   -- better start/end matching
   use({
     'andymass/vim-matchup',
-    config = config('vim-matchup'),
+    config_module = 'vim-matchup',
   })
 end
 
