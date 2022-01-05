@@ -52,13 +52,16 @@ local function init()
       require('settings.bufkill')
     end,
   })
+
   -- use('mileszs/ack.vim')
+
   use({
     'editorconfig/editorconfig-vim',
     config = function()
       require('settings.editorconfig')
     end,
   })
+
   use({
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
@@ -66,6 +69,9 @@ local function init()
       require('settings.nvim-treesitter')
     end,
   })
+
+  use('jeetsukumaran/vim-python-indent-black')
+
   use({
     'nvim-lualine/lualine.nvim',
     config = function()
@@ -84,26 +90,32 @@ local function init()
       },
     },
   })
+
   use({
     'tpope/vim-fugitive',
     config = function()
       require('settings.fugitive')
     end,
   })
+
   use('tpope/vim-repeat')
+
   use({
     'tpope/vim-surround',
     config = function()
       require('settings.surround')
     end,
   })
+
   use({
     'terryma/vim-expand-region',
     config = function()
       require('settings.expand-region')
     end,
   })
+
   use('tmux-plugins/vim-tmux-focus-events')
+
   use({
     'antoinemadec/FixCursorHold.nvim',
     setup = function()
@@ -120,6 +132,7 @@ local function init()
   --     vim.g.polyglot_disabled = {'autoindent'}
   --   end,
   -- })
+
   use('neoclide/jsonc.vim')
 
   use({
@@ -160,7 +173,6 @@ local function init()
 
   use({
     'nvim-telescope/telescope.nvim',
-    requires = 'plenary.nvim',
     config = function()
       require('settings.telescope')
     end,
