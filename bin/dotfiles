@@ -92,7 +92,7 @@ function dotfiles-brew {
         'mosh'       # remote terminal application that allows roaming
         'neovim'     # better vim
         'node'       # NodeJS
-        'python@3.8' # update from stock Python
+        'python@3.9' # update from stock Python
         'ripgrep'    # better grep
         'tmux'       # terminal multiplexer
         'yarn'       # node package manager
@@ -363,6 +363,8 @@ function dotfiles-vim {
         # If packer doesn't exist, nvim will bootstrap it and compile
         nvim --headless -c 'autocmd User PackerCompileDone quitall' 2>&1 > /dev/null
     fi
+
+    nvim --headless -c 'lua require("nvim-treesitter.install").ensure_installed_sync("maintained")' -c 'quitall' 2>&1 > /dev/null
 }
 
 cd $HOME

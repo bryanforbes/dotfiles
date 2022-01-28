@@ -84,7 +84,7 @@ local function init()
 
   use({
     'nvim-treesitter/nvim-treesitter',
-    run = ':TSUpdate',
+    run = ':TSUpdateSync',
     config_module = 'nvim-treesitter',
   })
 
@@ -97,6 +97,9 @@ local function init()
       'arkav/lualine-lsp-progress',
       {
         'SmiteshP/nvim-gps',
+        cond = function()
+          return require('req')('nvim-treesitter') ~= nil
+        end,
         config = function()
           local gps = require('req')('nvim-gps')
           if gps then
