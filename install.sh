@@ -10,15 +10,20 @@ if [[ "$OSTYPE" == linux* ]]; then
 fi
 
 if [[ "$OSTYPE" == darwin* ]]; then
-    HOMEBREW_BASE=/usr/local
+    UNAME_MACHINE="$(/usr/bin/uname -m)"
+    
+    if [[ "${UNAME_MACHINE}" == "arm64" ]]; then
+        HOMEBREW_BASE=/opt/homebrew
+    else
+        HOMEBREW_BASE=/usr/local
+    fi
 else
     HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
 fi
 
 if [[ ! -f "$HOMEBREW_BASE/bin/brew" ]]; then
     echo "Installing Homebrew"
-    # Run as a login shell (non-interactive) so that the script doesn't pause for user input
-    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | bash --login
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 eval "$($HOMEBREW_BASE/bin/brew shellenv)"
