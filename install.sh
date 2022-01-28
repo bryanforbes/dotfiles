@@ -11,7 +11,7 @@ fi
 
 if [[ "$OSTYPE" == darwin* ]]; then
     UNAME_MACHINE="$(/usr/bin/uname -m)"
-    
+
     if [[ "${UNAME_MACHINE}" == "arm64" ]]; then
         HOMEBREW_BASE=/opt/homebrew
     else

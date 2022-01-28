@@ -147,7 +147,7 @@ local function init()
   use('neoclide/jsonc.vim')
 
   use({
-    '/usr/local/opt/fzf',
+    vim.env.HOMEBREW_BASE .. '/opt/fzf',
     cond = function()
       return vim.fn.executable('fzf') == 1
     end,

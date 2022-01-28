@@ -13,6 +13,8 @@ if [[ -d /home/linuxbrew ]]; then
     export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
 elif [[ -d $HOME/.linuxbrew ]]; then
     export HOMEBREW_BASE=$HOME/.linuxbrew
+elif [[ -d /opt/homebrew ]]; then
+    export HOMEBREW_BASE=/opt/homebrew
 else
     export HOMEBREW_BASE=/usr/local
 fi

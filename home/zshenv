@@ -61,11 +61,11 @@ case "$OSTYPE" in
     darwin*)
         # path and manpath for homebrew
         path=(
-            /usr/local/opt/{coreutils,gnu-sed}/libexec/gnubin
+            $HOMEBREW_BASE/opt/{coreutils,gnu-sed}/libexec/gnubin
             $path
         )
         manpath=(
-            /usr/local/opt/{coreutils,gnu-sed}/libexec/gnuman
+            $HOMEBREW_BASE/opt/{coreutils,gnu-sed}/libexec/gnuman
             $manpath
         )
         ;;
