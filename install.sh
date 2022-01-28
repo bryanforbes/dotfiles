@@ -17,7 +17,8 @@ fi
 
 if [[ ! -f "$HOMEBREW_BASE/bin/brew" ]]; then
     echo "Installing Homebrew"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    # Run as a login shell (non-interactive) so that the script doesn't pause for user input
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | bash --login
 fi
 
 eval "$($HOMEBREW_BASE/bin/brew shellenv)"
