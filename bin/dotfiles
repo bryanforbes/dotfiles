@@ -34,7 +34,7 @@ function dotfiles-home {
 
     makedir $CONFIGDIR
 
-    for file in $HOME/.[a-z]*(@) $CONFIGDIR/[a-zA-Z]*(@); do
+    for file in $HOME/.[a-z]*(@,N) $CONFIGDIR/[a-zA-Z]*(@,N); do
         if [[ ! -e $file ]]; then
             rm $file
             logSub "Removed invalid link $file"
