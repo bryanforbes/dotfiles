@@ -15,7 +15,7 @@ else
     HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
 fi
 
-if [[ ! -d "$HOMEBREW_BASE" ]]; then
+if [[ ! -f "$HOMEBREW_BASE/bin/brew" ]]; then
     echo "Installing Homebrew"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 fi
