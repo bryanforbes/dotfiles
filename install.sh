@@ -36,6 +36,11 @@ fi
 ZSHPATH="$HOMEBREW_BASE/bin/zsh"
 echo "Adding $ZSHPATH to /etc/shells"
 echo "$ZSHPATH" | sudo tee -a /etc/shells > /dev/null
+
+if [[ ! -f "$ZSHPATH" ]]; then
+    brew install zsh
+fi
+
 chsh -s $ZSHPATH
 
 $HOMEBREW_BASE/bin/zsh --no-rcs --no-globalrcs -c "source $HOME/.dotfiles/home/zshenv; source $HOME/.dotfiles/home/zshrc; dotfiles"
