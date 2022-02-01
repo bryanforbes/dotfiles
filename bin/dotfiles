@@ -112,6 +112,7 @@ function dotfiles-brew {
             'mas'                 # App Store CLI
             'font-iosevka'        # iosevka font
             'font-hack-nerd-font' # hack font with glyphs
+            'sf-symbols'          # UI fonts from Apple
             'kitty'               # GPU based terminal emulator
             'hammerspoon'         # OS X automation via lua
         )
