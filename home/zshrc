@@ -373,6 +373,8 @@ bindkey -M isearch . self-insert 2> /dev/null
 # Clear existing aliases
 unalias -m '*'
 
+alias tox='no-coreutils tox'
+
 # Reload zshrc. Undefine DIRENV_WATCHES (if it exists) so that direnv will
 # reload the environment
 alias refresh='source ~/.zshenv && source ~/.zshrc'
@@ -602,10 +604,7 @@ fi
 # ------------------------------------------------------------------------
 
 if (( ${+commands[asdf]} )); then
-    path=(
-        ~/.asdf/shims
-        $path
-    )
+    alias asdf="no-coreutils asdf"
 
     # export ASDF_DIR=$HOMEBREW_BASE/opt/asdf/libexec
 
