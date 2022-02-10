@@ -12,7 +12,8 @@ use_asdf-plugins() {
       exit 1
     fi
 
-    eval "export ASDF_${plugin^^}_VERSION=$version"
+    local plugin_upper=$(printf "%s\\n" "$plugin" | tr '[:lower:]-' '[:upper:]_')
+    eval "export ASDF_${plugin_upper}_VERSION=$version"
 
     asdf current $plugin &> /dev/null
 
