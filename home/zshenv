@@ -57,19 +57,17 @@ fi
 export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
 
 # coreutils and gnu-sed
-case "$OSTYPE" in
-    darwin*)
-        # path and manpath for homebrew
-        path=(
-            $HOMEBREW_BASE/opt/{coreutils,gnu-sed}/libexec/gnubin
-            $path
-        )
-        manpath=(
-            $HOMEBREW_BASE/opt/{coreutils,gnu-sed}/libexec/gnuman
-            $manpath
-        )
-        ;;
-esac
+if is-darwin; then
+    # path and manpath for homebrew
+    path=(
+        $HOMEBREW_BASE/opt/{coreutils,gnu-sed}/libexec/gnubin
+        $path
+    )
+    manpath=(
+        $HOMEBREW_BASE/opt/{coreutils,gnu-sed}/libexec/gnuman
+        $manpath
+    )
+fi
 
 # Python
 if [[ -d $HOMEBREW_BASE/opt/python ]]; then

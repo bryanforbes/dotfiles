@@ -24,3 +24,11 @@ fi
 # value for ASDF_DIR automatically.
 export ASDF_DIR=$HOMEBREW_BASE/opt/asdf/libexec
 export ASDF_DATA_DIR=$DATADIR/asdf
+
+function is-darwin {
+    [[ "$OSTYPE" == darwin* ]]
+}
+
+function is-linux {
+    [[ "$OSTYPE" == linux* ]]
+}

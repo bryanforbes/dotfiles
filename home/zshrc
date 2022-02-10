@@ -123,7 +123,7 @@ fpath=(
 autoload -Uz compinit
 if [[ ! -f $ZCOMPFILE ]]; then
     compinit -i -d $ZCOMPFILE
-elif [[ $OSTYPE == linux* ]]; then
+elif is-linux; then
     # Only try to rebuild the comp dump once a day
     if [[ $(date +'%j') != $(date --date="$(stat --printf='%y' $ZCOMPFILE)" +'%j') ]]; then
         compinit -i -d $ZCOMPFILE
