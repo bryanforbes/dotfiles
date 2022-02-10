@@ -373,6 +373,7 @@ bindkey -M isearch . self-insert 2> /dev/null
 # Clear existing aliases
 unalias -m '*'
 
+alias make='no-coreutils make'
 alias tox='no-coreutils tox'
 
 # Reload zshrc. Undefine DIRENV_WATCHES (if it exists) so that direnv will
