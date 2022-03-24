@@ -18,10 +18,8 @@ local function tab_fn(cmp_function, fallback)
 end
 
 cmp.setup({
-  experimental = {
-    -- use vim's native completion menu, which may avoid the undo breaking
-    -- effect of floats (https://github.com/neovim/neovim/issues/11439)
-    native_menu = true,
+  view = {
+    entries = 'native',
   },
   snippet = {
     expand = function(args)

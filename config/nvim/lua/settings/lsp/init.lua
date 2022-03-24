@@ -50,6 +50,14 @@ local function on_attach(client, bufnr)
     )
   end
 
+  if client.resolved_capabilities.type_definition then
+    util.nnoremap(
+      '<C-\\>',
+      [[<cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>]],
+      opts
+    )
+  end
+
   if client.resolved_capabilities.find_references then
     util.nnoremap(
       '<leader>gf',
