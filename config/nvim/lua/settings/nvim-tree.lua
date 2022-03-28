@@ -16,9 +16,6 @@ if not tree then
 end
 
 tree.setup({
-  -- close the tree if it's the only open buffer
-  auto_close = true,
-
   -- diagnostics
   diagnostics = {
     enable = true,
@@ -48,3 +45,7 @@ tree.setup({
 })
 
 util.nnoremap('<leader>f', '<cmd>NvimTreeToggle<cr>')
+util.augroup('nvimtree', {
+  -- close the tree if it's the only open buffer
+  [[BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif]]
+})

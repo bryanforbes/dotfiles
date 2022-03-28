@@ -2,7 +2,7 @@ return {
   filetypes = { 'python', 'lua' },
   init_options = {
     filetypes = {
-      python = { 'flake8', 'mypy' },
+      python = { 'flake8' },
     },
     formatFiletypes = {
       python = { 'isort', 'black' },
