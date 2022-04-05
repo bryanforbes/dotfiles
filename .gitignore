@@ -1,5 +1,6 @@
 config/nvim/plugin/packer_compiled.lua
 config/nvim/.netrwhist
+config/direnv/lib/use_asdf.sh
 /hammerspoon/Spoons/*
 !/hammerspoon/Spoons/BFMuter.spoon
 !/hammerspoon/Spoons/SpoonInstall.spoon

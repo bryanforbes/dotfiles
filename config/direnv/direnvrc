@@ -1,5 +1,3 @@
-source "$(asdf direnv hook asdf)"
-
 use_asdf-plugins() {
   for spec in $@; do
     local plugin=${spec%@*}

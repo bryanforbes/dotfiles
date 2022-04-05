@@ -607,6 +607,10 @@ fi
 if (( ${+commands[asdf]} )); then
     alias asdf="no-coreutils asdf"
 
+    if [ -e "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc" ]; then
+        source ${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc
+    fi
+
     # export ASDF_DIR=$HOMEBREW_BASE/opt/asdf/libexec
 
     # alias direnv so we don't have to type asdf exec all the time

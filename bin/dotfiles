@@ -349,25 +349,28 @@ function dotfiles-asdf {
         fi
     done
 
+    asdf global direnv system
+    asdf direnv setup --version system
+
     # Setup the "system" install for asdf-direnv
-    local direnv_system=$ASDF_DATA_DIR/installs/direnv/system
+    # local direnv_system=$ASDF_DATA_DIR/installs/direnv/system
 
-    if [[ ! -L $direnv_system/bin/direnv ]]; then
-        # For `asdf exec direnv` to work, asdf needs a direnv shim. For it to
-        # be able to create that, *some* installed version of direnv needs a
-        # binary. If we only want to use the system install, we have to create
-        # a link to the system direnv binary in installs/direnv/system/bin.
-        makedir -q $direnv_system/bin
-        link -q $HOMEBREW_BASE/bin/direnv $direnv_system/bin/direnv
-        asdf reshim
-        logSub "Created direnv link"
+    # if [[ ! -L $direnv_system/bin/direnv ]]; then
+    #     # For `asdf exec direnv` to work, asdf needs a direnv shim. For it to
+    #     # be able to create that, *some* installed version of direnv needs a
+    #     # binary. If we only want to use the system install, we have to create
+    #     # a link to the system direnv binary in installs/direnv/system/bin.
+    #     makedir -q $direnv_system/bin
+    #     link -q $HOMEBREW_BASE/bin/direnv $direnv_system/bin/direnv
+    #     asdf reshim
+    #     logSub "Created direnv link"
 
-        # asdf needs a directory to create environments for each installed
-        # version.
-        makedir $direnv_system/env "Created direnv environment directory"
+    #     # asdf needs a directory to create environments for each installed
+    #     # version.
+    #     makedir $direnv_system/env "Created direnv environment directory"
 
-        asdf global direnv system
-    fi
+    #     asdf global direnv system
+    # fi
 }
 
 # Update vim plugins
