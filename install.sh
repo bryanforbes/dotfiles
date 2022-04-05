@@ -5,7 +5,7 @@ if [[ "$OSTYPE" == linux* ]]; then
         echo "Installing system requirements..."
         sudo apt-add-repository -y ppa:git-core/ppa
         sudo apt-get update
-        sudo apt-get install -y build-essential curl file git || true
+        sudo apt-get install -y build-essential procps curl file git || true
     fi
 fi
 

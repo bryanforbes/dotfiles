@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh --no-rcs --no-globalrcs
+#!/usr/bin/env -S zsh --no-rcs --no-globalrcs
 
 source $HOME/.dotfiles/zsh/common.zsh
 

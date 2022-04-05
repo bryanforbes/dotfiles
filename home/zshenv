@@ -82,7 +82,7 @@ if [[ -d $HOMEBREW_BASE/opt/python ]]; then
 fi
 
 path=(
-    "$(python -c 'import site; print(site.USER_BASE, end="")')/bin"
+    "$(python3 -c 'import site; print(site.USER_BASE, end="")')/bin"
     $path
 )
 

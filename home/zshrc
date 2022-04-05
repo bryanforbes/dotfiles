@@ -113,7 +113,9 @@ fpath=(
     $DOTFILES/zsh/functions
     $ZPLUGDIR/zsh-users/zsh-completions/src
     $ZPLUGDIR/sindresorhus/pure
-    $HOMEBREW_BASE/share/zsh-completions
+    $HOMEBREW_BASE/share/zsh/site-functions
+    $HOMEBREW_BASE/share/zsh/functions
+    /usr/share/zsh/vendor-completions
     $fpath
 )
 
