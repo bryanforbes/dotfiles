@@ -3,9 +3,6 @@ local req = require('req')
 
 local g = vim.g
 
--- show hierarchy lines
-g.nvim_tree_indent_markers = 1
-
 -- append a slash to folder names
 g.nvim_tree_add_trailing = 1
 
@@ -36,6 +33,12 @@ tree.setup({
 
     -- open the tree on the left side
     side = 'left',
+  },
+
+  renderer = {
+    indent_markers = {
+      enable = true,
+    },
   },
 
   git = {
