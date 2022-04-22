@@ -220,7 +220,6 @@ for _, plugin in pairs({
   '2html_plugin',
   'getscript',
   'getscriptPlugin',
-  'gzip',
   'logipat',
   'matchit',
   'matchparen',
@@ -231,12 +230,6 @@ for _, plugin in pairs({
   'rrhelper',
   'spec',
   'spellfile_plugin',
-  'tar',
-  'tarPlugin',
-  'vimball',
-  'vimballPlugin',
-  'zip',
-  'zipPlugin',
 }) do
   g['loaded_' .. plugin] = 1
 end
