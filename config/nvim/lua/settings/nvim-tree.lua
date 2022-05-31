@@ -1,11 +1,6 @@
 local util = require('util')
 local req = require('req')
 
-local g = vim.g
-
--- append a slash to folder names
-g.nvim_tree_add_trailing = 1
-
 local tree = req('nvim-tree')
 
 if not tree then
@@ -36,6 +31,7 @@ tree.setup({
   },
 
   renderer = {
+    add_trailing = true,
     indent_markers = {
       enable = true,
     },
@@ -50,5 +46,5 @@ tree.setup({
 util.nnoremap('<leader>f', '<cmd>NvimTreeToggle<cr>')
 util.augroup('nvimtree', {
   -- close the tree if it's the only open buffer
-  [[BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif]]
+  [[BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif]],
 })
