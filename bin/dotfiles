@@ -241,7 +241,7 @@ function dotfiles-node {
     fi
 
     # get list of outdated global packages
-    local mods=($($node_path/npm --registry=https://registry.npmjs.org outdated -g --parseable))
+    local mods=($($node_path/npm --registry=https://registry.npmjs.org outdated --location=global --parseable))
     for mod in $mods; do
         # extract current and latest fields
         array=(${(@s/:/)mod})
@@ -272,7 +272,7 @@ function dotfiles-node {
             (( latest[3] > current[3] ));
                     };
                 }; then
-            $node_path/npm install --registry=https://registry.npmjs.org --progress=false -g $latestPkg > /dev/null
+            $node_path/npm install --registry=https://registry.npmjs.org --progress=false --location=global $latestPkg > /dev/null
             logSub "Installed $latestPkg"
         fi
     done
