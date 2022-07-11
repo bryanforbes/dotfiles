@@ -1,3 +1,3 @@
 return {
-    disable = true,
+  disable = true,
 }
