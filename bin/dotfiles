@@ -111,7 +111,6 @@ function dotfiles-brew {
         'python@3.9' # update from stock Python
         'ripgrep'    # better grep
         'tmux'       # terminal multiplexer
-        'yarn'       # node package manager
         'zsh'        # newer zsh
     )
 
