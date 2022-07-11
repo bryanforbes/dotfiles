@@ -1,5 +1,5 @@
 return {
-  filetypes = { 'python', 'lua' },
+  filetypes = { 'python', 'lua', 'html', 'javascript', 'typescript', 'css' },
   init_options = {
     filetypes = {
       python = { 'flake8' },
@@ -7,6 +7,10 @@ return {
     formatFiletypes = {
       python = { 'isort', 'black' },
       lua = { 'stylua' },
+      html = { 'prettier' },
+      javascript = { 'prettier' },
+      typescript = { 'prettier' },
+      css = { 'prettier' },
     },
     linters = {
       flake8 = {
@@ -97,6 +101,27 @@ return {
         },
         requiredFiles = { '.stylua.toml' },
         rootPatterns = { '.stylua.toml' },
+      },
+      prettier = {
+        command = './node_modules/.bin/prettier',
+        args = {
+          '--stdin',
+          '--stdin-filepath',
+          '%filepath',
+        },
+        rootPatterns = {
+          '.prettierrc',
+          '.prettierrc.json',
+          '.prettierrc.toml',
+          '.prettierrc.json',
+          '.prettierrc.yml',
+          '.prettierrc.yaml',
+          '.prettierrc.json5',
+          '.prettierrc.js',
+          '.prettierrc.cjs',
+          'prettier.config.js',
+          'prettier.config.cjs',
+        },
       },
     },
   },
