@@ -1,4 +1,4 @@
-require('plugins-bootstrap').bootstrap()
+require('user.plugins-bootstrap').bootstrap()
 
 local join_paths = (function()
   local separator = package.config:sub(1, 1)
@@ -7,7 +7,7 @@ local join_paths = (function()
   end
 end)()
 
-local util = require('util')
+local util = require('user.util')
 local cmd = vim.cmd
 local env = vim.env
 local fn = vim.fn
@@ -141,10 +141,10 @@ g.lsp_severity_limit = 3
 ----------------
 
 function ReloadInitLua()
-  require('plenary.reload').reload_module('plugins-bootstrap')
-  require('plenary.reload').reload_module('settings', true)
+  require('plenary.reload').reload_module('user.plugins-bootstrap')
+  require('plenary.reload').reload_module('user.settings', true)
   require('plenary.reload').reload_module('lua')
-  require('plenary.reload').reload_module('plugins')
+  require('plenary.reload').reload_module('user.plugins')
   dofile(join_paths(fn.stdpath('config'), 'init.lua'))
   cmd([[EditorConfigReload]])
 end
@@ -193,18 +193,22 @@ util.map('<leader>cd', ':cd %:p:h<cr>')
 util.noremap('<leader>.', '<C-^>')
 util.map(
   '<C-h>',
-  [[<cmd>lua require('win_move').left()<cr>]],
+  [[<cmd>lua require('user.win_move').left()<cr>]],
   { silent = true }
 )
 util.map(
   '<C-j>',
-  [[<cmd>lua require('win_move').down()<cr>]],
+  [[<cmd>lua require('user.win_move').down()<cr>]],
   { silent = true }
 )
-util.map('<C-k>', [[<cmd>lua require('win_move').up()<cr>]], { silent = true })
+util.map(
+  '<C-k>',
+  [[<cmd>lua require('user.win_move').up()<cr>]],
+  { silent = true }
+)
 util.map(
   '<C-l>',
-  [[<cmd>lua require('win_move').right()<cr>]],
+  [[<cmd>lua require('user.win_move').right()<cr>]],
   { silent = true }
 )
 util.noremap('<leader>q', '<cmd>wincmd q<cr>')

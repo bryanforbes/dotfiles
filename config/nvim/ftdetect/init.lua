@@ -1,4 +1,4 @@
-require('util').create_augroup('init_ftdetect_autocommands', {
+require('user.util').create_augroup('init_ftdetect_autocommands', {
   -- jinja
   {
     { 'BufNewFile', 'BufRead' },

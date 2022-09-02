@@ -1,7 +1,7 @@
 local modbase = ...
 local fn = vim.fn
-local req = require('req')
-local util = require('util')
+local req = require('user.req')
+local util = require('user.util')
 
 -- vim.lsp.set_log_level('debug')
 
@@ -96,7 +96,7 @@ local function on_attach(client, bufnr)
   end
 
   util.autocmd(
-    'CursorHold <buffer> lua require("settings.lsp").show_position_diagnostics()'
+    'CursorHold <buffer> lua require("user.settings.lsp").show_position_diagnostics()'
   )
 end
 

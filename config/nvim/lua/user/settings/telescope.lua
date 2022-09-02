@@ -1,4 +1,4 @@
-local req = require('req')
+local req = require('user.req')
 local actions = req('telescope.actions')
 
 if not actions then

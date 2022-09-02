@@ -1,4 +1,4 @@
-local req = require('req')
+local req = require('user.req')
 local configs = req('nvim-treesitter.configs')
 local nvim_meta = req('plenary.nvim_meta')
 

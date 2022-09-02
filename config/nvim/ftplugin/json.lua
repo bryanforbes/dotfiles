@@ -1,4 +1,4 @@
-local util = require('util')
+local util = require('user.util')
 
 vim.wo.wrap = true
 vim.wo.linebreak = true

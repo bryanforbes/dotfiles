@@ -1,4 +1,4 @@
-local util = require('util')
+local util = require('user.util')
 
 util.noremap('<leader>gd', '<cmd>Gdiffsplit<cr>')
 util.noremap('<leader>gc', '<cmd>Git commit -v<cr>')

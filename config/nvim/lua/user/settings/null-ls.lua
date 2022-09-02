@@ -1,11 +1,11 @@
-local req = require('req')
+local req = require('user.req')
 local null_ls = req('null-ls')
 
 if null_ls == nil then
   return
 end
 
-local lsp = require('settings.lsp')
+local lsp = require('user.settings.lsp')
 local config = lsp.get_server_config('null-ls')
 
 null_ls.setup({

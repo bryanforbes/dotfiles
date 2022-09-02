@@ -1,7 +1,7 @@
 local fn = vim.fn
 local g = vim.g
 local Path = require('plenary.path')
-local util = require('util')
+local util = require('user.util')
 
 g.coc_node_path = Path:new(vim.env.HOMEBREW_BASE, 'bin', 'node'):absolute()
 g.coc_channel_timeout = 60

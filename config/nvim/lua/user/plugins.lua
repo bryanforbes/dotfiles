@@ -2,7 +2,7 @@ local packer = nil
 
 local function make_use(packer_use)
   local function config(module_name)
-    return [[require('settings.]] .. module_name .. [[')]]
+    return [[require('user.settings.]] .. module_name .. [[')]]
   end
 
   local function setup(module_name)
@@ -98,10 +98,10 @@ local function init()
       {
         'SmiteshP/nvim-gps',
         cond = function()
-          return require('req')('nvim-treesitter') ~= nil
+          return require('user.req')('nvim-treesitter') ~= nil
         end,
         config = function()
-          local gps = require('req')('nvim-gps')
+          local gps = require('user.req')('nvim-gps')
           if gps then
             gps.setup()
           end

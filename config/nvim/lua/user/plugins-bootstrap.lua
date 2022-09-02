@@ -1,6 +1,6 @@
 pcall(require, 'impatient')
 
-local util = require('util')
+local util = require('user.util')
 
 local cmd = vim.cmd
 local fn = vim.fn
@@ -39,7 +39,7 @@ function M.bootstrap()
         pattern = 'PackerComplete',
         once = true,
         callback = function()
-          require('plugins').compile()
+          require('user.plugins').compile()
         end,
       },
       -- finish bootstrap after compile is done
@@ -48,44 +48,44 @@ function M.bootstrap()
         pattern = 'PackerCompileDone',
         once = true,
         callback = function()
-          require('plugins-bootstrap').bootstrap_complete()
+          require('user.plugins-bootstrap').bootstrap_complete()
         end,
       },
     })
 
-    require('plugins').install()
+    require('user.plugins').install()
   end
 
   util.command(
     'PackerInstall',
     '-bang',
-    [[lua require('plugins-bootstrap').run('install', "<bang>")]]
+    [[lua require('user.plugins-bootstrap').run('install', "<bang>")]]
   )
   util.command(
     'PackerUpdate',
     '-bang',
-    [[lua require('plugins-bootstrap').run('update', "<bang>")]]
+    [[lua require('user.plugins-bootstrap').run('update', "<bang>")]]
   )
   util.command(
     'PackerSync',
     '-bang',
-    [[lua require('plugins-bootstrap').run('sync', "<bang>")]]
+    [[lua require('user.plugins-bootstrap').run('sync', "<bang>")]]
   )
   util.command(
     'PackerClean',
     '-bang',
-    [[lua require('plugins-bootstrap').run('clean', "<bang>")]]
+    [[lua require('user.plugins-bootstrap').run('clean', "<bang>")]]
   )
   util.command(
     'PackerCompile',
     '-bang',
-    [[lua require('plugins-bootstrap').run('compile', "<bang>")]]
+    [[lua require('user.plugins-bootstrap').run('compile', "<bang>")]]
   )
 
   util.create_augroup('init_packer', {
     {
       'BufWritePost',
-      pattern = 'config/nvim/lua/plugins.lua',
+      pattern = 'config/nvim/lua/user/plugins.lua',
       command = 'PackerCompile!',
     },
   })
@@ -101,10 +101,10 @@ function M.run(function_name, bang)
   cmd('packadd packer.nvim')
 
   if bang == '!' then
-    require('plenary.reload').reload_module('plugins')
+    require('plenary.reload').reload_module('user.plugins')
   end
 
-  require('plugins')[function_name]()
+  require('user.plugins')[function_name]()
 end
 
 return M

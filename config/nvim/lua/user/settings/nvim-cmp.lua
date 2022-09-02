@@ -1,4 +1,4 @@
-local req = require('req')
+local req = require('user.req')
 local cmp = req('cmp')
 local functional = req('plenary.functional')
 local luasnip = req('luasnip')
@@ -38,12 +38,12 @@ cmp.setup({
   }),
 })
 
-require('util').create_augroup('nvim_cmp_init', {
+require('user.util').create_augroup('nvim_cmp_init', {
   {
     'FileType',
     pattern = 'lua',
     callback = function()
-      require('cmp').setup.buffer({
+      cmp.setup.buffer({
         sources = {
           { name = 'path' },
           { name = 'nvim_lsp' },

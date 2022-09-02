@@ -1,5 +1,5 @@
-local lsp = require('settings.lsp')
-local req = require('req')
+local lsp = require('user.settings.lsp')
+local req = require('user.req')
 
 local mason = req('mason')
 if mason == nil then

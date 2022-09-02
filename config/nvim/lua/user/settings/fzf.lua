@@ -1,6 +1,6 @@
 local fn = vim.fn
 local g = vim.g
-local util = require('util')
+local util = require('user.util')
 local Path = require('plenary.path')
 
 if Path:new('.git'):is_dir() then

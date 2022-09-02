@@ -1,5 +1,5 @@
-local util = require('util')
-local req = require('req')
+local util = require('user.util')
+local req = require('user.req')
 
 local tree = req('nvim-tree')
 
