@@ -185,12 +185,9 @@ fn.sign_define(
   { text = '', texthl = 'DiagnosticSignHint' }
 )
 
-local lsp = vim.lsp
+vim.diagnostic.config({ virtual_text = false })
 
-lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
-  lsp.handlers['textDocument/publishDiagnostics'],
-  { virtual_text = false }
-)
+local lsp = vim.lsp
 
 lsp.handlers['textDocument/hover'] =
   lsp.with(lsp.handlers.hover, { border = 'rounded' })
