@@ -32,11 +32,25 @@ function M.bootstrap()
     cmd('packadd packer.nvim')
 
     -- compile after install finishes
-    util.augroup('packer_bootstrap_autocommands', {
+    util.create_augroup('packer_bootstrap_autocommands', {
       -- compile after install finishes
-      [[User PackerComplete ++once lua require('plugins').compile()]],
+      {
+        'User',
+        pattern = 'PackerComplete',
+        once = true,
+        callback = function()
+          require('plugins').compile()
+        end,
+      },
       -- finish bootstrap after compile is done
-      [[User PackerCompileDone ++once lua require('plugins-bootstrap').bootstrap_complete()]],
+      {
+        'User',
+        pattern = 'PackerCompileDone',
+        once = true,
+        callback = function()
+          require('plugins-bootstrap').bootstrap_complete()
+        end,
+      },
     })
 
     require('plugins').install()
@@ -68,8 +82,12 @@ function M.bootstrap()
     [[lua require('plugins-bootstrap').run('compile', "<bang>")]]
   )
 
-  util.augroup('init_packer', {
-    'BufWritePost config/nvim/lua/plugins.lua PackerCompile!',
+  util.create_augroup('init_packer', {
+    {
+      'BufWritePost',
+      pattern = 'config/nvim/lua/plugins.lua',
+      command = 'PackerCompile!',
+    },
   })
 end
 

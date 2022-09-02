@@ -30,6 +30,8 @@ local function load_local_config(server_name)
   return _local_config[server_name]
 end
 
+local augroup = vim.api.nvim_create_augroup('LspFormatting', {})
+
 -- configure a client when it's attached to a buffer
 local function on_attach(client, bufnr)
   -- print('on_attach: ' .. client.name .. ' ' .. bufnr)
@@ -75,12 +77,14 @@ local function on_attach(client, bufnr)
   end
 
   if client.resolved_capabilities.document_formatting then
-    util.command(
-      'Format',
-      '-buffer',
-      'lua require("settings.lsp").format_document()'
-    )
-    util.autocmd('BufWritePre <buffer> :Format')
+    vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+    vim.api.nvim_create_autocmd('BufWritePre', {
+      group = augroup,
+      buffer = bufnr,
+      callback = function()
+        vim.lsp.buf.formatting_sync()
+      end,
+    })
   end
 
   -- if client.resolved_capabilities.code_action then
@@ -122,9 +126,8 @@ function M.get_server_config(server_name)
     -- add cmp capabilities
     local cmp = req('cmp_nvim_lsp')
     if cmp then
-      base_config.capabilities = cmp.update_capabilities(
-        vim.lsp.protocol.make_client_capabilities()
-      )
+      base_config.capabilities =
+        cmp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
     end
 
     -- add coq capabilities
@@ -164,51 +167,6 @@ function M.show_position_diagnostics()
   })
 end
 
-local save_win_data = function(bufnr)
-  local marks = {}
-  for _, m in pairs(vim.fn.getmarklist(bufnr)) do
-    if m.mark:match('%a') then
-      marks[m.mark] = m.pos
-    end
-  end
-
-  local views = {}
-  for _, win in pairs(vim.api.nvim_list_wins() or {}) do
-    views[win] = vim.api.nvim_win_call(win, function()
-      return vim.fn.winsaveview()
-    end)
-  end
-
-  return marks, views
-end
-
-local restore_win_data = function(marks, views, bufnr)
-  -- no need to restore marks that still exist
-  for _, m in pairs(vim.fn.getmarklist(bufnr)) do
-    marks[m.mark] = nil
-  end
-  for mark, pos in pairs(marks) do
-    if pos then
-      vim.fn.setpos(mark, pos)
-    end
-  end
-
-  for win, view in pairs(views) do
-    if vim.api.nvim_win_is_valid(win) then
-      vim.api.nvim_win_call(win, function()
-        vim.fn.winrestview(view)
-      end)
-    end
-  end
-end
-
-function M.format_document()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local marks, views = save_win_data(bufnr)
-  vim.lsp.buf.formatting_sync(nil, 5000)
-  restore_win_data(marks, views, bufnr)
-end
-
 -- UI
 fn.sign_define(
   'DiagnosticSignError',
@@ -234,14 +192,10 @@ lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
   { virtual_text = false }
 )
 
-lsp.handlers['textDocument/hover'] = lsp.with(
-  lsp.handlers.hover,
-  { border = 'rounded' }
-)
+lsp.handlers['textDocument/hover'] =
+  lsp.with(lsp.handlers.hover, { border = 'rounded' })
 
-lsp.handlers['textDocument/signatureHelp'] = lsp.with(
-  lsp.handlers.signature_help,
-  { border = 'rounded' }
-)
+lsp.handlers['textDocument/signatureHelp'] =
+  lsp.with(lsp.handlers.signature_help, { border = 'rounded' })
 
 return M

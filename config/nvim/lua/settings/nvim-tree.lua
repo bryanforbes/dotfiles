@@ -44,7 +44,13 @@ tree.setup({
 })
 
 util.nnoremap('<leader>f', '<cmd>NvimTreeToggle<cr>')
-util.augroup('nvimtree', {
-  -- close the tree if it's the only open buffer
-  [[BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif]],
+
+-- close the tree if it's the only open buffer
+util.create_augroup('nvimtree', {
+  {
+    'BufEnter',
+    pattern = '*',
+    nested = true,
+    command = [[if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif]],
+  },
 })

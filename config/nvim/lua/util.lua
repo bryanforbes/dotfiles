@@ -138,4 +138,30 @@ function M.command(name, argsOrCmd, cmd)
   end
 end
 
+function M.create_augroup(name, commands, opts)
+  if opts == nil then
+    opts = {}
+  end
+
+  local group = vim.api.nvim_create_augroup(name, opts)
+
+  if commands then
+    for _, command in ipairs(commands) do
+      local command_options = {}
+      for key, value in pairs(command) do
+        if type(key) == 'string' then
+          command_options[key] = value
+        end
+      end
+
+      vim.api.nvim_create_autocmd(
+        command[1],
+        vim.tbl_extend('keep', {
+          group = group,
+        }, command_options)
+      )
+    end
+  end
+end
+
 return M

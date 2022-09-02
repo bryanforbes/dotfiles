@@ -38,7 +38,18 @@ cmp.setup({
   }),
 })
 
-require('util').augroup('nvim_cmp_init', {
-  -- only enable nvim_lua for lua files
-  [[FileType lua lua require('cmp').setup.buffer({ sources = { { name = 'path' }, { name = 'nvim_lsp' }, { name = 'nvim_lua' }, } })]],
+require('util').create_augroup('nvim_cmp_init', {
+  {
+    'FileType',
+    pattern = 'lua',
+    callback = function()
+      require('cmp').setup.buffer({
+        sources = {
+          { name = 'path' },
+          { name = 'nvim_lsp' },
+          { name = 'nvim_lua' },
+        },
+      })
+    end,
+  },
 })

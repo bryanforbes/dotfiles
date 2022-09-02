@@ -162,11 +162,18 @@ local function init()
   })
 
   -- Native LSP
-  use('neovim/nvim-lspconfig')
+  use({
+    'williamboman/mason-lspconfig.nvim',
+    requires = {
+      'williamboman/mason.nvim',
+      'neovim/nvim-lspconfig',
+    },
+    config_module = 'mason-lspconfig',
+  })
 
   use({
-    'williamboman/nvim-lsp-installer',
-    config_module = 'nvim-lsp-installer',
+    'jose-elias-alvarez/null-ls.nvim',
+    config_module = 'null-ls',
   })
 
   use('ray-x/lsp_signature.nvim')

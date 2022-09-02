@@ -1,4 +1,5 @@
 return {
+  disable = true,
   filetypes = { 'python', 'lua', 'html', 'javascript', 'typescript', 'css' },
   init_options = {
     filetypes = {

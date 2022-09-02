@@ -35,7 +35,10 @@ require('trouble').setup({
 })
 
 util.noremap('<leader>e', '<cmd>TroubleToggle<cr>')
-
-util.augroup('init_trouble', {
-  'FileType Trouble setlocal cursorline',
+util.create_augroup('init_trouble', {
+  {
+    'FileType',
+    pattern = 'Trouble',
+    command = 'setlocal cursorline',
+  },
 })

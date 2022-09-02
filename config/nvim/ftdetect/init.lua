@@ -1,22 +1,57 @@
-require('util').augroup('init_ftdetect_autocommands', {
+require('util').create_augroup('init_ftdetect_autocommands', {
   -- jinja
-  'BufNewFile,BufRead *.jin setfiletype jinja',
-  'BufNewFile,BufRead *.html.jin setfiletype htmljinja',
+  {
+    { 'BufNewFile', 'BufRead' },
+    pattern = '*.jin',
+    command = 'setfiletype jinja',
+  },
+  {
+    { 'BufNewFile', 'BufRead' },
+    pattern = '*.html.jin',
+    command = 'setfiletype htmljinja',
+  },
 
   -- json
-  'BufNewFile,BufRead *.json,*.smd setfiletype json',
-  'BufNewFile,BufRead .{bowerrc,tslintrc,eslintrc,dojorc,prettierrc} setfiletype json',
-  'BufNewFile,BufRead .dojorc-* setfiletype json',
+  {
+    { 'BufNewFile', 'BufRead' },
+    pattern = { '*.json', '*.smd' },
+    command = 'setfiletype json',
+  },
+  {
+    { 'BufNewFile', 'BufRead' },
+    pattern = { '.{bowerrc,tslintrc,eslintrc,dojorc,prettierrc}', '.dojorc-*' },
+    command = 'setfiletype json',
+  },
 
   -- mako
-  'BufNewFile,BufRead *.mak setfiletype mako',
+  {
+    { 'BufNewFile', 'BufRead' },
+    pattern = '*.mak',
+    command = 'setfiletype mako',
+  },
 
   -- nginx
-  'BufNewFile,BufRead *.nginx setfiletype nginx',
+  {
+    { 'BufNewFile', 'BufRead' },
+    pattern = '*.nginx',
+    command = 'setfiletype nginx',
+  },
 
   -- pyrex
-  'BufNewFile,BufRead *.pyx,*.pxd,*.pxi setfiletype pyrex',
+  {
+    { 'BufNewFile', 'BufRead' },
+    pattern = { '*.pyx', '*.pxd', '*.pxi' },
+    command = 'setfiletype pyrex',
+  },
 
   -- zsh
-  'BufNewFile,BufRead */zsh/functions/*,~/.dotfiles/bin/**,~/.dotfiles/home/zsh* setfiletype zsh',
+  {
+    { 'BufNewFile', 'BufRead' },
+    pattern = {
+      '*/zsh/functions/*',
+      '~/.dotfiles/bin/**',
+      '~/.dotfiles/home/zsh*',
+    },
+    command = 'setfiletype zsh',
+  },
 })
