@@ -96,7 +96,7 @@ local function on_attach(client, bufnr)
   end
 
   util.autocmd(
-    'CursorHold <buffer> lua require("user.settings.lsp").show_position_diagnostics()'
+    'CursorHold <buffer> lua require("user.lsp").show_position_diagnostics()'
   )
 end
 

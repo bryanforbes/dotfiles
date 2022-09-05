@@ -142,9 +142,8 @@ g.lsp_severity_limit = 3
 
 function ReloadInitLua()
   require('plenary.reload').reload_module('user.plugins-bootstrap')
-  require('plenary.reload').reload_module('user.settings', true)
+  require('plenary.reload').reload_module('user.plugins', true)
   require('plenary.reload').reload_module('lua')
-  require('plenary.reload').reload_module('user.plugins')
   dofile(join_paths(fn.stdpath('config'), 'init.lua'))
   cmd([[EditorConfigReload]])
 end
