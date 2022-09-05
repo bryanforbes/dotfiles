@@ -376,14 +376,14 @@ function dotfiles-asdf {
 function dotfiles-vim {
     log "Updating vim plugins..."
 
-    if [[ -a $DATADIR/nvim/site/pack/packer/opt/packer.nvim ]]; then
+    if [[ -a $DATADIR/nvim/site/pack/packer/start/packer.nvim ]]; then
         nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' 2>&1 > /dev/null
     else
         # If packer doesn't exist, nvim will bootstrap it and compile
         nvim --headless -c 'autocmd User PackerCompileDone quitall' 2>&1 > /dev/null
     fi
 
-    nvim --headless -c 'lua require("user.settings.nvim-treesitter").install_parsers()' -c 'quitall' 2>&1 > /dev/null
+    nvim --headless -c 'lua require("user.plugins.nvim-treesitter").install_parsers()' -c 'quitall' 2>&1 > /dev/null
 }
 
 cd $HOME
