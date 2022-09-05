@@ -51,7 +51,7 @@ local function init()
   -- manage the package manager
   use({
     'wbthomason/packer.nvim',
-    opt = true,
+    commit = 'dee5a4fe4ac6b9220471ed55a847a6c058f2bdec',
   })
 
   -- speed up the lua loader

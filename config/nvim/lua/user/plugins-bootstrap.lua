@@ -14,7 +14,7 @@ function M.bootstrap()
     'site',
     'pack',
     'packer',
-    'opt',
+    'start',
     'packer.nvim',
   }, package.config:sub(1, 1))
   local packer_exists = fn.isdirectory(install_path) == 1
