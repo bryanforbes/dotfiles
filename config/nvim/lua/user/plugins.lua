@@ -75,15 +75,9 @@ local function init()
     requires = {
       'arkav/lualine-lsp-progress',
       {
-        'SmiteshP/nvim-gps',
-        cond = function()
-          return require('user.req')('nvim-treesitter') ~= nil
-        end,
+        'SmiteshP/nvim-navic',
         config = function()
-          local gps = require('user.req')('nvim-gps')
-          if gps then
-            gps.setup()
-          end
+          require('nvim-navic').setup()
         end,
       },
     },

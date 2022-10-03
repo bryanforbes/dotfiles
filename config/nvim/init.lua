@@ -26,12 +26,12 @@ opt.history = 1000
 
 opt.ruler = true
 opt.showcmd = true
-opt.cmdheight = 2
+opt.cmdheight = 0
+opt.laststatus = 0
 opt.showmode = true
 opt.hlsearch = true
 opt.number = true
 opt.numberwidth = 4
-opt.laststatus = 2
 opt.visualbell = false
 
 opt.scrolloff = 3

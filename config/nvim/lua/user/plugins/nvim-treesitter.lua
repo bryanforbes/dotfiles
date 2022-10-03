@@ -1,6 +1,4 @@
 local req = require('user.req')
-local configs = req('nvim-treesitter.configs')
-local nvim_meta = req('plenary.nvim_meta')
 
 local parsers = {
   'bash',
@@ -37,24 +35,29 @@ M.install_parsers = function()
 end
 
 M.config = function()
-  if configs == nil or nvim_meta == nil or nvim_meta.is_headless then
-    return
-  end
+  req({
+    'nvim-treesitter.configs',
+    'plenary.nvim_meta',
+  }, function(configs, nvim_meta)
+    if nvim_meta.is_headless then
+      return
+    end
 
-  configs.setup({
-    ensure_installed = parsers,
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = true,
-    },
-    indent = {
-      enable = true,
-      disable = { 'python' },
-    },
-    matchup = {
-      enable = true,
-    },
-  })
+    configs.setup({
+      ensure_installed = parsers,
+      highlight = {
+        enable = true,
+        additional_vim_regex_highlighting = true,
+      },
+      indent = {
+        enable = true,
+        disable = { 'python' },
+      },
+      matchup = {
+        enable = true,
+      },
+    })
+  end)
 end
 
 return M

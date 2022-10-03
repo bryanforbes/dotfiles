@@ -1,21 +1,20 @@
-local req = require('user.req')
-
 local M = {}
 
 M.config = function()
+  local navic = require('nvim-navic')
+
   local config = {
     options = {
       theme = 'solarized',
-      section_separators = '',
       component_separators = '|',
     },
     sections = {
       lualine_a = { 'mode' },
       lualine_b = {
         { 'FugitiveHead', icon = '' },
-        { 'diagnostics', sources = { 'nvim_diagnostic' } },
       },
       lualine_c = {
+        { 'diagnostics', sources = { 'nvim_diagnostic' } },
         {
           'lsp_progress',
           display_components = { 'spinner' },
@@ -24,7 +23,6 @@ M.config = function()
           padding = { left = 1, right = 0 },
           separator = '',
         },
-        'filename',
       },
       lualine_x = {
         { 'fileformat', icons_enabled = false },
@@ -34,16 +32,24 @@ M.config = function()
       lualine_y = { 'progress' },
       lualine_z = { 'location' },
     },
+    inactive_sections = {
+      lualine_c = {},
+    },
+    winbar = {
+      lualine_a = {},
+      lualine_b = {
+        { 'filename', path = 1 },
+      },
+      lualine_c = {
+        { navic.get_location, cond = navic.is_available },
+      },
+      lualine_x = {},
+    },
+    inactive_winbar = {
+      lualine_c = { 'filename' },
+    },
     extensions = { 'fugitive', 'nvim-tree' },
   }
-
-  local gps = req('nvim-gps')
-  if gps then
-    table.insert(
-      config.sections.lualine_c,
-      { gps.get_location, cond = gps.is_available }
-    )
-  end
 
   require('lualine').setup(config)
 end

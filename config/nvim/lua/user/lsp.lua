@@ -43,8 +43,12 @@ local function on_attach(client, bufnr)
   --   max_width = 80,
   -- })
 
+  if client.server_capabilities.documentSymbolProvider then
+    require('nvim-navic').attach(client, bufnr)
+  end
+
   -- perform general setup
-  if client.resolved_capabilities.goto_definition then
+  if client.server_capabilities.definitionProvider then
     util.nnoremap(
       '<C-]>',
       [[<cmd>lua require('telescope.builtin').lsp_definitions()<cr>]],
@@ -52,7 +56,7 @@ local function on_attach(client, bufnr)
     )
   end
 
-  if client.resolved_capabilities.type_definition then
+  if client.server_capabilities.typeDefinitionProvider then
     util.nnoremap(
       '<C-\\>',
       [[<cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>]],
@@ -60,7 +64,7 @@ local function on_attach(client, bufnr)
     )
   end
 
-  if client.resolved_capabilities.find_references then
+  if client.server_capabilities.referencesProvider then
     util.nnoremap(
       '<leader>gf',
       [[<cmd>lua require('telescope.builtin').lsp_references()<cr>]],
@@ -68,26 +72,31 @@ local function on_attach(client, bufnr)
     )
   end
 
-  if client.resolved_capabilities.hover then
+  if client.server_capabilities.hoverProvider then
     util.noremap('K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
   end
 
-  if client.resolved_capabilities.rename then
+  if client.server_capabilities.renameProvider then
     util.noremap('<leader>r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
   end
 
-  if client.resolved_capabilities.document_formatting then
+  if client.server_capabilities.documentFormattingProvider then
     vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
     vim.api.nvim_create_autocmd('BufWritePre', {
       group = augroup,
       buffer = bufnr,
       callback = function()
-        vim.lsp.buf.formatting_sync()
+        vim.lsp.buf.format({
+          filter = function(lsp_client)
+            return lsp_client.name == 'null-ls'
+          end,
+          bufnr = bufnr,
+        })
       end,
     })
   end
 
-  -- if client.resolved_capabilities.code_action then
+  -- if client.server_capabilities.codeActionProvider then
   --   util.nnoremap('<leader>x', [[<cmd>lua require('telescope.builtin').lsp_code_actions()<cr>]], opts)
   -- end
 
@@ -124,17 +133,15 @@ function M.get_server_config(server_name)
     }
 
     -- add cmp capabilities
-    local cmp = req('cmp_nvim_lsp')
-    if cmp then
+    req('cmp_nvim_lsp', function(cmp)
       base_config.capabilities =
         cmp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
-    end
+    end)
 
     -- add coq capabilities
-    local coq = req('coq')
-    if coq then
+    req('coq', function(coq)
       base_config = coq.lsp_ensure_capabilities(base_config)
-    end
+    end)
 
     _configs[server_name] = vim.tbl_deep_extend(
       'keep',

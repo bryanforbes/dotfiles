@@ -4,14 +4,14 @@ local req = require('user.req')
 local M = {}
 
 M.config = function()
-  local mason = req('mason')
+  local mason, mason_lspconfig = req({ 'mason', 'mason-lspconfig' })
+
   if mason == nil then
     return
   end
 
   mason.setup()
 
-  local mason_lspconfig = req('mason-lspconfig')
   if mason_lspconfig == nil then
     return
   end

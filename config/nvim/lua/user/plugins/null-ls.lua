@@ -8,8 +8,7 @@ M.config = function()
     return
   end
 
-  local lsp = require('user.lsp')
-  local config = lsp.get_server_config('null-ls')
+  local config = require('user.lsp').get_server_config('null-ls')
 
   null_ls.setup({
     on_attach = config.on_attach,
