@@ -29,3 +29,5 @@
 	algorithm = histogram
 [rerere]
 	enabled = true
+[include]
+	path = ~/.gitconfig_local
