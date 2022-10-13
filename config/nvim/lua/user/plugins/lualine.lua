@@ -46,7 +46,9 @@ M.config = function()
       lualine_x = {},
     },
     inactive_winbar = {
-      lualine_c = { 'filename' },
+      lualine_c = {
+        { 'filename', path = 1 },
+      },
     },
     extensions = { 'fugitive', 'nvim-tree' },
   }
