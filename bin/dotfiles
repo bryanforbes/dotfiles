@@ -133,10 +133,7 @@ function dotfiles-brew {
         )
     fi
 
-    local installed_packages=(
-        "${(@f)$(brew list --formula -1)}"
-        "${(@f)$(brew list --casks -1)}"
-    )
+    local installed_packages=("${(@f)$(brew list -1)}")
 
     for pkg in $brew_packages; do
         if ((! $installed_packages[(Ie)$pkg])); then
