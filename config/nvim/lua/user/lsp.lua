@@ -134,8 +134,7 @@ function M.get_server_config(server_name)
 
     -- add cmp capabilities
     req('cmp_nvim_lsp', function(cmp)
-      base_config.capabilities =
-        cmp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+      base_config.capabilities = cmp.default_capabilities()
     end)
 
     -- add coq capabilities
