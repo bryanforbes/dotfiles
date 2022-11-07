@@ -114,7 +114,7 @@ function dotfiles-brew {
         'zsh'        # newer zsh
     )
 
-    brew_packages_args[mosh]='--HEAD'
+    # brew_packages_args[mosh]='--HEAD'
 
     if is-darwin; then
         brew_packages=(
