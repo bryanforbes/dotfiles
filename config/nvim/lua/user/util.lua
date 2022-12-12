@@ -164,4 +164,56 @@ function M.create_augroup(name, commands, opts)
   end
 end
 
+function M.unlink_treesitter_groups()
+  for _, group in ipairs({
+    '@text.literal',
+    '@text.reference',
+    '@text.title',
+    '@text.uri',
+    '@text.underline',
+    '@text.todo',
+    '@comment',
+    '@punctuation',
+    '@constant',
+    '@constant.builtin',
+    '@constant.macro',
+    '@define',
+    '@macro',
+    '@string',
+    '@string.escape',
+    '@string.special',
+    '@character',
+    '@character.special',
+    '@number',
+    '@boolean',
+    '@float',
+    '@function',
+    '@function.builtin',
+    '@function.macro',
+    '@parameter',
+    '@method',
+    '@field',
+    '@property',
+    '@constructor',
+    '@conditional',
+    '@repeat',
+    '@label',
+    '@operator',
+    '@keyword',
+    '@exception',
+    '@variable',
+    '@type',
+    '@type.definition',
+    '@storageclass',
+    '@structure',
+    '@namespace',
+    '@include',
+    '@preproc',
+    '@debug',
+    '@tag',
+  }) do
+    vim.cmd(string.format('hi! link %s NONE', group))
+  end
+end
+
 return M

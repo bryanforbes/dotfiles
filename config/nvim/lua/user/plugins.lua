@@ -42,9 +42,16 @@ local function init()
   -- Colorschemes
   use({
     'lifepillar/vim-solarized8',
-    setup = get_setup('solarized'),
-    config = get_config('solarized'),
+    -- setup = get_setup('solarized'),
+    -- config = get_config('solarized'),
   })
+
+  use({
+    'ishan9299/nvim-solarized-lua',
+    config = get_config('nvim-solarized-lua'),
+  })
+
+  use('~/Projects/nvim-solarized8')
 
   -- devicons are needed by many things
   use('kyazdani42/nvim-web-devicons')
@@ -66,6 +73,8 @@ local function init()
     run = ':TSUpdateSync',
     config = get_config('nvim-treesitter'),
   })
+
+  use('nvim-treesitter/playground')
 
   use('jeetsukumaran/vim-python-indent-black')
 
