@@ -186,6 +186,7 @@ local function init()
       'hrsh7th/cmp-nvim-lua',
       'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
+      'onsails/lspkind.nvim',
     },
   })
 

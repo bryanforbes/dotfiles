@@ -7,7 +7,8 @@ M.config = function()
     'cmp',
     'plenary.functional',
     'luasnip',
-  }, function(cmp, functional, luasnip)
+    'lspkind',
+  }, function(cmp, functional, luasnip, lspkind)
     vim.opt.completeopt = { 'menuone', 'noselect' }
 
     local function tab_fn(cmp_function, fallback)
@@ -20,7 +21,10 @@ M.config = function()
 
     cmp.setup({
       view = {
-        entries = 'native',
+        entries = {
+          name = 'custom',
+          selection_order = 'near_cursor',
+        },
       },
       snippet = {
         expand = function(args)
@@ -41,6 +45,9 @@ M.config = function()
         { name = 'path' },
         { name = 'nvim_lsp' },
       }),
+      formatting = {
+        format = lspkind.cmp_format(),
+      },
     })
 
     require('user.util').create_augroup('nvim_cmp_init', {
