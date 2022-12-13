@@ -1,10 +1,8 @@
-local util = require('user.util')
-
 local M = {}
 
 M.config = function()
-  util.vmap('v', '<Plug>(expand_region_expand)')
-  util.vmap('<C-v>', '<Plug>(expand_region_shrink)')
+  vim.keymap.set('v', 'v', '<Plug>(expand_region_expand)', { remap = true })
+  vim.keymap.set('v', '<C-v>', '<Plug>(expand_region_shrink)', { remap = true })
 end
 
 return M

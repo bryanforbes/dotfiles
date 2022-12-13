@@ -41,7 +41,7 @@ M.config = function()
       },
     })
 
-    util.nnoremap('<leader>f', '<cmd>NvimTreeToggle<cr>')
+    vim.keymap.set('n', '<leader>f', '<cmd>NvimTreeToggle<cr>')
 
     -- close the tree if it's the only open buffer
     util.create_augroup('nvimtree', {

@@ -36,7 +36,7 @@ local augroup = vim.api.nvim_create_augroup('LspFormatting', {})
 local function on_attach(client, bufnr)
   -- print('on_attach: ' .. client.name .. ' ' .. bufnr)
 
-  local opts = { buffer = bufnr }
+  local opts = { buffer = bufnr or 0 }
 
   -- require('illuminate').on_attach(client)
   -- require('lsp_signature').on_attach({
@@ -49,35 +49,38 @@ local function on_attach(client, bufnr)
 
   -- perform general setup
   if client.server_capabilities.definitionProvider then
-    util.nnoremap(
+    vim.keymap.set(
+      'n',
       '<C-]>',
-      [[<cmd>lua require('telescope.builtin').lsp_definitions()<cr>]],
+      require('telescope.builtin').lsp_definitions,
       opts
     )
   end
 
   if client.server_capabilities.typeDefinitionProvider then
-    util.nnoremap(
+    vim.keymap.set(
+      'n',
       '<C-\\>',
-      [[<cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>]],
+      require('telescope.builtin').lsp_type_definitions,
       opts
     )
   end
 
   if client.server_capabilities.referencesProvider then
-    util.nnoremap(
+    vim.keymap.set(
+      'n',
       '<leader>gf',
-      [[<cmd>lua require('telescope.builtin').lsp_references()<cr>]],
+      require('telescope.builtin').lsp_references,
       opts
     )
   end
 
   if client.server_capabilities.hoverProvider then
-    util.noremap('K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+    vim.keymap.set('', 'K', vim.lsp.buf.hover, opts)
   end
 
   if client.server_capabilities.renameProvider then
-    util.noremap('<leader>r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+    vim.keymap.set('', '<leader>r', vim.lsp.buf.rename, opts)
   end
 
   if client.server_capabilities.documentFormattingProvider then
@@ -97,11 +100,16 @@ local function on_attach(client, bufnr)
   end
 
   -- if client.server_capabilities.codeActionProvider then
-  --   util.nnoremap('<leader>x', [[<cmd>lua require('telescope.builtin').lsp_code_actions()<cr>]], opts)
+  --   vim.keymap.set(
+  --     'n',
+  --     '<leader>x',
+  --     require('telescope.builtin').lsp_code_actions,
+  --     opts
+  --   )
   -- end
 
   if not packer_plugins['trouble.nvim'] then
-    util.noremap('<leader>e', '<cmd>lua vim.diagnostic.setloclist()<cr>', opts)
+    vim.keymap.set('', '<leader>e', vim.diagnostic.setloclist, opts)
   end
 
   util.autocmd(

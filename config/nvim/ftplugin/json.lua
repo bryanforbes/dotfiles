@@ -1,9 +1,7 @@
-local util = require('user.util')
-
 vim.wo.wrap = true
 vim.wo.linebreak = true
 
-util.map('j', 'gj', { buffer = true })
-util.map('k', 'gk', { buffer = true })
-util.map('0', 'g0', { buffer = true })
-util.map('$', 'g$', { buffer = true })
+vim.keymap.set('', 'j', 'gj', { buffer = true, remap = true })
+vim.keymap.set('', 'k', 'gk', { buffer = true, remap = true })
+vim.keymap.set('', '0', 'g0', { buffer = true, remap = true })
+vim.keymap.set('', '$', 'g$', { buffer = true, remap = true })

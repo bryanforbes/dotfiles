@@ -38,7 +38,8 @@ M.config = function()
     use_diagnostic_signs = true,
   })
 
-  util.noremap('<leader>e', '<cmd>TroubleToggle<cr>')
+  vim.keymap.set('', '<leader>e', require('trouble').toggle, { silent = false })
+
   util.create_augroup('init_trouble', {
     {
       'FileType',

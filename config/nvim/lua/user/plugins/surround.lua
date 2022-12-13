@@ -1,7 +1,7 @@
 local M = {}
 
 M.config = function()
-  require('user.util').nmap('dsf', 'ds)db', { silent = true })
+  vim.keymap.set('n', 'dsf', 'ds)db', { silent = true, remap = true })
 end
 
 return M

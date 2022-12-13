@@ -172,51 +172,55 @@ util.augroup('init_autocommands', {
 g.mapleader = ','
 
 -- Map default leader to what , does normally
-util.nnoremap('\\', ',')
+vim.keymap.set('n', '\\', ',')
 
 -- Fast saving
-util.nnoremap('<leader>w', ':up!<cr>')
+vim.keymap.set('n', '<leader>w', ':up!<cr>')
 
 -- Fast reloading of the .vimrc
-util.noremap('<leader>s', '<cmd>lua ReloadInitLua()<cr>')
+vim.keymap.set('n', '<leader>s', '<cmd>lua ReloadInitLua()<cr>')
 
 -- Fast editing of .vimrc
-util.noremap('<leader>v', '<cmd>e! $MYVIMRC<cr>')
+vim.keymap.set('', '<leader>v', '<cmd>e! $MYVIMRC<cr>')
 
 -- turn on spell checking
-util.map('<leader>spell', ':setlocal spell!<cr>')
+vim.keymap.set('', '<leader>spell', ':setlocal spell!<cr>', { remap = true })
 
 -- Change directory to current buffer
-util.map('<leader>cd', ':cd %:p:h<cr>')
+vim.keymap.set('', '<leader>cd', ':cd %:p:h<cr>', { remap = true })
 
-util.noremap('<leader>.', '<C-^>')
-util.map(
+vim.keymap.set('', '<leader>.', '<C-^>')
+vim.keymap.set(
+  '',
   '<C-h>',
-  [[<cmd>lua require('user.win_move').left()<cr>]],
-  { silent = true }
+  require('user.win_move').left,
+  { silent = true, remap = true }
 )
-util.map(
+vim.keymap.set(
+  '',
   '<C-j>',
-  [[<cmd>lua require('user.win_move').down()<cr>]],
-  { silent = true }
+  require('user.win_move').down,
+  { silent = true, remap = true }
 )
-util.map(
+vim.keymap.set(
+  '',
   '<C-k>',
-  [[<cmd>lua require('user.win_move').up()<cr>]],
-  { silent = true }
+  require('user.win_move').up,
+  { silent = true, remap = true }
 )
-util.map(
+vim.keymap.set(
+  '',
   '<C-l>',
-  [[<cmd>lua require('user.win_move').right()<cr>]],
-  { silent = true }
+  require('user.win_move').right,
+  { silent = true, remap = true }
 )
-util.noremap('<leader>q', '<cmd>wincmd q<cr>')
+vim.keymap.set('', '<leader>q', '<cmd>wincmd q<cr>')
 
 -- Visually select the text that was last edited/pasted
-util.nmap('gV', '`[v`]')
+vim.keymap.set('n', 'gV', '`[v`]', { remap = true })
 
 -- Shortcut to rapidly toggle `set list`
-util.nmap('<leader>l', ':set list!<cr>')
+vim.keymap.set('n', '<leader>l', ':set list!<cr>', { remap = true })
 
 -- disable builtin plugins
 for _, plugin in pairs({

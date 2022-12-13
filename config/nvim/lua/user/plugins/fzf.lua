@@ -1,6 +1,5 @@
 local fn = vim.fn
 local g = vim.g
-local util = require('user.util')
 local Path = require('plenary.path')
 
 function FloatingFZF()
@@ -26,17 +25,18 @@ local M = {}
 
 M.config = function()
   if Path:new('.git'):is_dir() then
-    util.noremap(
+    vim.keymap.set(
+      '',
       '<leader>t',
       '<cmd>GFiles --cached --others --exclude-standard<cr>'
     )
   else
-    util.noremap('<leader>t', '<cmd>Files<cr>')
+    vim.keymap.set('', '<leader>t', '<cmd>Files<cr>')
   end
-  util.noremap('<leader>T', '<cmd>Files<cr>')
-  util.noremap('<leader>b', '<cmd>Buffers<cr>')
-  util.noremap('<leader>/', '<cmd>BLines<cr>')
-  util.noremap('<leader>a', ':Rg<space>')
+  vim.keymap.set('', '<leader>T', '<cmd>Files<cr>')
+  vim.keymap.set('', '<leader>b', '<cmd>Buffers<cr>')
+  vim.keymap.set('', '<leader>/', '<cmd>BLines<cr>')
+  vim.keymap.set('', '<leader>a', ':Rg<space>')
 
   vim.env.FZF_DEFAULT_OPTS = table.concat({
     vim.env.FZF_DEFAULT_OPTS or '',
