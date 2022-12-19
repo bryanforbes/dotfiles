@@ -42,13 +42,13 @@ local function init()
   -- Colorschemes
   use({
     'lifepillar/vim-solarized8',
-    -- setup = get_setup('solarized'),
-    -- config = get_config('solarized'),
+    setup = get_setup('solarized'),
+    config = get_config('solarized'),
   })
 
   use({
     'ishan9299/nvim-solarized-lua',
-    config = get_config('nvim-solarized-lua'),
+    -- config = get_config('nvim-solarized-lua'),
   })
 
   use('~/Projects/nvim-solarized8')
