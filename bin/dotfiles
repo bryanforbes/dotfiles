@@ -345,7 +345,14 @@ function dotfiles-asdf {
         fi
     done
 
-    asdf global direnv system
+    if [ ! -e "$HOME/.tool-versions" ]; then
+        touch "$HOME/.tool-versions"
+    fi
+
+    if ! grep -q "direnv system" "$HOME/.tool-versions"; then
+        asdf global direnv system
+    fi
+
     asdf direnv setup --version system
 
     # Setup the "system" install for asdf-direnv
