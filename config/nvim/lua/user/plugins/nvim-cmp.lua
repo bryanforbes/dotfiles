@@ -20,12 +20,6 @@ M.config = function()
     end
 
     cmp.setup({
-      view = {
-        entries = {
-          name = 'custom',
-          selection_order = 'near_cursor',
-        },
-      },
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
