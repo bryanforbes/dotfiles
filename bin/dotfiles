@@ -100,18 +100,18 @@ function dotfiles-brew {
     local -A brew_packages_args
 
     brew_packages=(
-        'asdf'       # dev tools management
-        'bat'        # better cat
-        'direnv'     # local environment management
-        'fzf'        # fuzzy finder
-        'git'        # update from system stock git
-        'mosh'       # remote terminal application that allows roaming
-        'neovim'     # better vim
-        'node'       # NodeJS
-        'python@3.9' # update from stock Python
-        'ripgrep'    # better grep
-        'tmux'       # terminal multiplexer
-        'zsh'        # newer zsh
+        'asdf'                              # dev tools management
+        'bat'                               # better cat
+        'direnv'                            # local environment management
+        'fzf'                               # fuzzy finder
+        'git'                               # update from system stock git
+        'mosh'                              # remote terminal application that allows roaming
+        'neovim'                            # better vim
+        'node'                              # NodeJS
+        "python@${HOMEBREW_PYTHON_VERSION}" # update from stock Python
+        'ripgrep'                           # better grep
+        'tmux'                              # terminal multiplexer
+        'zsh'                               # newer zsh
     )
 
     # brew_packages_args[mosh]='--HEAD'
@@ -190,23 +190,25 @@ function dotfiles-python {
         return
     fi
 
-    if [[ ! -e $HOMEBREW_BASE/bin/python ]] && [[ -e $HOMEBREW_BASE/bin/python3 ]]; then
-        logSub "Creating python link..."
-        link $HOMEBREW_BASE/bin/python3 $HOMEBREW_BASE/bin/python
-    fi
+    local python_path="${HOMEBREW_BASE}/opt/python@${HOMEBREW_PYTHON_VERSION}/libexec"
+
+    # if [[ ! -e $HOMEBREW_BASE/bin/python ]] && [[ -e $HOMEBREW_BASE/bin/python3 ]]; then
+    #     logSub "Creating python link..."
+    #     link $HOMEBREW_BASE/bin/python3 $HOMEBREW_BASE/bin/python
+    # fi
 
     log "Updating python packages..."
-    if [[ -f $HOMEBREW_BASE/bin/pip3 ]]; then
-        $HOMEBREW_BASE/bin/pip3 install --upgrade pip setuptools > /dev/null
-        $HOMEBREW_BASE/bin/pip3 install --upgrade --user pynvim neovim-remote > /dev/null
+    if [[ -f $python_path/bin/pip3 ]]; then
+        $python_path/bin/pip3 install --upgrade pip setuptools > /dev/null
+        $python_path/bin/pip3 install --upgrade --user pynvim neovim-remote > /dev/null
         logSub "Updated Python 3 packages"
     fi
 
-    local python_user_base="$(python3 -c 'import site; print(site.USER_BASE, end="")')"
+    local python_user_base="$($python_path/bin/python3 -c 'import site; print(site.USER_BASE, end="")')"
 
     if [[ ! -e "$python_user_base/bin/poetry" ]]; then
         log "Installing poetry..."
-        curl -sSL https://install.python-poetry.org | python3 -
+        curl -sSL https://install.python-poetry.org | $python_path/bin/python3 -
     else
         log "Updating poetry..."
         $python_user_base/bin/poetry self update

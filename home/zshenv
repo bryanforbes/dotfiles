@@ -70,15 +70,14 @@ if is-darwin; then
 fi
 
 # Python
-if [[ -d $HOMEBREW_BASE/opt/python ]]; then
+if [[ -d $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION} ]]; then
     # Put python before $HOMEBREW_BASE/bin since some of its programs, like pip,
     # will eventually be overridden with things in $HOMEBREW_BASE/bin
     # https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
     path[$path[(ie)$HOMEBREW_BASE/bin]]=(
-        $HOMEBREW_BASE/opt/python/libexec/bin
+        $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION}/libexec/bin
         $HOMEBREW_BASE/bin
     )
-
 fi
 
 path=(
