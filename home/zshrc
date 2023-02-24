@@ -48,12 +48,6 @@ cdpath=(
     $cdpath
 )
 
-# Brew
-# ----------------------------------------------------------------------------
-if [[ -d /home/linuxbrew ]]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-
 # manpath
 # ----------------------------------------------------------------------------
 # Set the list of directories that man searches for manuals.

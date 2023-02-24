@@ -37,7 +37,6 @@ typeset -gU path mailpath
 # --------------------------------------------------------------------------
 path=(
     $HOMEBREW_BASE/bin
-    /usr/local/bin
     $HOMEBREW_BASE/sbin
     $path
 )
