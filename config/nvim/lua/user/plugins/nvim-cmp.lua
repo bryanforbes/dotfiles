@@ -11,13 +11,16 @@ M.config = function()
   }, function(cmp, functional, luasnip, lspkind)
     vim.opt.completeopt = { 'menuone', 'noselect' }
 
-    local function tab_fn(cmp_function, fallback)
+    local function select_fn(cmp_function, fallback)
       if cmp.visible() then
         cmp_function({ behavior = cmp.SelectBehavior.Select })
       else
         fallback()
       end
     end
+
+    local select_next = functional.partial(select_fn, cmp.select_next_item)
+    local select_prev = functional.partial(select_fn, cmp.select_next_item)
 
     cmp.setup({
       snippet = {
@@ -26,12 +29,12 @@ M.config = function()
         end,
       },
       mapping = {
-        ['<tab>'] = cmp.mapping(
-          functional.partial(tab_fn, cmp.select_next_item)
-        ),
-        ['<s-tab>'] = cmp.mapping(
-          functional.partial(tab_fn, cmp.select_prev_item)
-        ),
+        ['<tab>'] = cmp.mapping(select_next),
+        ['<c-j>'] = cmp.mapping(select_next),
+        ['<down>'] = cmp.mapping(select_next),
+        ['<s-tab>'] = cmp.mapping(select_prev),
+        ['<c-k>'] = cmp.mapping(select_prev),
+        ['<up>'] = cmp.mapping(select_prev),
         ['<c-space>'] = cmp.mapping.complete(),
         ['<cr>'] = cmp.mapping.confirm(),
       },
