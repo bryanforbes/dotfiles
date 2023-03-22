@@ -1,14 +1,24 @@
-local req = require('user.req')
+return {
+  'hrsh7th/nvim-cmp',
 
-local M = {}
+  dependencies = {
+    'plenary.nvim',
+    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-path',
+    'hrsh7th/cmp-nvim-lua',
+    'L3MON4D3/LuaSnip',
+    'saadparwaiz1/cmp_luasnip',
+    'onsails/lspkind.nvim',
+  },
 
-M.config = function()
-  req({
-    'cmp',
-    'plenary.functional',
-    'luasnip',
-    'lspkind',
-  }, function(cmp, functional, luasnip, lspkind)
+  event = 'BufEnter',
+
+  config = function()
+    local cmp = require('cmp')
+    local functional = require('plenary.functional')
+    local luasnip = require('luasnip')
+    local lspkind = require('lspkind')
+
     vim.opt.completeopt = { 'menuone', 'noselect' }
 
     local function select_fn(cmp_function, fallback)
@@ -62,7 +72,5 @@ M.config = function()
         end,
       },
     })
-  end)
-end
-
-return M
+  end,
+}

@@ -1,7 +1,9 @@
-local M = {}
+return {
+  'tpope/vim-surround',
 
-M.config = function()
-  vim.keymap.set('n', 'dsf', 'ds)db', { silent = true, remap = true })
-end
+  event = 'BufEnter',
 
-return M
+  config = function()
+    vim.keymap.set('n', 'dsf', 'ds)db', { silent = true, remap = true })
+  end,
+}

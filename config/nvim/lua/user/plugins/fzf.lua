@@ -1,6 +1,5 @@
 local fn = vim.fn
 local g = vim.g
-local Path = require('plenary.path')
 
 function FloatingFZF()
   local buf = vim.api.nvim_create_buf(false, true)
@@ -21,37 +20,50 @@ function FloatingFZF()
   })
 end
 
-local M = {}
+return {
+  'junegunn/fzf.vim',
 
-M.config = function()
-  if Path:new('.git'):is_dir() then
-    vim.keymap.set(
-      '',
-      '<leader>t',
-      '<cmd>GFiles --cached --others --exclude-standard<cr>'
-    )
-  else
-    vim.keymap.set('', '<leader>t', '<cmd>Files<cr>')
-  end
-  vim.keymap.set('', '<leader>T', '<cmd>Files<cr>')
-  vim.keymap.set('', '<leader>b', '<cmd>Buffers<cr>')
-  vim.keymap.set('', '<leader>/', '<cmd>BLines<cr>')
-  vim.keymap.set('', '<leader>a', ':Rg<space>')
+  dependencies = {
+    'plenary.nvim',
+    {
+      dir = vim.env.HOMEBREW_BASE .. '/opt/fzf',
+    },
+  },
 
-  vim.env.FZF_DEFAULT_OPTS = table.concat({
-    vim.env.FZF_DEFAULT_OPTS or '',
-    ' --layout reverse',
-    ' --info hidden',
-    ' --pointer " "',
-    ' --border rounded',
-    ' --color "bg+:0"',
-  }, '')
+  cond = function()
+    return vim.fn.executable('fzf') == 1
+  end,
 
-  g.fzf_buffers_jump = 0
-  g.fzf_preview_window = {}
-  g.fzf_layout = {
-    window = 'call v:lua.FloatingFZF()',
-  }
-end
+  config = function()
+    local Path = require('plenary.path')
 
-return M
+    if Path:new('.git'):is_dir() then
+      vim.keymap.set(
+        '',
+        '<leader>t',
+        '<cmd>GFiles --cached --others --exclude-standard<cr>'
+      )
+    else
+      vim.keymap.set('', '<leader>t', '<cmd>Files<cr>')
+    end
+    vim.keymap.set('', '<leader>T', '<cmd>Files<cr>')
+    vim.keymap.set('', '<leader>b', '<cmd>Buffers<cr>')
+    vim.keymap.set('', '<leader>/', '<cmd>BLines<cr>')
+    vim.keymap.set('', '<leader>a', ':Rg<space>')
+
+    vim.env.FZF_DEFAULT_OPTS = table.concat({
+      vim.env.FZF_DEFAULT_OPTS or '',
+      ' --layout reverse',
+      ' --info hidden',
+      ' --pointer " "',
+      ' --border rounded',
+      ' --color "bg+:0"',
+    }, '')
+
+    g.fzf_buffers_jump = 0
+    g.fzf_preview_window = {}
+    g.fzf_layout = {
+      window = 'call v:lua.FloatingFZF()',
+    }
+  end,
+}

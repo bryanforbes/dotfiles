@@ -1,9 +1,5 @@
 local modbase = ...
-local fn = vim.fn
-local req = require('user.req')
 local util = require('user.util')
-
--- vim.lsp.set_log_level('debug')
 
 -- load the global config, if it exists
 local function load_global_config(server_name)
@@ -108,9 +104,9 @@ local function on_attach(client, bufnr)
   --   )
   -- end
 
-  if not packer_plugins['trouble.nvim'] then
-    vim.keymap.set('', '<leader>e', vim.diagnostic.setloclist, opts)
-  end
+  -- if not packer_plugins['trouble.nvim'] then
+  --   vim.keymap.set('', '<leader>e', vim.diagnostic.setloclist, opts)
+  -- end
 
   util.autocmd(
     'CursorHold <buffer> lua require("user.lsp").show_position_diagnostics()'
@@ -119,46 +115,61 @@ end
 
 local M = {}
 
-local _configs = {}
+function M.config()
+  -- vim.lsp.set_log_level('debug')
+
+  -- UI
+  vim.fn.sign_define(
+    'DiagnosticSignError',
+    { text = '', texthl = 'DiagnosticSignError' }
+  )
+  vim.fn.sign_define(
+    'DiagnosticSignWarn',
+    { text = '', texhl = 'DiagnosticSignWarn' }
+  )
+  vim.fn.sign_define(
+    'DiagnosticSignInfo',
+    { text = '', texthl = 'DiagnosticSignInfo' }
+  )
+  vim.fn.sign_define(
+    'DiagnosticSignHint',
+    { text = '', texthl = 'DiagnosticSignHint' }
+  )
+
+  vim.diagnostic.config({ virtual_text = false })
+
+  local lsp = vim.lsp
+
+  lsp.handlers['textDocument/hover'] =
+    lsp.with(lsp.handlers.hover, { border = 'rounded' })
+
+  lsp.handlers['textDocument/signatureHelp'] =
+    lsp.with(lsp.handlers.signature_help, { border = 'rounded' })
+end
+
 function M.get_server_config(server_name)
-  if _configs[server_name] == nil then
-    local global_server_config = load_global_config(server_name)
-    local local_server_config = load_local_config(server_name) or {}
+  local global_config = load_global_config(server_name)
+  local local_config = load_local_config(server_name) or {}
 
-    local base_config = {
-      on_attach = function(client, bufnr)
-        -- run any client-specific attach functions
-        if local_server_config.on_attach then
-          local_server_config.on_attach(client, bufnr)
-        end
+  local config = vim.tbl_deep_extend('keep', {
+    on_attach = function(client, bufnr)
+      -- run any client-specific attach functions
+      if local_config.on_attach then
+        local_config.on_attach(client, bufnr)
+      end
 
-        if global_server_config.on_attach then
-          global_server_config.on_attach(client, bufnr)
-        end
+      if global_config.on_attach then
+        global_config.on_attach(client, bufnr)
+      end
 
-        on_attach(client, bufnr)
-      end,
-    }
+      on_attach(client, bufnr)
+    end,
 
     -- add cmp capabilities
-    req('cmp_nvim_lsp', function(cmp)
-      base_config.capabilities = cmp.default_capabilities()
-    end)
+    capabilities = require('cmp_nvim_lsp').default_capabilities(),
+  }, local_config, global_config)
 
-    -- add coq capabilities
-    req('coq', function(coq)
-      base_config = coq.lsp_ensure_capabilities(base_config)
-    end)
-
-    _configs[server_name] = vim.tbl_deep_extend(
-      'keep',
-      base_config,
-      local_server_config,
-      global_server_config
-    )
-  end
-
-  return _configs[server_name]
+  return config
 end
 
 function M.show_line_diagnostics()
@@ -180,33 +191,5 @@ function M.show_position_diagnostics()
     focusable = false,
   })
 end
-
--- UI
-fn.sign_define(
-  'DiagnosticSignError',
-  { text = '', texthl = 'DiagnosticSignError' }
-)
-fn.sign_define(
-  'DiagnosticSignWarn',
-  { text = '', texhl = 'DiagnosticSignWarn' }
-)
-fn.sign_define(
-  'DiagnosticSignInfo',
-  { text = '', texthl = 'DiagnosticSignInfo' }
-)
-fn.sign_define(
-  'DiagnosticSignHint',
-  { text = '', texthl = 'DiagnosticSignHint' }
-)
-
-vim.diagnostic.config({ virtual_text = false })
-
-local lsp = vim.lsp
-
-lsp.handlers['textDocument/hover'] =
-  lsp.with(lsp.handlers.hover, { border = 'rounded' })
-
-lsp.handlers['textDocument/signatureHelp'] =
-  lsp.with(lsp.handlers.signature_help, { border = 'rounded' })
 
 return M

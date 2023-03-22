@@ -1,9 +1,11 @@
-local M = {}
+return {
+  'tpope/vim-fugitive',
 
-M.config = function()
-  vim.keymap.set('', '<leader>gd', '<cmd>Gdiffsplit<cr>')
-  vim.keymap.set('', '<leader>gc', '<cmd>Git commit -v<cr>')
-  vim.keymap.set('', '<leader>gs', '<cmd>Git<cr>')
-end
+  event = 'BufEnter',
 
-return M
+  config = function()
+    vim.keymap.set('', '<leader>gd', '<cmd>Gdiffsplit<cr>')
+    vim.keymap.set('', '<leader>gc', '<cmd>Git commit -v<cr>')
+    vim.keymap.set('', '<leader>gs', '<cmd>Git<cr>')
+  end,
+}

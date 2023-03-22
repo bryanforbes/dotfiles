@@ -1,36 +1,29 @@
-local lsp = require('user.lsp')
-local req = require('user.req')
+return {
+  'williamboman/mason-lspconfig.nvim',
 
-local M = {}
+  dependencies = {
+    'neovim/nvim-lspconfig',
+    'williamboman/mason.nvim',
+  },
 
-M.config = function()
-  local mason, mason_lspconfig = req({ 'mason', 'mason-lspconfig' })
+  config = function()
+    require('user.lsp').config()
+    require('mason').setup()
 
-  if mason == nil then
-    return
-  end
+    require('mason-lspconfig').setup()
+    require('mason-lspconfig').setup_handlers({
+      function(server_name)
+        local server_config = require('user.lsp').get_server_config(server_name)
 
-  mason.setup()
+        -- print(vim.inspect(server_config))
 
-  if mason_lspconfig == nil then
-    return
-  end
+        if server_config.disable then
+          return
+        end
 
-  mason_lspconfig.setup()
-  mason_lspconfig.setup_handlers({
-    function(server_name)
-      local server_config = lsp.get_server_config(server_name)
-
-      -- print(vim.inspect(server_config))
-
-      if server_config.disable then
-        return
-      end
-
-      require('lspconfig')[server_name].setup(server_config)
-      vim.cmd([[ do User LspAttachBuffers ]])
-    end,
-  })
-end
-
-return M
+        require('lspconfig')[server_name].setup(server_config)
+        vim.cmd([[ do User LspAttachBuffers ]])
+      end,
+    })
+  end,
+}

@@ -1,9 +1,14 @@
-local req = require('user.req')
+return {
+  'nvim-telescope/telescope.nvim',
 
-local M = {}
+  dependencies = {
+    'plenary.nvim',
+    'nvim-web-devicons',
+  },
 
-M.config = function()
-  req('telescope.actions', function(actions)
+  config = function()
+    local actions = require('telescope.actions')
+
     require('telescope').setup({
       defaults = {
         mappings = {
@@ -13,7 +18,5 @@ M.config = function()
         },
       },
     })
-  end)
-end
-
-return M
+  end,
+}

@@ -1,7 +1,9 @@
-local M = {}
+return {
+  'ishan9299/nvim-solarized-lua',
 
-M.config = function()
-  vim.cmd('colorscheme solarized')
-end
+  enabled = false,
 
-return M
+  config = function()
+    vim.cmd('colorscheme solarized')
+  end,
+}

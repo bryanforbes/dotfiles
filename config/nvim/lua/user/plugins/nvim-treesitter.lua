@@ -1,5 +1,3 @@
-local req = require('user.req')
-
 local parsers = {
   'bash',
   'c',
@@ -30,22 +28,27 @@ local parsers = {
   'yaml',
 }
 
-local M = {}
+return {
+  'nvim-treesitter/nvim-treesitter',
 
-M.install_parsers = function()
-  require('nvim-treesitter.install').ensure_installed_sync(parsers)
-end
+  dependencies = {
+    'plenary.nvim',
+    'nvim-treesitter/playground',
+  },
 
-M.config = function()
-  req({
-    'nvim-treesitter.configs',
-    'plenary.nvim_meta',
-  }, function(configs, nvim_meta)
+  install_parsers = function()
+    require('nvim-treesitter.install').ensure_installed_sync(parsers)
+  end,
+
+  build = ':TSUpdateSync',
+
+  config = function()
+    local nvim_meta = require('plenary.nvim_meta')
     if nvim_meta.is_headless then
       return
     end
 
-    configs.setup({
+    require('nvim-treesitter.configs').setup({
       ensure_installed = parsers,
       highlight = {
         enable = true,
@@ -59,7 +62,5 @@ M.config = function()
         enable = true,
       },
     })
-  end)
-end
-
-return M
+  end,
+}

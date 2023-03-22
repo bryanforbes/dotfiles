@@ -1,10 +1,8 @@
-local util = require('user.util')
-local req = require('user.req')
+return {
+  'kyazdani42/nvim-tree.lua',
 
-local M = {}
-
-M.config = function()
-  req('nvim-tree', function(tree)
+  config = function()
+    local tree = require('nvim-tree')
     tree.setup({
       -- diagnostics
       diagnostics = {
@@ -44,7 +42,7 @@ M.config = function()
     vim.keymap.set('n', '<leader>f', '<cmd>NvimTreeToggle<cr>')
 
     -- close the tree if it's the only open buffer
-    util.create_augroup('nvimtree', {
+    require('user.util').create_augroup('nvimtree', {
       {
         'BufEnter',
         pattern = '*',
@@ -52,7 +50,5 @@ M.config = function()
         command = [[if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif]],
       },
     })
-  end)
-end
-
-return M
+  end,
+}
