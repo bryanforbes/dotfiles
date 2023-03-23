@@ -38,19 +38,19 @@ return {
       use_diagnostic_signs = true,
     })
 
-    vim.keymap.set(
-      '',
-      '<leader>e',
-      require('trouble').toggle,
-      { silent = false }
-    )
+    -- vim.keymap.set(
+    --   '',
+    --   '<leader>e',
+    --   require('trouble').toggle,
+    --   { silent = false }
+    -- )
 
-    require('user.util').create_augroup('init_trouble', {
-      {
-        'FileType',
-        pattern = 'Trouble',
-        command = 'setlocal cursorline',
-      },
-    })
+    -- require('user.util').create_augroup('init_trouble', {
+    --   {
+    --     'FileType',
+    --     pattern = 'Trouble',
+    --     command = 'setlocal cursorline',
+    --   },
+    -- })
   end,
 }

@@ -62,14 +62,14 @@ local function on_attach(client, bufnr)
     )
   end
 
-  if client.server_capabilities.referencesProvider then
-    vim.keymap.set(
-      'n',
-      '<leader>gf',
-      require('telescope.builtin').lsp_references,
-      opts
-    )
-  end
+  -- if client.server_capabilities.referencesProvider then
+  --   vim.keymap.set(
+  --     'n',
+  --     '<leader>gf',
+  --     require('telescope.builtin').lsp_references,
+  --     opts
+  --   )
+  -- end
 
   if client.server_capabilities.hoverProvider then
     vim.keymap.set('', 'K', vim.lsp.buf.hover, opts)
