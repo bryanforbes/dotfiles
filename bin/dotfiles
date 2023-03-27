@@ -383,7 +383,7 @@ function dotfiles-vim {
     log "Updating vim plugins..."
 
     nvim --headless -c ':Lazy! sync' -c 'quitall' 2>&1 > /dev/null
-    nvim --headless -c 'lua require("user.plugins.nvim-treesitter").install_parsers()' -c 'quitall' 2>&1 > /dev/null
+    nvim --headless -c 'lua require("user.plugins.treesitter").install_parsers()' -c 'quitall' 2>&1 > /dev/null
 }
 
 cd $HOME
