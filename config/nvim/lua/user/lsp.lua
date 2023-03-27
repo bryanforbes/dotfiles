@@ -1,5 +1,4 @@
 local modbase = ...
-local util = require('user.util')
 
 -- load the global config, if it exists
 local function load_global_config(server_name)
@@ -45,72 +44,76 @@ local function on_attach(client, bufnr)
 
   -- perform general setup
   if client.server_capabilities.definitionProvider then
-    vim.keymap.set(
-      'n',
-      '<C-]>',
-      require('telescope.builtin').lsp_definitions,
-      opts
-    )
+    vim.keymap.set('n', '<C-]>', function()
+      require('fzf-lua').lsp_definitions({ jump_to_single_result = true })
+    end, opts)
   end
 
   if client.server_capabilities.typeDefinitionProvider then
+    vim.keymap.set('n', '<C-\\>', function()
+      require('fzf-lua').lsp_typedefs({ jump_to_single_result = true })
+    end, opts)
+  end
+
+  if client.server_capabilities.documentSymbolProvider then
     vim.keymap.set(
-      'n',
-      '<C-\\>',
-      require('telescope.builtin').lsp_type_definitions,
+      '',
+      '<leader>ls',
+      '<cmd>FzfLua lsp_document_symbols<cr>',
       opts
     )
   end
 
-  -- if client.server_capabilities.referencesProvider then
-  --   vim.keymap.set(
-  --     'n',
-  --     '<leader>gf',
-  --     require('telescope.builtin').lsp_references,
-  --     opts
-  --   )
-  -- end
+  if client.server_capabilities.referencesProvider then
+    vim.keymap.set('', '<leader>lr', '<cmd>FzfLua lsp_references<cr>', opts)
+  end
 
   if client.server_capabilities.hoverProvider then
-    vim.keymap.set('', 'K', vim.lsp.buf.hover, opts)
+    vim.keymap.set('', 'K', function()
+      vim.lsp.buf.hover()
+    end, opts)
   end
 
   if client.server_capabilities.renameProvider then
-    vim.keymap.set('', '<leader>r', vim.lsp.buf.rename, opts)
+    vim.keymap.set('', '<leader>r', function()
+      vim.lsp.buf.rename()
+    end, opts)
   end
 
   if client.server_capabilities.documentFormattingProvider then
-    vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+    vim.api.nvim_clear_autocmds({ group = augroup, buffer = opts.buffer })
     vim.api.nvim_create_autocmd('BufWritePre', {
       group = augroup,
-      buffer = bufnr,
+      buffer = opts.buffer,
       callback = function()
         vim.lsp.buf.format({
           filter = function(lsp_client)
             return lsp_client.name == 'null-ls'
           end,
-          bufnr = bufnr,
+          bufnr = opts.buffer,
         })
       end,
     })
   end
 
-  -- if client.server_capabilities.codeActionProvider then
-  --   vim.keymap.set(
-  --     'n',
-  --     '<leader>x',
-  --     require('telescope.builtin').lsp_code_actions,
-  --     opts
-  --   )
-  -- end
+  if client.server_capabilities.codeActionProvider then
+    vim.keymap.set('', '<leader>la', '<cmd>FzfLua lsp_code_actions<cr>', opts)
+  end
 
-  -- if not packer_plugins['trouble.nvim'] then
-  --   vim.keymap.set('', '<leader>e', vim.diagnostic.setloclist, opts)
-  -- end
+  vim.keymap.set('', '<leader>ld', '<cmd>FzfLua diagnostics_document<cr>', opts)
 
-  util.autocmd(
-    'CursorHold <buffer> lua require("user.lsp").show_position_diagnostics()'
-  )
+  vim.api.nvim_create_autocmd('CursorHold', {
+    buffer = opts.buffer,
+    callback = function()
+      vim.diagnostic.open_float(nil, {
+        scope = 'cursor',
+        border = 'rounded',
+        max_width = 80,
+        show_header = false,
+        focusable = false,
+      })
+    end,
+  })
 end
 
 local M = {}
@@ -170,26 +173,6 @@ function M.get_server_config(server_name)
   }, local_config, global_config)
 
   return config
-end
-
-function M.show_line_diagnostics()
-  vim.diagnostic.open_float(nil, {
-    scope = 'line',
-    border = 'rounded',
-    max_width = 80,
-    show_header = false,
-    focusable = false,
-  })
-end
-
-function M.show_position_diagnostics()
-  vim.diagnostic.open_float(nil, {
-    scope = 'cursor',
-    border = 'rounded',
-    max_width = 80,
-    show_header = false,
-    focusable = false,
-  })
 end
 
 return M

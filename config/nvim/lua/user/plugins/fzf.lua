@@ -78,10 +78,5 @@ return {
     vim.keymap.set('', '<leader>/', '<cmd>FzfLua blines<cr>')
     vim.keymap.set('', '<leader>a', '<cmd>FzfLua live_grep_native<cr>')
     vim.keymap.set('', '<leader>e', '<cmd>FzfLua diagnostics_document<cr>')
-
-    vim.keymap.set('', '<leader>la', '<cmd>FzfLua lsp_code_actions<cr>')
-    vim.keymap.set('', '<leader>lr', '<cmd>FzfLua lsp_references<cr>')
-    vim.keymap.set('', '<leader>ld', '<cmd>FzfLua diagnostics_document<cr>')
-    vim.keymap.set('', '<leader>ls', '<cmd>FzfLua lsp_document_symbols<cr>')
   end,
 }
