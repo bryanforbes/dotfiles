@@ -31,6 +31,7 @@ return {
       fzf_opts = {
         ['--info'] = 'hidden',
         ['--pointer'] = '" "',
+        ['--margin'] = '0,1',
       },
 
       fzf_colors = {
@@ -59,6 +60,10 @@ return {
           },
         },
       },
+
+      diagnostics = {
+        severity_limit = 2,
+      },
     })
 
     local Path = require('plenary.path')
@@ -78,20 +83,5 @@ return {
     vim.keymap.set('', '<leader>lr', '<cmd>FzfLua lsp_references<cr>')
     vim.keymap.set('', '<leader>ld', '<cmd>FzfLua diagnostics_document<cr>')
     vim.keymap.set('', '<leader>ls', '<cmd>FzfLua lsp_document_symbols<cr>')
-
-    -- vim.env.FZF_DEFAULT_OPTS = table.concat({
-    --   vim.env.FZF_DEFAULT_OPTS or '',
-    --   ' --layout reverse',
-    --   ' --info hidden',
-    --   ' --pointer " "',
-    --   ' --border rounded',
-    --   ' --color "bg+:0"',
-    -- }, '')
-
-    -- g.fzf_buffers_jump = 0
-    -- g.fzf_preview_window = {}
-    -- g.fzf_layout = {
-    --   window = 'call v:lua.FloatingFZF()',
-    -- }
   end,
 }
