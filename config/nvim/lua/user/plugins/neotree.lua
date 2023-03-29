@@ -17,14 +17,12 @@ return {
     vim.g.neo_tree_remove_legacy_commands = 1
   end,
 
-  config = function()
-    require('neo-tree').setup({
-      close_if_last_window = true,
-      enable_git_status = true,
+  opts = {
+    close_if_last_window = true,
+    enable_git_status = true,
 
-      window = {
-        width = 35,
-      },
-    })
-  end,
+    window = {
+      width = 35,
+    },
+  },
 }

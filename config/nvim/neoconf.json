@@ -1,0 +1,8 @@
+{
+  "lspconfig": {
+    "pyright": {
+      "python.analysis.diagnosticMode": "openFilesOnly"
+    },
+    "jedi_language_server": false
+  }
+}

@@ -1,3 +1,0 @@
-return {
-  filetypes = { 'json', 'jsonc' },
-}

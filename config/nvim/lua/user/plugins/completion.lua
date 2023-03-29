@@ -1,3 +1,14 @@
+local has_words_before = function()
+  unpack = unpack or table.unpack
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0
+    and vim.api
+        .nvim_buf_get_lines(0, line - 1, line, true)[1]
+        :sub(col, col)
+        :match('%s')
+      == nil
+end
+
 return {
   'hrsh7th/nvim-cmp',
 
@@ -5,7 +16,6 @@ return {
     'plenary.nvim',
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-path',
-    'hrsh7th/cmp-nvim-lua',
     'L3MON4D3/LuaSnip',
     'saadparwaiz1/cmp_luasnip',
     'onsails/lspkind.nvim',
@@ -13,13 +23,14 @@ return {
 
   event = 'BufEnter',
 
-  config = function()
-    local cmp = require('cmp')
-    local functional = require('plenary.functional')
-    local luasnip = require('luasnip')
-    local lspkind = require('lspkind')
-
+  init = function()
     vim.opt.completeopt = { 'menuone', 'noselect' }
+  end,
+
+  opts = function()
+    local cmp = require('cmp')
+    local luasnip = require('luasnip')
+    local functional = require('plenary.functional')
 
     local function select_fn(cmp_function, fallback)
       if cmp.visible() then
@@ -29,22 +40,42 @@ return {
       end
     end
 
-    local select_next = functional.partial(select_fn, cmp.select_next_item)
-    local select_prev = functional.partial(select_fn, cmp.select_next_item)
+    local select_next =
+      cmp.mapping(functional.partial(select_fn, cmp.select_next_item))
+    local select_prev =
+      cmp.mapping(functional.partial(select_fn, cmp.select_prev_item))
 
-    cmp.setup({
+    return {
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
         end,
       },
       mapping = {
-        ['<tab>'] = cmp.mapping(select_next),
-        ['<c-j>'] = cmp.mapping(select_next),
-        ['<down>'] = cmp.mapping(select_next),
-        ['<s-tab>'] = cmp.mapping(select_prev),
-        ['<c-k>'] = cmp.mapping(select_prev),
-        ['<up>'] = cmp.mapping(select_prev),
+        ['<tab>'] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+          elseif luasnip.expand_or_locally_jumpable() then
+            luasnip.expand_or_jump()
+          elseif has_words_before() then
+            cmp.complete()
+          else
+            fallback()
+          end
+        end, { 'i', 's' }),
+        ['<c-j>'] = select_next,
+        ['<down>'] = select_next,
+        ['<s-tab>'] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+          elseif luasnip.locally_jumpable(-1) then
+            luasnip.jump(-1)
+          else
+            fallback()
+          end
+        end, { 'i', 's' }),
+        ['<c-k>'] = select_prev,
+        ['<up>'] = select_prev,
         ['<c-space>'] = cmp.mapping.complete(),
         ['<cr>'] = cmp.mapping.confirm(),
       },
@@ -53,24 +84,8 @@ return {
         { name = 'nvim_lsp' },
       }),
       formatting = {
-        format = lspkind.cmp_format(),
+        format = require('lspkind').cmp_format(),
       },
-    })
-
-    require('user.util').create_augroup('nvim_cmp_init', {
-      {
-        'FileType',
-        pattern = 'lua',
-        callback = function()
-          cmp.setup.buffer({
-            sources = {
-              { name = 'path' },
-              { name = 'nvim_lsp' },
-              { name = 'nvim_lua' },
-            },
-          })
-        end,
-      },
-    })
+    }
   end,
 }
