@@ -4,7 +4,7 @@
   "cmp-path": { "branch": "main", "commit": "91ff86cd9c29299a64f968ebb45846c485725f23" },
   "cmp_luasnip": { "branch": "master", "commit": "18095520391186d634a0045dacaa346291096566" },
   "dressing.nvim": { "branch": "master", "commit": "5f44f829481640be0f96759c965ae22a3bcaf7ce" },
-  "editorconfig-vim": { "branch": "master", "commit": "7f4e4dfc58c480d154116614e616d90aac77204d" },
+  "editorconfig.nvim": { "branch": "master", "commit": "5b9e303e1d6f7abfe616ce4cc8d3fffc554790bf" },
   "fzf-lua": { "branch": "main", "commit": "d49f79fbdaf5247ce694637555e8cd503f6fc05f" },
   "jsonc.vim": { "branch": "master", "commit": "6fb92460f9e50505c9b93181a00f27d10c9b383f" },
   "lazy.nvim": { "branch": "main", "commit": "57cce98dfdb2f2dd05a0567d89811e6d0505e13b" },
