@@ -41,10 +41,12 @@ local function on_attach(client, bufnr)
 
   local opts = { buffer = bufnr or 0 }
 
-  -- require('illuminate').on_attach(client)
-  -- require('lsp_signature').on_attach({
-  --   max_width = 80,
-  -- })
+  require('lsp_signature').on_attach({
+    bind = true,
+    handler_opts = {
+      border = 'rounded',
+    },
+  }, bufnr)
 
   if client.server_capabilities.documentSymbolProvider then
     require('nvim-navic').attach(client, bufnr)
@@ -93,23 +95,30 @@ local function on_attach(client, bufnr)
   vim.api.nvim_create_autocmd('CursorHold', {
     buffer = opts.buffer,
     callback = function()
-      vim.diagnostic.open_float(nil, {
-        scope = 'cursor',
-        border = 'rounded',
-        max_width = 80,
-        show_header = false,
-        focusable = false,
-      })
+      vim.diagnostic.open_float({ bufnr = opts.buffer, scope = 'cursor' })
     end,
   })
 end
 
 return {
-  -- Helpers for editing neovim lua; must be setup before lspconfig
   {
+    'folke/neoconf.nvim',
+
+    -- ensure this loads before neodev and lspconfig calls
+    priority = 200,
+
+    opts = {
+      import = {
+        coc = false,
+      },
+    },
+  },
+
+  {
+    -- Helpers for editing neovim lua; must be setup before lspconfig
     'folke/neodev.nvim',
 
-    -- ensure this loads before lsp
+    -- ensure this loads before lspconfig calls happen
     priority = 100,
 
     opts = {},
@@ -119,9 +128,10 @@ return {
     'williamboman/mason-lspconfig.nvim',
 
     dependencies = {
-      'folke/neoconf.nvim',
       'neovim/nvim-lspconfig',
       'williamboman/mason.nvim',
+      'ray-x/lsp_signature.nvim',
+      'SmiteshP/nvim-navic',
     },
 
     config = function()
@@ -145,7 +155,15 @@ return {
         { text = '', texthl = 'DiagnosticSignHint' }
       )
 
-      vim.diagnostic.config({ virtual_text = false })
+      vim.diagnostic.config({
+        virtual_text = false,
+        float = {
+          border = 'rounded',
+          max_width = 80,
+          show_header = false,
+          focusable = false,
+        },
+      })
 
       local lsp = vim.lsp
 
@@ -154,13 +172,6 @@ return {
 
       lsp.handlers['textDocument/signatureHelp'] =
         lsp.with(lsp.handlers.signature_help, { border = 'rounded' })
-
-      -- neoconf must be configured before any lspconfig calls happen
-      require('neoconf').setup({
-        import = {
-          coc = false,
-        },
-      })
 
       require('mason').setup()
       require('mason-lspconfig').setup()
@@ -236,17 +247,6 @@ return {
         },
       }
     end,
-  },
-
-  {
-    'ray-x/lsp_signature.nvim',
-
-    opts = {
-      bind = true,
-      handler_opts = {
-        border = 'rounded',
-      },
-    },
   },
 
   {
