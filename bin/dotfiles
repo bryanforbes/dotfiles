@@ -382,7 +382,11 @@ function dotfiles-asdf {
 function dotfiles-vim {
     log "Updating vim plugins..."
 
-    nvim --headless -c ':Lazy! sync' -c 'quitall' 2>&1 > /dev/null
+    if [[ -z "$SSH_CONNECTION" ]]; then
+        nvim --headless -c ':Lazy! sync' -c 'quitall' 2>&1 > /dev/null
+    else
+        nvim --headless -c ':Lazy! restore' -c 'quitall' 2>&1 > /dev/null
+    fi
     nvim --headless -c 'lua require("user.plugins.treesitter").install_parsers()' -c 'quitall' 2>&1 > /dev/null
 }
 
