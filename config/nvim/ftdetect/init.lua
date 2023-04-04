@@ -1,57 +1,38 @@
-require('user.util').create_augroup('init_ftdetect_autocommands', {
-  -- jinja
-  {
-    { 'BufNewFile', 'BufRead' },
-    pattern = '*.jin',
-    command = 'setfiletype jinja',
-  },
-  {
-    { 'BufNewFile', 'BufRead' },
-    pattern = '*.html.jin',
-    command = 'setfiletype htmljinja',
-  },
+local group =
+  vim.api.nvim_create_augroup('init_ftdetect_autocommands', { clear = true })
 
-  -- json
-  {
-    { 'BufNewFile', 'BufRead' },
-    pattern = { '*.json', '*.smd' },
-    command = 'setfiletype json',
-  },
-  {
-    { 'BufNewFile', 'BufRead' },
-    pattern = { '.{bowerrc,tslintrc,eslintrc,dojorc,prettierrc}', '.dojorc-*' },
-    command = 'setfiletype json',
-  },
+---@param pattern string|string[]
+---@param filetype string
+local function autoft(pattern, filetype)
+  vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
+    group = group,
+    pattern = pattern,
+    callback = function(args)
+      vim.bo[args.buf].filetype = filetype
+    end,
+  })
+end
 
-  -- mako
-  {
-    { 'BufNewFile', 'BufRead' },
-    pattern = '*.mak',
-    command = 'setfiletype mako',
-  },
+autoft('*.jin', 'jinja')
+autoft('*.html.jin', 'htmljinja')
+autoft({
+  '*.smd',
+  '.{jscsrc,bowerrc,tslintrc,eslintrc,dojorc,prettierrc}',
+  '.dojorc-*',
+}, 'json')
+autoft({ '{ts,js}config.json', 'intern.json', 'intern{-.}*.json' }, 'jsonc')
+autoft('*.mak', 'mako')
+autoft('*.nginx', 'nginx')
+autoft({ '*.pyx', '*.pxd', '*.pxi' }, 'pyrex')
+autoft({
+  '*/zsh/functions/*',
+  '~/.dotfiles/bin/**',
+  '~/.dotfiles/home/zsh*',
+}, 'zsh')
 
-  -- nginx
-  {
-    { 'BufNewFile', 'BufRead' },
-    pattern = '*.nginx',
-    command = 'setfiletype nginx',
-  },
+---@type table<string, string>
+local filetypes = require('neoconf').get('filetypes', {})
 
-  -- pyrex
-  {
-    { 'BufNewFile', 'BufRead' },
-    pattern = { '*.pyx', '*.pxd', '*.pxi' },
-    command = 'setfiletype pyrex',
-  },
-
-  -- zsh
-  {
-    { 'BufNewFile', 'BufRead' },
-    pattern = {
-      '*/zsh/functions/*',
-      '~/.dotfiles/bin/**',
-      '~/.dotfiles/home/zsh*',
-    },
-    command = 'setfiletype zsh',
-  },
-})
+for pattern, filetype in pairs(filetypes) do
+  autoft(pattern, filetype)
+end

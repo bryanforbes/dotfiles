@@ -1,8 +1,11 @@
-vim.api.nvim_create_augroup('init_autocommands', {})
+local group = vim.api.nvim_create_augroup('init_autocommands', {})
 
-local function autocmd(type, pattern, callback)
-  vim.api.nvim_create_autocmd(type, {
-    group = 'init_autocommands',
+---@param event string|string[]
+---@param pattern string|string[]
+---@param callback function
+local function autocmd(event, pattern, callback)
+  vim.api.nvim_create_autocmd(event, {
+    group = group,
     pattern = pattern,
     callback = callback,
   })
