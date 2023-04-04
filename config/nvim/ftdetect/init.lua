@@ -1,38 +1,34 @@
-local group =
-  vim.api.nvim_create_augroup('init_ftdetect_autocommands', { clear = true })
+-- The following hooks into the mechanism found in `$VIMRUNTIME/filetype.lua`
+vim.filetype.add({
+  extension = {
+    jin = 'jinja',
+    smd = 'json',
+  },
+  filename = {
+    ['poetry.lock'] = 'toml',
+    ['.jscsrc'] = 'json',
+    ['.bowerrc'] = 'json',
+    ['.tslintrc'] = 'json',
+    ['.eslintrc'] = 'json',
+    ['.dojorc'] = 'json',
+    ['.prettierrc'] = 'json',
+    ['tsconfifg.json'] = 'jsonc',
+    ['jsconfig.json'] = 'jsonc',
+    ['intern.json'] = 'jsonc',
+  },
+  pattern = {
+    ['.*%.html%.jin'] = 'htmljinja',
+    ['%.dojorc%-.*'] = 'json',
+    ['intern.*%.json'] = 'jsonc',
+    ['.*/zsh/functions/.*'] = 'zsh',
+    ['~/.dotfiles/bin/.*'] = 'zsh',
+    ['~/.dotfiles/home/zsh.*'] = 'zsh',
+  },
+})
 
----@param pattern string|string[]
----@param filetype string
-local function autoft(pattern, filetype)
-  vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
-    group = group,
-    pattern = pattern,
-    callback = function(args)
-      vim.bo[args.buf].filetype = filetype
-    end,
-  })
-end
+---@type table|nil
+local filetypes = require('neoconf').get('filetype_add')
 
-autoft('*.jin', 'jinja')
-autoft('*.html.jin', 'htmljinja')
-autoft({
-  '*.smd',
-  '.{jscsrc,bowerrc,tslintrc,eslintrc,dojorc,prettierrc}',
-  '.dojorc-*',
-}, 'json')
-autoft({ '{ts,js}config.json', 'intern.json', 'intern{-.}*.json' }, 'jsonc')
-autoft('*.mak', 'mako')
-autoft('*.nginx', 'nginx')
-autoft({ '*.pyx', '*.pxd', '*.pxi' }, 'pyrex')
-autoft({
-  '*/zsh/functions/*',
-  '~/.dotfiles/bin/**',
-  '~/.dotfiles/home/zsh*',
-}, 'zsh')
-
----@type table<string, string>
-local filetypes = require('neoconf').get('filetypes', {})
-
-for pattern, filetype in pairs(filetypes) do
-  autoft(pattern, filetype)
+if filetypes ~= nil then
+  vim.filetype.add(filetypes)
 end
