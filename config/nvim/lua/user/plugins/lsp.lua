@@ -209,6 +209,9 @@ return {
 
     opts = function()
       local null_ls = require('null-ls')
+      local settings = require('neoconf').get('null-ls', {
+        enable_mypy = false,
+      })
 
       return {
         on_attach = on_attach,
@@ -224,6 +227,18 @@ return {
           null_ls.builtins.diagnostics.flake8.with({
             only_local = '.venv/bin',
             condition = root_has_file({ '.flake8', 'setup.cfg', 'tox.ini' }),
+          }),
+          null_ls.builtins.diagnostics.mypy.with({
+            only_local = '.venv/bin',
+            condition = function(utils)
+              return settings.enable_mypy
+                and utils.root_has_file({
+                  'mypy.ini',
+                  '.mypy.ini',
+                  'pyproject.toml',
+                  'setup.cfg',
+                })
+            end,
           }),
           null_ls.builtins.formatting.stylua.with({
             condition = root_has_file({ '.stylua.toml' }),
