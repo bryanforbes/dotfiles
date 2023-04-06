@@ -65,7 +65,7 @@ return {
       },
 
       diagnostics = {
-        severity_limit = 2,
+        severity_limit = vim.diagnostic.severity.WARN,
       },
     })
 

@@ -125,9 +125,6 @@ g.vim_json_syntax_conceal = 0
 -- typescript-vim
 g.typescript_indent_disable = 1
 
--- Don't show hints in diagnostic lists (telescope, trouble)
-g.lsp_severity_limit = 3
-
 -- disable builtin plugins
 for _, plugin in pairs({
   '2html_plugin',

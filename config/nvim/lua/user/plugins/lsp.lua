@@ -35,55 +35,55 @@ local server_configs = {
 
 -- configure a client when it's attached to a buffer
 ---@param client any
----@param bufnr integer
-local function on_attach(client, bufnr)
+---@param buffer integer
+local function on_attach(client, buffer)
   -- print('on_attach: ' .. client.name .. ' ' .. bufnr)
 
-  local opts = { buffer = bufnr or 0 }
+  buffer = buffer or 0
 
   require('lsp_signature').on_attach({
     bind = true,
     handler_opts = {
       border = 'rounded',
     },
-  }, bufnr)
+  }, buffer)
 
   if client.server_capabilities.documentSymbolProvider then
-    require('nvim-navic').attach(client, bufnr)
+    require('nvim-navic').attach(client, buffer)
   end
 
   -- perform general setup
   if client.server_capabilities.definitionProvider then
     vim.keymap.set('n', '<C-]>', function()
       require('fzf-lua').lsp_definitions({ jump_to_single_result = true })
-    end, opts)
+    end, { buffer = buffer })
   end
 
   if client.server_capabilities.typeDefinitionProvider then
     vim.keymap.set('n', '<C-\\>', function()
       require('fzf-lua').lsp_typedefs({ jump_to_single_result = true })
-    end, opts)
+    end, { buffer = buffer })
   end
 
   if client.server_capabilities.hoverProvider then
     vim.keymap.set('', 'K', function()
       vim.lsp.buf.hover()
-    end, opts)
+    end, { buffer = buffer })
   end
 
   if client.server_capabilities.renameProvider then
     vim.keymap.set('', '<leader>r', function()
       vim.lsp.buf.rename()
-    end, opts)
+    end, { buffer = buffer })
   end
 
   if client.server_capabilities.documentFormattingProvider then
     vim.api.nvim_create_autocmd('BufWritePre', {
-      group = vim.api.nvim_create_augroup('LspFormat.' .. bufnr, {}),
-      buffer = opts.buffer,
+      group = vim.api.nvim_create_augroup('LspFormat.' .. buffer, {}),
+      buffer = buffer,
       callback = function()
         vim.lsp.buf.format({
-          bufnr = opts.buffer,
+          bufnr = buffer,
           filter = function(lsp_client)
             return lsp_client.name == 'null-ls'
           end,
@@ -93,9 +93,9 @@ local function on_attach(client, bufnr)
   end
 
   vim.api.nvim_create_autocmd('CursorHold', {
-    buffer = opts.buffer,
+    buffer = buffer,
     callback = function()
-      vim.diagnostic.open_float({ bufnr = opts.buffer, scope = 'cursor' })
+      vim.diagnostic.open_float({ bufnr = buffer, scope = 'cursor' })
     end,
   })
 end
@@ -242,7 +242,7 @@ return {
             end,
           }),
           null_ls.builtins.formatting.stylua.with({
-            condition = root_has_file({ '.stylua.toml' }),
+            condition = root_has_file({ '.stylua.toml', 'stylua.toml' }),
           }),
           null_ls.builtins.formatting.prettier.with({
             only_local = 'node_modules/.bin',
