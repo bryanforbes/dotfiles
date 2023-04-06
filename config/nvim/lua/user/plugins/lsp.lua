@@ -102,7 +102,8 @@ end
 
 return {
   {
-    'folke/neoconf.nvim',
+    'bryanforbes/neoconf.nvim',
+    branch = 'feature/use-vim-filetype-add',
 
     -- ensure this loads before neodev and lspconfig calls
     priority = 200,
