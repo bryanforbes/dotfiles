@@ -67,6 +67,16 @@ local function on_attach(client, buffer)
 
   if client.server_capabilities.hoverProvider then
     vim.keymap.set('', 'K', function()
+      -- Ignore CursorHold when requesting hover so the diagnostic float doesn't
+      -- close the hover after a second
+      vim.opt.eventignore = { 'CursorHold' }
+      vim.api.nvim_create_autocmd('CursorMoved', {
+        buffer = buffer,
+        once = true,
+        callback = function()
+          vim.opt.eventignore = {}
+        end,
+      })
       vim.lsp.buf.hover()
     end, { buffer = buffer })
   end
