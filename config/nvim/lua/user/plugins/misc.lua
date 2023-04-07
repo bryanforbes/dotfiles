@@ -18,47 +18,6 @@ return {
   },
 
   {
-    'gpanders/editorconfig.nvim',
-
-    init = function()
-      -- Disable builtin EditorConfig
-      vim.g.editorconfig = false
-      -- Set up the autocmd ourselves
-      vim.g.loaded_editorconfig = 1
-    end,
-
-    config = function()
-      vim.api.nvim_create_autocmd(
-        { 'BufNewFile', 'BufRead', 'BufFilePost', 'VimResized' },
-        {
-          group = vim.api.nvim_create_augroup('editorconfig', { clear = true }),
-          callback = function(args)
-            require('editorconfig').config(args.buf)
-
-            local buffer_name = vim.fn.expand('%:p')
-
-            if
-              buffer_name:match('^fugitive://.*') ~= nil
-              or buffer_name:match('^scp://.*') ~= nil
-            then
-              return
-            end
-
-            local max_line_length = vim.bo[args.buf].textwidth
-            local columns = vim.o.columns
-
-            if max_line_length > 0 and max_line_length < columns then
-              vim.opt_local.colorcolumn = require('plenary.iterators')
-                .range(max_line_length + 1, columns, 1)
-                :tolist()
-            end
-          end,
-        }
-      )
-    end,
-  },
-
-  {
     'tpope/vim-fugitive',
 
     event = 'BufEnter',
