@@ -7,7 +7,6 @@ local parsers = {
   'css',
   'dockerfile',
   'go',
-  'help',
   'html',
   'java',
   'javascript',
@@ -25,6 +24,7 @@ local parsers = {
   'toml',
   'typescript',
   'vim',
+  'vimdoc',
   'yaml',
 }
 
