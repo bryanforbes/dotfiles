@@ -20,7 +20,7 @@ local server_configs = {
     filetypes = { 'json', 'jsonc' },
   },
   ruff_lsp = function()
-    if vim.fn.executable('.vim/bin/python') == 1 then
+    if vim.fn.executable('.venv/bin/python') == 1 then
       return {
         init_options = {
           settings = {
