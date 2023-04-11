@@ -19,6 +19,19 @@ local server_configs = {
   jsonls = {
     filetypes = { 'json', 'jsonc' },
   },
+  ruff_lsp = function()
+    if vim.fn.executable('.vim/bin/python') == 1 then
+      return {
+        init_options = {
+          settings = {
+            interpreter = { '.venv/bin/python' },
+          },
+        },
+      }
+    end
+
+    return false
+  end,
   tsserver = {
     on_attach = function(_, bufnr)
       vim.api.nvim_buf_create_user_command(bufnr, 'OrganizeImports', function()
@@ -32,6 +45,26 @@ local server_configs = {
     end,
   },
 }
+
+---@param name string
+---@return table|false
+local function get_server_config(name)
+  local neoconf_config = require('neoconf').get('lspconfig')[name]
+  local server_config = server_configs[name]
+
+  if type(server_config) == 'function' then
+    server_config = server_config()
+  end
+
+  if
+    neoconf_config == false
+    or (neoconf_config == nil and server_config == false)
+  then
+    return false
+  end
+
+  return server_config or {}
+end
 
 -- configure a client when it's attached to a buffer
 ---@param client any
@@ -189,21 +222,17 @@ return {
 
       require('mason-lspconfig').setup_handlers({
         function(server_name)
-          local server_config = server_configs[server_name]
+          local server_config = get_server_config(server_name)
 
           if server_config == false then
             return
           end
 
-          server_config = server_config or {}
-
           require('lspconfig')[server_name].setup(vim.tbl_extend('keep', {
-            on_attach = server_config.on_attach
-                and require('lspconfig.util').add_hook_before(
-                  on_attach,
-                  server_config.on_attach
-                )
-              or on_attach,
+            on_attach = require('lspconfig.util').add_hook_before(
+              server_config.on_attach,
+              on_attach
+            ),
             capabilities = require('cmp_nvim_lsp').default_capabilities(),
           }, server_config))
         end,
@@ -222,6 +251,7 @@ return {
       local null_ls = require('null-ls')
       local settings = require('neoconf').get('null-ls', {
         enable_mypy = false,
+        enable_flake8 = true,
       })
 
       return {
@@ -237,7 +267,10 @@ return {
           }),
           null_ls.builtins.diagnostics.flake8.with({
             only_local = '.venv/bin',
-            condition = root_has_file({ '.flake8', 'setup.cfg', 'tox.ini' }),
+            condition = function(utils)
+              return settings.enable_flake8
+                and utils.root_has_file({ '.flake8', 'setup.cfg', 'tox.ini' })
+            end,
           }),
           null_ls.builtins.diagnostics.mypy.with({
             only_local = '.venv/bin',
