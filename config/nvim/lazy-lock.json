@@ -17,7 +17,7 @@
   "neoconf.nvim": { "branch": "feature/use-vim-filetype-add", "commit": "12a1eceb7a7a76f9f75d47747105f1631f47a273" },
   "neodev.nvim": { "branch": "main", "commit": "864b35006d3de24c60e44b566de8018f919b13e6" },
   "nui.nvim": { "branch": "main", "commit": "bf5900f1b60bf6499755ac92315181a24a87a577" },
-  "null-ls.nvim": { "branch": "main", "commit": "7e362189bc1598f36ba5e349ad6b35bed541ec40" },
+  "null-ls.nvim": { "branch": "main", "commit": "f8ffcd7cb8fb3325c711d459152ef132b5b65aed" },
   "nvim-cmp": { "branch": "main", "commit": "777450fd0ae289463a14481673e26246b5e38bf2" },
   "nvim-lightbulb": { "branch": "master", "commit": "56b9ce31ec9d09d560fe8787c0920f76bc208297" },
   "nvim-lspconfig": { "branch": "master", "commit": "10fa01d553ce10646350461ac5ddc71f189e9d1a" },
