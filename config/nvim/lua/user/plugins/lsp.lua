@@ -4,34 +4,42 @@ local function root_has_file(patterns)
   end
 end
 
+---@param cmd string
+---@return boolean
+local function executable(cmd)
+  return vim.fn.executable(cmd) == 1
+end
+
 ---@type lspconfig.options
 local server_configs = {
   bashls = {
     filetypes = { 'sh', 'zsh' },
   },
-  diagnosticls = false,
   html = {
     init_options = {
       provideFormatter = false,
     },
   },
-  jedi_language_server = false,
   jsonls = {
     filetypes = { 'json', 'jsonc' },
   },
-  ruff_lsp = function()
-    if vim.fn.executable('.venv/bin/python') == 1 then
-      return {
-        init_options = {
+  ruff_lsp = {
+    before_init = function(init_params)
+      if executable('ruff') then
+        init_params.initializationOptions = {
           settings = {
-            interpreter = { '.venv/bin/python' },
+            path = { vim.fn.exepath('ruff') },
           },
-        },
-      }
-    end
-
-    return false
-  end,
+        }
+      elseif executable('python') then
+        init_params.initializationOptions = {
+          settings = {
+            interpreter = { vim.fn.exepath('python') },
+          },
+        }
+      end
+    end,
+  },
   tsserver = {
     on_attach = function(_, bufnr)
       vim.api.nvim_buf_create_user_command(bufnr, 'OrganizeImports', function()
@@ -45,26 +53,6 @@ local server_configs = {
     end,
   },
 }
-
----@param name string
----@return table|false
-local function get_server_config(name)
-  local neoconf_config = require('neoconf').get('lspconfig')[name]
-  local server_config = server_configs[name]
-
-  if type(server_config) == 'function' then
-    server_config = server_config()
-  end
-
-  if
-    neoconf_config == false
-    or (neoconf_config == nil and server_config == false)
-  then
-    return false
-  end
-
-  return server_config or {}
-end
 
 -- configure a client when it's attached to a buffer
 ---@param client any
@@ -141,6 +129,29 @@ local function on_attach(client, buffer)
       vim.diagnostic.open_float({ bufnr = buffer, scope = 'cursor' })
     end,
   })
+end
+
+---@param server_name string
+local function default_handler(server_name)
+  local neoconf_config = require('neoconf').get('lspconfig')[server_name]
+  local server_config = server_configs[server_name]
+
+  if
+    neoconf_config == false
+    or (neoconf_config == nil and server_config == false)
+  then
+    return
+  end
+
+  server_config = server_config or {}
+
+  require('lspconfig')[server_name].setup(vim.tbl_extend('keep', {
+    on_attach = require('lspconfig.util').add_hook_before(
+      server_config.on_attach,
+      on_attach
+    ),
+    capabilities = require('cmp_nvim_lsp').default_capabilities(),
+  }, server_config))
 end
 
 return {
@@ -221,20 +232,12 @@ return {
       require('mason-lspconfig').setup()
 
       require('mason-lspconfig').setup_handlers({
-        function(server_name)
-          local server_config = get_server_config(server_name)
+        default_handler,
 
-          if server_config == false then
-            return
+        ['ruff_lsp'] = function(server_name)
+          if executable('ruff') then
+            default_handler(server_name)
           end
-
-          require('lspconfig')[server_name].setup(vim.tbl_extend('keep', {
-            on_attach = require('lspconfig.util').add_hook_before(
-              server_config.on_attach,
-              on_attach
-            ),
-            capabilities = require('cmp_nvim_lsp').default_capabilities(),
-          }, server_config))
         end,
       })
     end,
