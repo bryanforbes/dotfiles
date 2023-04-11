@@ -66,7 +66,6 @@ return {
     end,
   },
 
-  'tmux-plugins/vim-tmux-focus-events',
   'neoclide/jsonc.vim',
 
   -- Better UI
