@@ -54,6 +54,73 @@ local server_configs = {
   },
 }
 
+---@param buffer integer
+---@param method string
+local function lsp_method_supported(buffer, method)
+  ---@type lsp.Client[]
+  local active_clients = vim.lsp.get_active_clients({ bufnr = buffer })
+
+  for _, active_client in pairs(active_clients) do
+    if active_client.supports_method(method) then
+      return true
+    end
+  end
+end
+
+---Adapted from M.code_actions() in $VIMRUNTIME/lua/vim/buf.lua
+---@param buffer integer
+local function organize_imports(buffer)
+  if not lsp_method_supported(buffer, 'textDocument/codeAction') then
+    return
+  end
+
+  local params = vim.lsp.util.make_range_params()
+  params.context = {
+    diagnostics = {},
+    only = { 'source.organizeImports' },
+  }
+  local results =
+    vim.lsp.buf_request_sync(buffer, 'textDocument/codeAction', params)
+
+  if results == nil then
+    return
+  end
+
+  for client_id, result in pairs(results) do
+    local client = vim.lsp.get_client_by_id(client_id)
+
+    for _, action in pairs(result.result or {}) do
+      if action.kind == 'source.organizeImports' then
+        if action.edit then
+          vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
+        end
+        if action.command then
+          local command = type(action.command) == 'table' and action.command
+            or action
+          local fn = client.commands[command.command]
+            or vim.lsp.commands[command.command]
+          if fn then
+            fn(command, {
+              client_id = client.id,
+              bufnr = buffer,
+              method = 'textDocument/codeAction',
+              params = vim.deepcopy(params),
+            })
+          else
+            -- Not using command directly to exclude extra properties,
+            -- see https://github.com/python-lsp/python-lsp-server/issues/146
+            client.request_sync('workspace/executeCommand', {
+              command = command.command,
+              arguments = command.arguments,
+              workDoneToken = command.workDoneToken,
+            }, nil, buffer)
+          end
+        end
+      end
+    end
+  end
+end
+
 -- configure a client when it's attached to a buffer
 ---@param client any
 ---@param buffer integer
@@ -113,6 +180,7 @@ local function on_attach(client, buffer)
       group = vim.api.nvim_create_augroup('LspFormat.' .. buffer, {}),
       buffer = buffer,
       callback = function()
+        organize_imports(buffer)
         vim.lsp.buf.format({
           bufnr = buffer,
           filter = function(lsp_client)
@@ -255,6 +323,7 @@ return {
       local settings = require('neoconf').get('null-ls', {
         enable_mypy = false,
         enable_flake8 = true,
+        enable_isort = true,
       })
 
       return {
@@ -262,7 +331,10 @@ return {
         sources = {
           null_ls.builtins.formatting.isort.with({
             only_local = '.venv/bin',
-            condition = root_has_file({ 'pyproject.toml' }),
+            condition = function(utils)
+              return settings.enable_isort
+                and utils.root_has_file({ 'pyproject.toml' })
+            end,
           }),
           null_ls.builtins.formatting.black.with({
             only_local = '.venv/bin',
