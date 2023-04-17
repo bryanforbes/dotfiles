@@ -283,7 +283,9 @@ return {
         float = {
           border = 'rounded',
           max_width = 80,
-          show_header = false,
+          header = false,
+          title = 'Diagnostics:',
+          title_pos = 'left',
           focusable = false,
         },
       })
