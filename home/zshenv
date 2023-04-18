@@ -55,6 +55,11 @@ fi
 # --------------------------------------------------------------------------
 export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
 
+manpath=(
+    $HOMEBREW_BASE/share/man
+    $manpath
+)
+
 # coreutils and gnu-sed
 if is-darwin; then
     # path and manpath for homebrew
