@@ -1,6 +1,18 @@
 # This code was originally from
 # https://github.com/ninrod/dotfiles/boot/functions.zsh
 
+# Terminal colors
+local TC='\e['
+local Rst="${TC}0m"
+local Blk="${TC}30m";
+local Red="${TC}31m";
+local Grn="${TC}32m";
+local Yel="${TC}33m";
+local Blu="${TC}34m";
+local Prp="${TC}35m";
+local Cyn="${TC}36m";
+local Wht="${TC}37m";
+
 git_clone_error_msg() {
   echo -e "  ${Red}[ERROR]${Rst} git clone errored: ${Red}${1}${Rst}. ${Yel}aborting...${Rst}"
 }
