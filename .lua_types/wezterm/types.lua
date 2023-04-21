@@ -836,7 +836,7 @@ function KeyAssignment.CharSelect(opts) end
 
 ---@param mode 'ScrollbackOnly' | 'ScrollbackAndViewport'
 ---@return _.wezterm._KeyAssignmentAction
-function KeyAssignment.CharSelect(mode) end
+function KeyAssignment.ClearScrollback(mode) end
 
 ---@param opts { confirm: boolean }
 ---@return _.wezterm._KeyAssignmentAction
