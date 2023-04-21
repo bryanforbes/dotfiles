@@ -15,7 +15,6 @@
   "lspconfig": {
     "lua_ls": {
       "Lua.workspace.library": [
-        "config/nvim/lua/types",
         ".lua_types"
       ],
       "Lua.workspace.checkThirdParty": false,
