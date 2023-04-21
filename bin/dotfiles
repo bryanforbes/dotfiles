@@ -7,9 +7,14 @@ function generate_terminfo {
     local term_name="$1"
     local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
 
-    # The substitution for kbs is a fix so C-H works properly in neovim
-    # The substitutions for paris are a fix for ncurses 5.7 (https://github.com/tmux/tmux/issues/2262#issuecomment-819569654)
-    $HOMEBREW_BASE/opt/ncurses/bin/infocmp $term_name | sed -e 's/kbs=^[hH]/kbs=\\177/' -e 's/pairs#0x10000/pairs#0x1000/' -e 's/pairs#65536/pairs#32768/' > $tmpfile
+    # Fix so C-H will work in neovim
+    $HOMEBREW_BASE/opt/ncurses/bin/infocmp $term_name | sed -e 's/kbs=^[hH]/kbs=\\177/' > $tmpfile
+
+    if is-darwin; then
+        # Fix for ncurses 5.7 (https://github.com/tmux/tmux/issues/2262#issuecomment-819569654)
+        sed -i -e 's/pairs#0x10000/pairs#0x1000/' -e 's/pairs#65536/pairs#32768/' $tmpfile
+    fi
+
     $HOMEBREW_BASE/opt/ncurses/bin/tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
 
     rm $tmpfile
@@ -17,11 +22,13 @@ function generate_terminfo {
 
 # Fix terminal config
 function fixterm {
-    if [[ ! -d $HOME/.terminfo/74/tmux-256color ]]; then
+    infocmp tmux-256color &> /dev/null
+    if (( $? != 0 )); then
         generate_terminfo "tmux-256color"
     fi
 
-    if [[ ! -d $HOME/.terminfo/74/tmux ]]; then
+    infocmp tmux &> /dev/null
+    if (( $? != 0 )); then
         generate_terminfo "tmux"
     fi
 }
