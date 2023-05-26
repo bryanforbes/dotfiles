@@ -3,6 +3,10 @@ export CACHEDIR=$HOME/.cache
 export CONFIGDIR=$HOME/.config
 export DATADIR=$HOME/.local/share
 
+export XDG_CACHE_HOME=$CACHEDIR
+export XDG_CONFIG_HOME=$CONFIGDIR
+export XDG_DATA_HOME=$DATADIR
+
 export ZCACHEDIR=$CACHEDIR/zsh
 export ZDATADIR=$DATADIR/zsh
 export ZPLUGDIR=$ZCACHEDIR/plugins

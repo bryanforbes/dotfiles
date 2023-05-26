@@ -40,6 +40,14 @@ local server_configs = {
       end
     end,
   },
+  stylelint_lsp = {
+    filetypes = {
+      'css',
+      'less',
+      'scss',
+      'sugarss',
+    },
+  },
   tsserver = {
     on_attach = function(_, bufnr)
       vim.api.nvim_buf_create_user_command(bufnr, 'OrganizeImports', function()
@@ -379,6 +387,7 @@ return {
               'prettier.config.cjs',
             }),
           }),
+          null_ls.builtins.formatting.rustfmt.with({}),
         },
       }
     end,
