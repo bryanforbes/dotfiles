@@ -1,0 +1,48 @@
+#!/usr/bin/env zsh
+
+local FIRMWARE
+
+if [[ -n "$1" ]]; then
+    FIRMWARE="$1"
+else
+    FIRMWARE="$(ls -t ~/Downloads/*.uf2 | head -n1)"
+    echo "Flashing $FIRMWARE"
+fi
+
+function copy-to-volume {
+    local hand="$1"
+    local volume="$2"
+
+    local dots=('.   ' '..  ' '... ')
+    local -i i=0
+
+    echo -n "Waiting for $hand hand boot volume    "
+
+    while [[ ! -d "$volume" ]]; do
+        echo -n "\b\b\b\b${dots[$(( i % 3 + 1 ))]}"
+        ((++i))
+
+        sleep 0.5
+    done
+
+    echo -n "\b\b\b\b... found"
+
+    sleep 0.5
+
+    echo -en "\033[2K\rFlashing $hand hand    "
+
+    cp -f "$FIRMWARE" "$volume"
+
+    i=0
+    while [[ -d "$volume" ]]; do
+        echo -n "\b\b\b\b${dots[$(( i % 3 + 1 ))]}"
+        ((++i))
+
+        sleep 0.5
+    done
+
+    echo "\b\b\b\b... done"
+}
+
+copy-to-volume "left" "/Volumes/GLV80LHBOOT"
+copy-to-volume "right" "/Volumes/GLV80RHBOOT"
