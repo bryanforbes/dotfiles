@@ -5,7 +5,7 @@
 ---@alias _.wezterm.Appearance 'Light' | 'Dark' | 'LightHighContrast' | 'DarkHighContrast'
 ---@alias _.wezterm.Clipboard 'Clipboard' | 'PrimarySelection' | 'ClipboardAndPrimarySelection'
 ---@alias _.wezterm.ColorSpec 'Default' | { AnsiColor: string } | { Color: string }
----@alias _.wezterm.CopyMode 'AcceptPattern' | 'ClearPattern' | 'ClearSelectionMode'[] | 'Close' | 'CycleMatchType' | 'EditPattern' | 'MoveBackwardSemanticZone' | { MoveBackwardSemanticZoneOfType: _.wezterm.SemanticZoneType } | 'MoveBackwardWord' | 'MoveDown' | 'MoveForwardSemanticZone' | { MoveForwardSemanticZoneOfType: _.wezterm.SemanticZoneType } | 'MoveForwardWord' | 'MoveForwardWordEnd' | 'MoveLeft' | 'MoveRight' | 'MoveToEndOfLineContent' | 'MoveToScrollbackBottom' | 'MoveToScrollbackTop' | 'MoveToSelectionOtherEnd' | 'MoveToSelectionOtherEndHoriz' | 'MoveToStartOfLine' | 'MoveToStartOfLineContent' | 'MoveToStartOfNextLine' | 'MoveToViewportBottom' | 'MoveToViewportMiddle' | 'MoveToViewportTop' | 'MoveUp' | 'NextMatch' | 'NextMatchPage' | 'PriorMatch' | 'PriorMatchPage' | { SetSelectionMode: _.wezterm.SelectionMode | 'SemanticZone' }
+---@alias _.wezterm.CopyMode 'AcceptPattern' | 'ClearPattern' | 'ClearSelectionMode' | 'Close' | 'CycleMatchType' | 'EditPattern' | 'MoveBackwardSemanticZone' | { MoveBackwardSemanticZoneOfType: _.wezterm.SemanticZoneType } | 'MoveBackwardWord' | 'MoveDown' | 'MoveForwardSemanticZone' | { MoveForwardSemanticZoneOfType: _.wezterm.SemanticZoneType } | 'MoveForwardWord' | 'MoveForwardWordEnd' | 'MoveLeft' | 'MoveRight' | 'MoveToEndOfLineContent' | 'MoveToScrollbackBottom' | 'MoveToScrollbackTop' | 'MoveToSelectionOtherEnd' | 'MoveToSelectionOtherEndHoriz' | 'MoveToStartOfLine' | 'MoveToStartOfLineContent' | 'MoveToStartOfNextLine' | 'MoveToViewportBottom' | 'MoveToViewportMiddle' | 'MoveToViewportTop' | 'MoveUp' | 'NextMatch' | 'NextMatchPage' | 'PriorMatch' | 'PriorMatchPage' | { SetSelectionMode: _.wezterm.SelectionMode | 'SemanticZone' }
 ---@alias _.wezterm.CursorShape 'Default' | _.wezterm.CursorStyle
 ---@alias _.wezterm.CursorStyle 'BlinkingBlock' | 'SteadyBlock' | 'BlinkingUnderline' | 'SteadyUnderline' | 'BlinkingBar' | 'SteadyBar'
 ---@alias _.wezterm.CursorVisibility 'Hidden' | 'Visible'
@@ -536,6 +536,29 @@ function MuxDomain:state() end
 ---@field index number
 ---@field is_active boolean
 ---@field tab _.wezterm.MuxTab
+
+---@class _.wezterm.PaneInformation
+---@field pane_id integer
+---@field pane_index integer
+---@field is_active boolean
+---@field is_zoomed boolean
+---@field left integer
+---@field top integer
+---@field width integer
+---@field height integer
+---@field pixel_width integer
+---@field pixel_height integer
+---@field title string
+---@field user_vars table<string, any>
+
+---@class _.wezterm.TabInformation
+---@field tab_id integer
+---@field tab_index integer
+---@field is_active boolean
+---@field active_pane _.wezterm.PaneInformation
+---@field window_id integer
+---@field window_title string
+---@field tab_title string
 
 ---@class _.wezterm.MuxWindow
 local MuxWindow = {}
