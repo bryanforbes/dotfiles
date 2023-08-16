@@ -5,6 +5,7 @@ local parsers = {
   'comment',
   'cpp',
   'css',
+  'devicetree',
   'dockerfile',
   'go',
   'html',
