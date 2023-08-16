@@ -15,6 +15,150 @@ local server_configs = {
   bashls = {
     filetypes = { 'sh', 'zsh' },
   },
+  diagnosticls = {
+    filetypes = {
+      'python',
+      'lua',
+      'html',
+      'javascript',
+      'typescript',
+      'css',
+      'rust',
+    },
+    init_options = {
+      filetypes = {},
+      formatFiletypes = {
+        python = { 'isort', 'black' },
+        lua = { 'stylua' },
+        html = { 'prettier' },
+        javascript = { 'prettier' },
+        typescript = { 'prettier' },
+        css = { 'prettier' },
+        rust = { 'rustfmt' },
+      },
+      linters = {
+        flake8 = {
+          command = 'flake8',
+          sourceName = 'flake8',
+          debounce = 100,
+          rootPatterns = { '.flake8', 'setup.cfg', 'tox.ini' },
+          requiredFiles = { '.flake8', 'setup.cfg', 'tox.ini' },
+          args = {
+            '--format=%(row)d,%(col)d,%(code).1s,%(code)s: %(text)s',
+            '--stdin-display-name',
+            '%filepath',
+            '-',
+          },
+          offsetLine = 0,
+          offsetColumn = 0,
+          formatLines = 1,
+          formatPattern = {
+            [[(\d+),(\d+),([A-Z]),(.*)(\r|\n)*$]],
+            {
+              line = 1,
+              column = 2,
+              security = 3,
+              message = { '[flake8]', 4 },
+            },
+          },
+          securities = {
+            W = 'warning',
+            E = 'error',
+            F = 'error',
+            C = 'error',
+            N = 'error',
+            B = 'error',
+            Y = 'error',
+          },
+        },
+        mypy = {
+          command = 'mypy',
+          sourceName = 'mypy',
+          debounce = 500,
+          rootPatterns = {
+            'mypy.ini',
+            '.mypy.ini',
+            'setup.cfg',
+            'pyproject.toml',
+          },
+          requiredFiles = {
+            'mypy.ini',
+            '.mypy.ini',
+            'setup.cfg',
+            'pyproject.toml',
+          },
+          args = {
+            '--no-color-output',
+            '--no-error-summary',
+            '--show-column-numbers',
+            '--show-error-codes',
+            '--show-error-context',
+            '--shadow-file',
+            '%filepath',
+            '%tempfile',
+            '%filepath',
+          },
+          formatPattern = {
+            [[^([^:]+):(\d+):(\d+):\s+(\w*):\s+(.*)(\r|\n)*$]],
+            {
+              sourceName = 1,
+              sourceNameFilter = true,
+              line = 2,
+              column = 3,
+              security = 4,
+              message = { '[mypy]', 4 },
+            },
+          },
+        },
+      },
+      formatters = {
+        black = {
+          command = 'black',
+          args = { '--quiet', '--stdin-filename', '%filepath', '-' },
+          requiredFiles = { 'pyproject.toml' },
+          rootPatterns = { 'pyproject.toml' },
+        },
+        isort = {
+          command = 'isort',
+          args = { '--quiet', '--stdout', '-' },
+          requiredFiles = { 'pyproject.toml' },
+          rootPatterns = { 'pyproject.toml' },
+        },
+        stylua = {
+          command = 'stylua',
+          args = {
+            '--stdin-filepath',
+            '%filepath',
+            '--search-parent-directories',
+            '-',
+          },
+          requiredFiles = { '.stylua.toml', 'stylua.toml' },
+          rootPatterns = { '.stylua.toml', 'stylua.toml' },
+        },
+        prettier = {
+          command = './node_modules/.bin/prettier',
+          args = { '--stdin', '--stdin-filepath', '%filepath' },
+          rootPatterns = {
+            '.prettierrc',
+            '.prettierrc.json',
+            '.prettierrc.toml',
+            '.prettierrc.json',
+            '.prettierrc.yml',
+            '.prettierrc.yaml',
+            '.prettierrc.json5',
+            '.prettierrc.js',
+            '.prettierrc.cjs',
+            'prettier.config.js',
+            'prettier.config.cjs',
+          },
+        },
+        rustfmt = {
+          command = 'rustfmt',
+          args = { '--emit=stdout' },
+        },
+      },
+    },
+  },
   html = {
     init_options = {
       provideFormatter = false,
@@ -192,7 +336,7 @@ local function on_attach(client, buffer)
         vim.lsp.buf.format({
           bufnr = buffer,
           filter = function(lsp_client)
-            return lsp_client.name == 'null-ls'
+            return lsp_client.name == 'diagnosticls'
           end,
         })
       end,
@@ -317,79 +461,6 @@ return {
           end
         end,
       })
-    end,
-  },
-
-  {
-    'jose-elias-alvarez/null-ls.nvim',
-
-    dependencies = {
-      'plenary.nvim',
-    },
-
-    opts = function()
-      local null_ls = require('null-ls')
-      local settings = require('neoconf').get('null-ls', {
-        enable_mypy = false,
-        enable_flake8 = true,
-        enable_isort = true,
-      })
-
-      return {
-        on_attach = on_attach,
-        sources = {
-          null_ls.builtins.formatting.isort.with({
-            only_local = '.venv/bin',
-            condition = function(utils)
-              return settings.enable_isort
-                and utils.root_has_file({ 'pyproject.toml' })
-            end,
-          }),
-          null_ls.builtins.formatting.black.with({
-            only_local = '.venv/bin',
-            condition = root_has_file({ 'pyproject.toml' }),
-          }),
-          null_ls.builtins.diagnostics.flake8.with({
-            only_local = '.venv/bin',
-            condition = function(utils)
-              return settings.enable_flake8
-                and utils.root_has_file({ '.flake8', 'setup.cfg', 'tox.ini' })
-            end,
-          }),
-          null_ls.builtins.diagnostics.mypy.with({
-            only_local = '.venv/bin',
-            condition = function(utils)
-              return settings.enable_mypy
-                and utils.root_has_file({
-                  'mypy.ini',
-                  '.mypy.ini',
-                  'pyproject.toml',
-                  'setup.cfg',
-                })
-            end,
-          }),
-          null_ls.builtins.formatting.stylua.with({
-            condition = root_has_file({ '.stylua.toml', 'stylua.toml' }),
-          }),
-          null_ls.builtins.formatting.prettier.with({
-            only_local = 'node_modules/.bin',
-            condition = root_has_file({
-              '.prettierrc',
-              '.prettierrc.json',
-              '.prettierrc.toml',
-              '.prettierrc.json',
-              '.prettierrc.yml',
-              '.prettierrc.yaml',
-              '.prettierrc.json5',
-              '.prettierrc.js',
-              '.prettierrc.cjs',
-              'prettier.config.js',
-              'prettier.config.cjs',
-            }),
-          }),
-          null_ls.builtins.formatting.rustfmt.with({}),
-        },
-      }
     end,
   },
 
