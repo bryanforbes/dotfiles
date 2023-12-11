@@ -44,5 +44,5 @@ function copy-to-volume {
     echo "\b\b\b\b... done"
 }
 
-copy-to-volume "left" "/Volumes/GLV80LHBOOT"
 copy-to-volume "right" "/Volumes/GLV80RHBOOT"
+copy-to-volume "left" "/Volumes/GLV80LHBOOT"
