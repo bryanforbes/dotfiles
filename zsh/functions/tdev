@@ -25,7 +25,7 @@ for directory in $directories; do
         tmux rename-window "$(basename $directory)"
     fi
 
-    tmux split-window -d -p 25 -c "$directory"
+    tmux split-window -d -l "25%" -c "$directory"
     tmux split-window -d -b -h -t "{bottom}" -c "$directory"
 
     new_window=1
