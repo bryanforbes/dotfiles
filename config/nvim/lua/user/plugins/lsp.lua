@@ -281,13 +281,6 @@ local function on_attach(client, buffer)
 
   buffer = buffer or 0
 
-  require('lsp_signature').on_attach({
-    bind = true,
-    handler_opts = {
-      border = 'rounded',
-    },
-  }, buffer)
-
   if client.server_capabilities.documentSymbolProvider then
     require('nvim-navic').attach(client, buffer)
   end
