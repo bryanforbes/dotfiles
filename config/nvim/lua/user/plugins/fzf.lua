@@ -30,7 +30,7 @@ return {
 
       fzf_opts = {
         ['--info'] = 'hidden',
-        ['--pointer'] = '" "',
+        ['--pointer'] = ' ',
         ['--margin'] = '0,1',
       },
 
@@ -65,7 +65,7 @@ return {
       },
 
       diagnostics = {
-        severity_limit = vim.diagnostic.severity.WARN,
+        severity_limit = vim.diagnostic.severity.HINT,
       },
     })
 
