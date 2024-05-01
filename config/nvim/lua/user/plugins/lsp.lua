@@ -18,23 +18,10 @@ local server_configs = {
   diagnosticls = {
     filetypes = {
       'python',
-      'lua',
-      'html',
-      'javascript',
-      'typescript',
-      'css',
-      'rust',
     },
     init_options = {
-      filetypes = {},
-      formatFiletypes = {
-        python = { 'isort', 'black' },
-        lua = { 'stylua' },
-        html = { 'prettier' },
-        javascript = { 'prettier' },
-        typescript = { 'prettier' },
-        css = { 'prettier' },
-        rust = { 'rustfmt' },
+      filetypes = {
+        python = { 'flake8' },
       },
       linters = {
         flake8 = {
@@ -109,52 +96,6 @@ local server_configs = {
               message = { '[mypy]', 4 },
             },
           },
-        },
-      },
-      formatters = {
-        black = {
-          command = 'black',
-          args = { '--quiet', '--stdin-filename', '%filepath', '-' },
-          requiredFiles = { 'pyproject.toml' },
-          rootPatterns = { 'pyproject.toml' },
-        },
-        isort = {
-          command = 'isort',
-          args = { '--quiet', '--stdout', '-' },
-          requiredFiles = { 'pyproject.toml' },
-          rootPatterns = { 'pyproject.toml' },
-        },
-        stylua = {
-          command = 'stylua',
-          args = {
-            '--stdin-filepath',
-            '%filepath',
-            '--search-parent-directories',
-            '-',
-          },
-          requiredFiles = { '.stylua.toml', 'stylua.toml' },
-          rootPatterns = { '.stylua.toml', 'stylua.toml' },
-        },
-        prettier = {
-          command = './node_modules/.bin/prettier',
-          args = { '--stdin', '--stdin-filepath', '%filepath' },
-          rootPatterns = {
-            '.prettierrc',
-            '.prettierrc.json',
-            '.prettierrc.toml',
-            '.prettierrc.json',
-            '.prettierrc.yml',
-            '.prettierrc.yaml',
-            '.prettierrc.json5',
-            '.prettierrc.js',
-            '.prettierrc.cjs',
-            'prettier.config.js',
-            'prettier.config.cjs',
-          },
-        },
-        rustfmt = {
-          command = 'rustfmt',
-          args = { '--emit=stdout' },
         },
       },
     },
