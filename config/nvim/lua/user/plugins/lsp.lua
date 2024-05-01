@@ -347,7 +347,6 @@ return {
     dependencies = {
       'neovim/nvim-lspconfig',
       'williamboman/mason.nvim',
-      'ray-x/lsp_signature.nvim',
       'SmiteshP/nvim-navic',
     },
 
