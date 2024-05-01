@@ -133,6 +133,15 @@ local server_configs = {
       'sugarss',
     },
   },
+  svelte = {
+    capabilities = {
+      workspace = {
+        didChangeWatchedFiles = {
+          dynamicRegistration = true,
+        },
+      },
+    },
+  },
   tsserver = {
     on_attach = function(_, bufnr)
       vim.api.nvim_buf_create_user_command(bufnr, 'OrganizeImports', function()
@@ -299,7 +308,7 @@ local function default_handler(server_name)
 
   server_config = server_config or {}
 
-  require('lspconfig')[server_name].setup(vim.tbl_extend('keep', {
+  require('lspconfig')[server_name].setup(vim.tbl_deep_extend('keep', {
     on_attach = require('lspconfig.util').add_hook_before(
       server_config.on_attach,
       on_attach
