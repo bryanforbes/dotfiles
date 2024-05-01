@@ -1,6 +1,7 @@
 {
   "lspconfig": {
     "jedi_language_server": false,
+    "diagnosticls": false,
     "pyright": {
       "python.analysis.diagnosticMode": "openFilesOnly",
       "python.analysis.useLibraryCodeForTypes": true
