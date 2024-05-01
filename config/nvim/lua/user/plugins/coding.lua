@@ -10,6 +10,15 @@ return {
         require('conform').format({ lsp_fallback = true })
       end, {})
 
+      -- Run "ruff_fix" formatter config, but only select the rules
+      -- that deal with imports
+      local ruff_fix = require('conform.formatters.ruff_fix')
+      local ruff_organize_imports = vim.tbl_extend('force', {}, ruff_fix)
+      ---@diagnostic disable-next-line: param-type-mismatch
+      ruff_organize_imports.args = { unpack(ruff_fix.args) }
+      table.insert(ruff_organize_imports.args, 2, '--select')
+      table.insert(ruff_organize_imports.args, 3, 'I001,F401')
+
       return {
         -- log_level = vim.log.levels.DEBUG,
         format_on_save = {
@@ -17,7 +26,7 @@ return {
           timeout_ms = 1000,
         },
         formatters_by_ft = {
-          python = { 'isort', 'black' },
+          python = { { 'ruff_organize_imports', 'isort' }, 'black' },
           lua = { 'stylua' },
           html = { 'prettier' },
           javascript = { 'prettier' },
@@ -28,7 +37,8 @@ return {
           css = { 'prettier' },
           rust = { 'rustfmt' },
         },
-        formaters = {
+        formatters = {
+          ruff_organize_imports = ruff_organize_imports,
           isort = { require_cwd = true },
           black = { require_cwd = true },
           prettier = { require_cwd = true },

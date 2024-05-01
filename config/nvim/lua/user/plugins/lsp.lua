@@ -133,6 +133,15 @@ local server_configs = {
       'sugarss',
     },
   },
+  eslint = {
+    capabilities = {
+      workspace = {
+        didChangeWatchedFiles = {
+          dynamicRegistration = true,
+        },
+      },
+    },
+  },
   svelte = {
     capabilities = {
       workspace = {
@@ -143,15 +152,9 @@ local server_configs = {
     },
   },
   tsserver = {
-    on_attach = function(_, bufnr)
-      vim.api.nvim_buf_create_user_command(bufnr, 'OrganizeImports', function()
-        vim.lsp.buf.execute_command({
-          command = '_typescript.organizeImports',
-          arguments = { vim.api.nvim_buf_get_name(bufnr) },
-        })
-      end, {
-        desc = 'Organize imports',
-      })
+    on_attach = function(client, bufnr)
+      -- disable formatting in favor of conform
+      client.server_capabilities.documentFormattingProvider = false
     end,
   },
 }
@@ -271,19 +274,9 @@ local function on_attach(client, buffer)
   end
 
   if client.server_capabilities.documentFormattingProvider then
-    vim.api.nvim_create_autocmd('BufWritePre', {
-      group = vim.api.nvim_create_augroup('LspFormat.' .. buffer, {}),
-      buffer = buffer,
-      callback = function()
-        organize_imports(buffer)
-        vim.lsp.buf.format({
-          bufnr = buffer,
-          filter = function(lsp_client)
-            return lsp_client.name == 'diagnosticls'
-          end,
-        })
-      end,
-    })
+    vim.api.nvim_buf_create_user_command(buffer, 'OrganizeImports', function()
+      organize_imports(buffer)
+    end, { desc = 'Organize imports' })
   end
 
   vim.api.nvim_create_autocmd('CursorHold', {
