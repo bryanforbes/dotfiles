@@ -109,11 +109,10 @@ function dotfiles-brew {
     local -A brew_packages_args
 
     brew_packages=(
-        'asdf'                              # dev tools management
         'bat'                               # better cat
-        'direnv'                            # local environment management
         'fzf'                               # fuzzy finder
         'git'                               # update from system stock git
+        'mise'                              # mise environment manager
         'mosh'                              # remote terminal application that allows roaming
         'neovim'                            # better vim
         'node'                              # NodeJS
@@ -157,6 +156,11 @@ function dotfiles-brew {
     # Remove git's included zsh completions in favor of the system completions
     if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
         rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
+    fi
+
+    # Update mise zsh completions
+    if (( $+commands[mise] )); then
+        mise complete --shell zsh >! $ZFUNCDIR/_mise
     fi
 }
 
@@ -313,80 +317,6 @@ function dotfiles-tmux {
     fi
 }
 
-# Update asdf plugins
-function dotfiles-asdf {
-    if (( ! $+commands[asdf] )); then
-        log "Skipping asdf update"
-        return
-    fi
-
-    log "Updating asdf..."
-
-    local asdf_plugins=(${(@f)$(asdf plugin-list)})
-    local asdf_desired_plugins=(
-        direnv
-        python
-        nodejs
-    )
-
-    local -a installed_plugins
-
-    # Add any missing plugins
-    for plugin in $asdf_desired_plugins; do
-        if (( ! $asdf_plugins[(Ie)$plugin] )); then
-            asdf plugin add $plugin > /dev/null
-            installed_plugins+=($plugin)
-
-            if [[ $plugin == "nodejs" ]]; then
-                bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
-            fi
-
-            logSub "Installed $plugin plugin"
-        fi
-    done
-
-    # Update all plugins
-    logSub "Updating plugins..."
-    for plugin in $(asdf plugin list); do
-        if (( ! $installed_plugins[(Ie)$plugin] )); then
-            asdf plugin update $plugin > /dev/null
-            if (( $? != 0 )); then
-                err "Problem updating $plugin plugin"
-            fi
-        fi
-    done
-
-    if [ ! -e "$HOME/.tool-versions" ]; then
-        touch "$HOME/.tool-versions"
-    fi
-
-    if ! grep -q "direnv system" "$HOME/.tool-versions"; then
-        asdf global direnv system
-    fi
-
-    asdf direnv setup --version system
-
-    # Setup the "system" install for asdf-direnv
-    # local direnv_system=$ASDF_DATA_DIR/installs/direnv/system
-
-    # if [[ ! -L $direnv_system/bin/direnv ]]; then
-    #     # For `asdf exec direnv` to work, asdf needs a direnv shim. For it to
-    #     # be able to create that, *some* installed version of direnv needs a
-    #     # binary. If we only want to use the system install, we have to create
-    #     # a link to the system direnv binary in installs/direnv/system/bin.
-    #     makedir -q $direnv_system/bin
-    #     link -q $HOMEBREW_BASE/bin/direnv $direnv_system/bin/direnv
-    #     asdf reshim
-    #     logSub "Created direnv link"
-
-    #     # asdf needs a directory to create environments for each installed
-    #     # version.
-    #     makedir $direnv_system/env "Created direnv environment directory"
-
-    #     asdf global direnv system
-    # fi
-}
-
 # Update vim plugins
 function dotfiles-vim {
     log "Updating vim plugins..."
@@ -416,7 +346,6 @@ if [[ -n $help ]]; then
     echo '    <group>        A group to update'
     echo
     echo 'Available groups:'
-    echo '    asdf           Update asdf plugins, install defaults'
     echo '    bat            Rebuild bat theme and filetype cache'
     echo '    brew           Update brew packages, install defaults'
     echo '    home           Update dotfiles and home directories, fixup terminfo database'
@@ -440,7 +369,6 @@ else
     dotfiles-home
     dotfiles-brew
     dotfiles-zsh
-    dotfiles-asdf
     dotfiles-python
     dotfiles-node
     dotfiles-tmux

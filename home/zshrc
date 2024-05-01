@@ -598,35 +598,17 @@ if (( ${+commands[rg]} )); then
     export RIPGREP_CONFIG_PATH=$HOME/.config/ripgrep/ripgreprc
 fi
 
-# direnv
+# mise
 # ------------------------------------------------------------------------
 
-if (( ${+commands[direnv]} )); then
-    # export DIRENV_LOG_FORMAT=
-
-    eval "$(direnv hook $SHELL)"
+if (( ${+commands[mise]} )); then
+    eval "$(mise activate zsh)"
 
     # Wrap tmux to avoid environment loading issues
     # See https://github.com/direnv/direnv/wiki/Tmux
-    tmux() { direnv exec / tmux $*; }
+    # tmux() { direnv exec / tmux $*; }
 
-    dotfiles() { direnv exec / dotfiles $*; }
-fi
-
-# asdf
-# ------------------------------------------------------------------------
-
-if (( ${+commands[asdf]} )); then
-    alias asdf="no-coreutils asdf"
-
-    if [ -e "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc" ]; then
-        source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc"
-    fi
-
-    # export ASDF_DIR=$HOMEBREW_BASE/opt/asdf/libexec
-
-    # alias direnv so we don't have to type asdf exec all the time
-    # direnv() { asdf exec direnv $*; }
+    # dotfiles() { direnv exec / dotfiles $*; }
 fi
 
 # Line editor
