@@ -11,6 +11,9 @@ return {
     local n = require('neosolarized').setup({
       comment_italics = true,
     })
+
+    vim.cmd('colorscheme neosolarized')
+
     local Color, Group, colors, groups, styles =
       n.Color, n.Group, n.colors, n.groups, n.styles
 
