@@ -157,6 +157,12 @@ local server_configs = {
       client.server_capabilities.documentFormattingProvider = false
     end,
   },
+  clangd = {
+    on_attach = function(client, bufnr)
+      -- disable formatting
+      client.server_capabilities.documentFormattingProvider = false
+    end,
+  },
 }
 
 ---@param buffer integer
@@ -345,6 +351,7 @@ return {
 
     config = function()
       -- vim.lsp.set_log_level('debug')
+      -- vim.lsp.log.set_format_func(vim.inspect)
 
       -- UI
       vim.fn.sign_define(
