@@ -26,7 +26,18 @@ return {
           timeout_ms = 1000,
         },
         formatters_by_ft = {
-          python = { { 'ruff_organize_imports', 'isort' }, 'black' },
+          python = function(bufnr)
+            if
+              require('conform').get_formatter_info(
+                'ruff_organize_imports',
+                bufnr
+              ).available
+            then
+              return { 'ruff_organize_imports', 'black' }
+            else
+              return { 'isort', 'black' }
+            end
+          end,
           lua = { 'stylua' },
           html = { 'prettier' },
           javascript = { 'prettier' },
