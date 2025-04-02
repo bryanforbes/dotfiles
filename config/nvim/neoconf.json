@@ -5,6 +5,10 @@
     "pyright": {
       "python.analysis.diagnosticMode": "openFilesOnly",
       "python.analysis.useLibraryCodeForTypes": true
+    },
+    "basedpyright": {
+      "basedpyright.analysis.diagnosticMode": "openFilesOnly",
+      "basedpyright.analysis.useLibraryCodeForTypes": true
     }
   }
 }

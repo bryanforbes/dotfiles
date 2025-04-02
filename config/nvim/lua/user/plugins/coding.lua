@@ -58,4 +58,7 @@ return {
       }
     end,
   },
+  {
+    'tpope/vim-abolish',
+  },
 }

@@ -1,3 +1,13 @@
+if vim.fn.has('nvim-0.11') then
+  local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+  ---@diagnostic disable-next-line: duplicate-set-field
+  function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+    opts = opts or {}
+    opts.border = opts.border or 'rounded'
+    return orig_util_open_floating_preview(contents, syntax, opts, ...)
+  end
+end
+
 local function root_has_file(patterns)
   return function(utils)
     return utils.root_has_file(patterns)
@@ -10,7 +20,6 @@ local function executable(cmd)
   return vim.fn.executable(cmd) == 1
 end
 
----@type lspconfig.options
 local server_configs = {
   bashls = {
     filetypes = { 'sh', 'zsh' },
@@ -108,7 +117,7 @@ local server_configs = {
   jsonls = {
     filetypes = { 'json', 'jsonc' },
   },
-  ruff_lsp = {
+  ruff = {
     before_init = function(init_params)
       if executable('ruff') then
         init_params.initializationOptions = {
@@ -124,6 +133,11 @@ local server_configs = {
         }
       end
     end,
+    capabilities = {
+      general = {
+        positionEncodings = { 'utf-16' },
+      },
+    },
   },
   stylelint_lsp = {
     filetypes = {
@@ -168,68 +182,29 @@ local server_configs = {
 ---@param buffer integer
 ---@param method string
 local function lsp_method_supported(buffer, method)
-  ---@type lsp.Client[]
-  local active_clients = vim.lsp.get_active_clients({ bufnr = buffer })
+  ---@type vim.lsp.Client[]
+  local active_clients = vim.lsp.get_clients({ bufnr = buffer })
 
   for _, active_client in pairs(active_clients) do
-    if active_client.supports_method(method) then
+    if active_client:supports_method(method) then
       return true
     end
   end
 end
 
----Adapted from M.code_actions() in $VIMRUNTIME/lua/vim/buf.lua
 ---@param buffer integer
 local function organize_imports(buffer)
   if not lsp_method_supported(buffer, 'textDocument/codeAction') then
     return
   end
 
-  local params = vim.lsp.util.make_range_params()
-  params.context = {
-    diagnostics = {},
-    only = { 'source.organizeImports' },
-  }
-  local results =
-    vim.lsp.buf_request_sync(buffer, 'textDocument/codeAction', params)
-
-  if results == nil then
-    return
-  end
-
-  for client_id, result in pairs(results) do
-    local client = vim.lsp.get_client_by_id(client_id)
-
-    for _, action in pairs(result.result or {}) do
-      if action.kind == 'source.organizeImports' then
-        if action.edit then
-          vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
-        end
-        if action.command then
-          local command = type(action.command) == 'table' and action.command
-            or action
-          local fn = client.commands[command.command]
-            or vim.lsp.commands[command.command]
-          if fn then
-            fn(command, {
-              client_id = client.id,
-              bufnr = buffer,
-              method = 'textDocument/codeAction',
-              params = vim.deepcopy(params),
-            })
-          else
-            -- Not using command directly to exclude extra properties,
-            -- see https://github.com/python-lsp/python-lsp-server/issues/146
-            client.request_sync('workspace/executeCommand', {
-              command = command.command,
-              arguments = command.arguments,
-              workDoneToken = command.workDoneToken,
-            }, nil, buffer)
-          end
-        end
-      end
-    end
-  end
+  vim.lsp.buf.code_action({
+    context = {
+      diagnostics = {},
+      only = { 'source.organizeImports' },
+    },
+    apply = true,
+  })
 end
 
 -- configure a client when it's attached to a buffer
@@ -247,13 +222,13 @@ local function on_attach(client, buffer)
   -- perform general setup
   if client.server_capabilities.definitionProvider then
     vim.keymap.set('n', '<C-]>', function()
-      require('fzf-lua').lsp_definitions({ jump_to_single_result = true })
+      require('fzf-lua').lsp_definitions({ jump1 = true })
     end, { buffer = buffer })
   end
 
   if client.server_capabilities.typeDefinitionProvider then
     vim.keymap.set('n', '<C-\\>', function()
-      require('fzf-lua').lsp_typedefs({ jump_to_single_result = true })
+      require('fzf-lua').lsp_typedefs({ jump1 = true })
     end, { buffer = buffer })
   end
 
@@ -332,7 +307,8 @@ return {
 
   {
     -- Helpers for editing neovim lua; must be setup before lspconfig
-    'folke/neodev.nvim',
+    'folke/lazydev.nvim',
+    ft = 'lua',
 
     -- ensure this loads before lspconfig calls happen
     priority = 100,
@@ -354,25 +330,9 @@ return {
       -- vim.lsp.log.set_format_func(vim.inspect)
 
       -- UI
-      vim.fn.sign_define(
-        'DiagnosticSignError',
-        { text = '', texthl = 'DiagnosticSignError' }
-      )
-      vim.fn.sign_define(
-        'DiagnosticSignWarn',
-        { text = '', texhl = 'DiagnosticSignWarn' }
-      )
-      vim.fn.sign_define(
-        'DiagnosticSignInfo',
-        { text = '', texthl = 'DiagnosticSignInfo' }
-      )
-      vim.fn.sign_define(
-        'DiagnosticSignHint',
-        { text = '', texthl = 'DiagnosticSignHint' }
-      )
-
       vim.diagnostic.config({
         virtual_text = false,
+        severity_sort = true,
         float = {
           border = 'rounded',
           max_width = 80,
@@ -381,15 +341,21 @@ return {
           title_pos = 'left',
           focusable = false,
         },
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = '',
+            [vim.diagnostic.severity.WARN] = '',
+            [vim.diagnostic.severity.INFO] = '',
+            [vim.diagnostic.severity.HINT] = '',
+          },
+          texthl = {
+            [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
+            [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
+            [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
+            [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
+          },
+        },
       })
-
-      local lsp = vim.lsp
-
-      lsp.handlers['textDocument/hover'] =
-        lsp.with(lsp.handlers.hover, { border = 'rounded' })
-
-      lsp.handlers['textDocument/signatureHelp'] =
-        lsp.with(lsp.handlers.signature_help, { border = 'rounded' })
 
       require('mason').setup()
       require('mason-lspconfig').setup()
@@ -397,7 +363,7 @@ return {
       require('mason-lspconfig').setup_handlers({
         default_handler,
 
-        ['ruff_lsp'] = function(server_name)
+        ['ruff'] = function(server_name)
           if executable('ruff') then
             default_handler(server_name)
           end

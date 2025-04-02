@@ -84,7 +84,7 @@ opt.clipboard = { 'unnamed' }
 opt.termguicolors = true
 
 local datadir = os.getenv('DATADIR')
-if vim.fn.isdirectory(datadir) == 1 then
+if datadir and vim.fn.isdirectory(datadir) == 1 then
   datadir = datadir .. '/nvim'
 
   opt.directory = datadir .. '/swap'
@@ -104,12 +104,12 @@ if vim.fn.executable(python2_path) == 1 then
   g.python_host_prog = python2_path
 end
 
-local python3_path = homebrew_base .. 'bin/python3'
+local python3_path = homebrew_base .. '/bin/python3'
 if vim.fn.executable(python3_path) == 1 then
   g.python3_host_prog = python3_path
 end
 
-g.node_host_prog = homebrew_base .. 'bin/neovim-node-host'
+g.node_host_prog = homebrew_base .. '/bin/neovim-node-host'
 
 -- HTML indent
 g.html_indent_inctags = 'body,head,tbody'
