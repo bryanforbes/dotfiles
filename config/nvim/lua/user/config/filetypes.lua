@@ -21,8 +21,22 @@ vim.filetype.add({
     ['%.dojorc%-.*'] = 'json',
     ['intern.*%.json'] = 'jsonc',
     ['.*/zsh/functions/.*'] = 'zsh',
-    ['~/.dotfiles/bin/.*'] = 'zsh',
-    ['~/.dotfiles/home/zsh.*'] = 'zsh',
+    ['~/%.dotfiles/bin/.*'] = 'zsh',
+    ['~/%.dotfiles/home/zsh.*'] = 'zsh',
+    ['.*/doc/.*%.txt$'] = function(_, bufnr)
+      local line = vim.filetype._getline(bufnr, -1)
+      local ml = line:find('^vim:') or line:find('%svim:')
+      vim.print(line)
+      if
+        ml
+        and vim.filetype._matchregex(
+          line:sub(ml),
+          [[\<\(ft\|filetype\)=help\>]]
+        )
+      then
+        return 'help'
+      end
+    end,
   },
 })
 
@@ -38,6 +52,7 @@ end
 add_filetypes()
 
 require('neoconf.plugins').register({
+  name = 'filetype_add',
   on_schema = function(schema)
     schema:set('filetype_add', { type = 'object' })
     schema:set('filetype_add.extension', {

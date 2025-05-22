@@ -125,6 +125,34 @@ g.vim_json_syntax_conceal = 0
 -- typescript-vim
 g.typescript_indent_disable = 1
 
+-- diagnostics
+vim.diagnostic.config({
+  virtual_text = false,
+  severity_sort = true,
+  float = {
+    border = 'rounded',
+    max_width = 80,
+    header = false,
+    title = 'Diagnostics:',
+    title_pos = 'left',
+    focusable = false,
+  },
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = '',
+      [vim.diagnostic.severity.WARN] = '',
+      [vim.diagnostic.severity.INFO] = '',
+      [vim.diagnostic.severity.HINT] = '',
+    },
+    texthl = {
+      [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
+      [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
+      [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
+      [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
+    },
+  },
+})
+
 -- disable builtin plugins
 for _, plugin in pairs({
   '2html_plugin',

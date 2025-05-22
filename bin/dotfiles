@@ -327,7 +327,7 @@ function dotfiles-vim {
         nvim --headless -c ':Lazy! restore' -c 'quitall' 2>&1 > /dev/null
     fi
 
-    nvim --headless -c 'lua require("user.plugins.treesitter").install_parsers()' -c 'quitall' 2>&1 > /dev/null
+    nvim --headless -c 'TSUpdateSync | lua print("\n") io.flush()' -c 'quitall' 2>&1 > /dev/null
 }
 
 cd $HOME

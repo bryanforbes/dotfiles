@@ -1,17 +1,14 @@
-if vim.fn.has('nvim-0.11') then
-  local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-  ---@diagnostic disable-next-line: duplicate-set-field
-  function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-    opts = opts or {}
-    opts.border = opts.border or 'rounded'
-    return orig_util_open_floating_preview(contents, syntax, opts, ...)
-  end
-end
+-- Logging
+-- vim.lsp.set_log_level('debug')
+-- vim.lsp.log.set_format_func(vim.inspect)
 
-local function root_has_file(patterns)
-  return function(utils)
-    return utils.root_has_file(patterns)
-  end
+-- Give LSP floats rounded borders
+local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+---@diagnostic disable-next-line: duplicate-set-field
+function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+  opts = opts or {}
+  opts.border = opts.border or 'rounded'
+  return orig_util_open_floating_preview(contents, syntax, opts, ...)
 end
 
 ---@param cmd string
@@ -20,6 +17,7 @@ local function executable(cmd)
   return vim.fn.executable(cmd) == 1
 end
 
+---@type table<string, vim.lsp.Config>
 local server_configs = {
   bashls = {
     filetypes = { 'sh', 'zsh' },
@@ -179,10 +177,14 @@ local server_configs = {
   },
 }
 
+-- TODO: enable once neoconf supports vim.lsp.config()
+-- for name, config in pairs(server_configs) do
+--   vim.lsp.config(name, config)
+-- end
+
 ---@param buffer integer
 ---@param method string
 local function lsp_method_supported(buffer, method)
-  ---@type vim.lsp.Client[]
   local active_clients = vim.lsp.get_clients({ bufnr = buffer })
 
   for _, active_client in pairs(active_clients) do
@@ -208,31 +210,31 @@ local function organize_imports(buffer)
 end
 
 -- configure a client when it's attached to a buffer
----@param client any
+---@param client vim.lsp.Client
 ---@param buffer integer
 local function on_attach(client, buffer)
   -- print('on_attach: ' .. client.name .. ' ' .. bufnr)
 
   buffer = buffer or 0
 
-  if client.server_capabilities.documentSymbolProvider then
+  if client:supports_method('textDocument/documentSymbol', buffer) then
     require('nvim-navic').attach(client, buffer)
   end
 
   -- perform general setup
-  if client.server_capabilities.definitionProvider then
+  if client:supports_method('textDocument/definition', buffer) then
     vim.keymap.set('n', '<C-]>', function()
-      require('fzf-lua').lsp_definitions({ jump1 = true })
+      Snacks.picker.lsp_definitions()
     end, { buffer = buffer })
   end
 
-  if client.server_capabilities.typeDefinitionProvider then
+  if client:supports_method('textDocument/typeDefinition', buffer) then
     vim.keymap.set('n', '<C-\\>', function()
-      require('fzf-lua').lsp_typedefs({ jump1 = true })
+      Snacks.picker.lsp_type_definitions()
     end, { buffer = buffer })
   end
 
-  if client.server_capabilities.hoverProvider then
+  if client:supports_method('textDocument/hover', buffer) then
     vim.keymap.set('', 'K', function()
       -- Ignore CursorHold when requesting hover so the diagnostic float doesn't
       -- close the hover after a second
@@ -248,13 +250,13 @@ local function on_attach(client, buffer)
     end, { buffer = buffer })
   end
 
-  if client.server_capabilities.renameProvider then
+  if client:supports_method('textDocument/rename', buffer) then
     vim.keymap.set('', '<leader>r', function()
       vim.lsp.buf.rename()
     end, { buffer = buffer })
   end
 
-  if client.server_capabilities.documentFormattingProvider then
+  if client:supports_method('textDocument/formatting', buffer) then
     vim.api.nvim_buf_create_user_command(buffer, 'OrganizeImports', function()
       organize_imports(buffer)
     end, { desc = 'Organize imports' })
@@ -268,6 +270,7 @@ local function on_attach(client, buffer)
   })
 end
 
+-- TODO: remove once neoconf supports vim.lsp.config()
 ---@param server_name string
 local function default_handler(server_name)
   local neoconf_config = require('neoconf').get('lspconfig')[server_name]
@@ -282,106 +285,76 @@ local function default_handler(server_name)
 
   server_config = server_config or {}
 
-  require('lspconfig')[server_name].setup(vim.tbl_deep_extend('keep', {
-    on_attach = require('lspconfig.util').add_hook_before(
-      server_config.on_attach,
-      on_attach
-    ),
-    capabilities = require('cmp_nvim_lsp').default_capabilities(),
-  }, server_config))
+  local merged_config = vim.tbl_deep_extend('keep', {
+    ---@param client vim.lsp.Client
+    ---@param bufnr integer
+    on_attach = function(client, bufnr)
+      if server_config.on_attach then
+        on_attach(client, bufnr)
+        return server_config.on_attach(client, bufnr)
+      else
+        return on_attach(client, bufnr)
+      end
+    end,
+    -- capabilities = require('cmp_nvim_lsp').default_capabilities(),
+  }, server_config)
+  merged_config.capabilities =
+    require('blink.cmp').get_lsp_capabilities(merged_config.capabilities)
+
+  require('lspconfig')[server_name].setup(merged_config)
 end
 
-return {
-  {
-    'folke/neoconf.nvim',
+-- TODO: remove once neoconf supports vim.lsp.config()
+require('mason-lspconfig').setup_handlers({
+  default_handler,
 
-    -- ensure this loads before neodev and lspconfig calls
-    priority = 200,
+  ['ruff'] = function(server_name)
+    if executable('ruff') then
+      default_handler(server_name)
+    end
+  end,
+})
 
-    opts = {
-      import = {
-        coc = false,
-      },
-    },
-  },
+-- TODO: enable once neoconf supports vim.lsp.config()
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--   callback = function(args)
+--     local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+--     local buffer = args.buf
+--
+--     on_attach(client, buffer)
+--   end,
+-- })
+--
+-- TODO: enable once neoconf supports vim.lsp.config()
+-- local orig_register_capability = vim.lsp.handlers['client/registerCapability']
+-- vim.lsp.handlers['client/registerCapability'] = function(err, res, ctx)
+--   local result = orig_register_capability(err, res, ctx)
+--
+--   local client = vim.lsp.get_client_by_id(ctx.client_id)
+--   if not client then
+--     return result
+--   end
+--
+--   for bufnr, _ in pairs(client.attached_buffers) do
+--     on_attach(client, bufnr)
+--   end
+--
+--   return result
+-- end
+--
+-- TODO: enable once neoconf supports vim.lsp.config()
+-- local exclude = {}
+-- local neoconf_lspconfig = require('neoconf').get('lspconfig')
 
-  {
-    -- Helpers for editing neovim lua; must be setup before lspconfig
-    'folke/lazydev.nvim',
-    ft = 'lua',
+-- for name, value in pairs(neoconf_lspconfig) do
+--   if value == false then
+--     table.insert(exclude, name)
+--   end
+-- end
 
-    -- ensure this loads before lspconfig calls happen
-    priority = 100,
-
-    opts = {},
-  },
-
-  {
-    'williamboman/mason-lspconfig.nvim',
-
-    dependencies = {
-      'neovim/nvim-lspconfig',
-      'williamboman/mason.nvim',
-      'SmiteshP/nvim-navic',
-    },
-
-    config = function()
-      -- vim.lsp.set_log_level('debug')
-      -- vim.lsp.log.set_format_func(vim.inspect)
-
-      -- UI
-      vim.diagnostic.config({
-        virtual_text = false,
-        severity_sort = true,
-        float = {
-          border = 'rounded',
-          max_width = 80,
-          header = false,
-          title = 'Diagnostics:',
-          title_pos = 'left',
-          focusable = false,
-        },
-        signs = {
-          text = {
-            [vim.diagnostic.severity.ERROR] = '',
-            [vim.diagnostic.severity.WARN] = '',
-            [vim.diagnostic.severity.INFO] = '',
-            [vim.diagnostic.severity.HINT] = '',
-          },
-          texthl = {
-            [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
-            [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
-            [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
-            [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
-          },
-        },
-      })
-
-      require('mason').setup()
-      require('mason-lspconfig').setup()
-
-      require('mason-lspconfig').setup_handlers({
-        default_handler,
-
-        ['ruff'] = function(server_name)
-          if executable('ruff') then
-            default_handler(server_name)
-          end
-        end,
-      })
-    end,
-  },
-
-  {
-    'kosayoda/nvim-lightbulb',
-
-    config = function()
-      vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-        pattern = '*',
-        callback = function()
-          require('nvim-lightbulb').update_lightbulb()
-        end,
-      })
-    end,
-  },
-}
+-- require('mason-lspconfig').setup({
+--   ensure_installed = {},
+--   automatic_enable = {
+--     exclude = exclude,
+--   },
+-- })
