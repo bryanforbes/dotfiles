@@ -1,3 +1,5 @@
 *.swp
 *.pyc
 .DS_Store
+.envrc
+.tool-versions
