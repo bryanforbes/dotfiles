@@ -403,14 +403,26 @@ require('lazy').setup(
     {
       'stevearc/conform.nvim',
       config = function()
-        -- Run "ruff_fix" formatter config, but only select the rules
-        -- that deal with imports
-        local ruff_fix = require('conform.formatters.ruff_fix')
-        local ruff_organize_imports = vim.tbl_extend('force', {}, ruff_fix)
+        ---@param bufnr integer
+        ---@param ... string
+        ---@return string
+        local function first(bufnr, ...)
+          local conform = require('conform')
+          for i = 1, select('#', ...) do
+            local formatter = select(i, ...)
+            if conform.get_formatter_info(formatter, bufnr).available then
+              return formatter
+            end
+          end
+          return select(1, ...)
+        end
+
+        -- Run "ruff_organize_imports" formatter config, but add the F401 rule to fix
+        local ruff_organize_imports =
+          require('conform.formatters.ruff_organize_imports')
+
         ---@diagnostic disable-next-line: param-type-mismatch
-        ruff_organize_imports.args = { unpack(ruff_fix.args) }
-        table.insert(ruff_organize_imports.args, 2, '--select')
-        table.insert(ruff_organize_imports.args, 3, 'I001,F401')
+        table.insert(ruff_organize_imports.args, 5, '--select=F401')
 
         require('conform').setup({
           -- log_level = vim.log.levels.DEBUG,
@@ -428,16 +440,10 @@ require('lazy').setup(
           end,
           formatters_by_ft = {
             python = function(bufnr)
-              if
-                require('conform').get_formatter_info(
-                  'ruff_organize_imports',
-                  bufnr
-                ).available
-              then
-                return { 'ruff_organize_imports', 'black' }
-              else
-                return { 'isort', 'black' }
-              end
+              return {
+                first(bufnr, 'ruff_organize_imports', 'isort'),
+                first(bufnr, 'black', 'ruff_format'),
+              }
             end,
             lua = { 'stylua' },
             html = { 'prettier' },
@@ -450,7 +456,7 @@ require('lazy').setup(
             rust = { 'rustfmt' },
           },
           formatters = {
-            ruff_organize_imports = ruff_organize_imports,
+            ruff_organize_imports = { require_cwd = true },
             isort = { require_cwd = true },
             black = { require_cwd = true },
             prettier = { require_cwd = true },
@@ -884,6 +890,7 @@ require('lazy').setup(
 
         Snacks.setup({
           bufdelete = {},
+          notifier = {},
           indent = {
             animate = { enabled = false },
             indent = {
