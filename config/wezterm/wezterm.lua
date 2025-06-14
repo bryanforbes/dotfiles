@@ -1,6 +1,8 @@
 local wezterm = require('wezterm')
 local mux = wezterm.mux
 
+wezterm.add_to_config_reload_watch_list('~/.dotfiles/config/wezterm/')
+
 ---@type string
 local cache_dir = os.getenv('HOME') .. '/.cache/wezterm'
 ---@type string
@@ -64,10 +66,7 @@ solarized.brights = {
   '#fdf6e3',
 }
 
-config.color_schemes = {
-  ['My Solarized'] = solarized,
-}
-config.color_scheme = 'My Solarized'
+config.color_scheme = 'Solarized Dark - Patched'
 config.bold_brightens_ansi_colors = 'No'
 
 config.adjust_window_size_when_changing_font_size = false
@@ -90,6 +89,15 @@ config.window_padding = {
 
 config.keys = {
   { key = 'q', mods = 'CMD', action = wezterm.action.QuitApplication },
+  {
+    key = 'r',
+    mods = 'CMD|SHIFT',
+    action = wezterm.action.ReloadConfiguration,
+  },
 }
+
+-- config.front_end = 'WebGpu'
+-- config.webgpu_power_preference = 'HighPerformance'
+config.window_background_opacity = 1.0
 
 return config
