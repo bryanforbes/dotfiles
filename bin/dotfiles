@@ -132,12 +132,16 @@ function dotfiles-brew {
             'gnu-sed'             # GNU sed
             'gnu-tar'             # GNU tar
             'gnupg'               # update from stock gnupg
-            'mas'                 # App Store CLI
             'font-iosevka'        # iosevka font
             'font-hack-nerd-font' # hack font with glyphs
             'sf-symbols'          # UI fonts from Apple
-            'kitty'               # GPU based terminal emulator
+            'wezterm'             # Terminal emulator
             'hammerspoon'         # OS X automation via lua
+            'raycast'             # cmd-space launcher
+            'keyman'              # Ancient Greek keyboard
+            'moom'                # Window placement
+            'stay'                # Window placement memory
+            'dropbox'             # Dropbox
         )
     fi
 
@@ -162,12 +166,6 @@ function dotfiles-brew {
     if (( $+commands[mise] )); then
         mise completions zsh >! $ZFUNCDIR/_mise
     fi
-}
-
-# Update Mac App Store apps
-function dotfiles-mas {
-    logSub "Updating installed App Store apps..."
-    mas upgrade
 }
 
 # Update zsh plugins
@@ -349,7 +347,6 @@ if [[ -n $help ]]; then
     echo '    bat            Rebuild bat theme and filetype cache'
     echo '    brew           Update brew packages, install defaults'
     echo '    home           Update dotfiles and home directories, fixup terminfo database'
-    echo '    mas            Update Mac App Store packages'
     echo '    node           Update global node packages, install defaults'
     echo '    python         Update global python packages, install defaults'
     echo '    tmux           Update tpm packages'

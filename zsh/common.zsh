@@ -23,7 +23,7 @@ else
     export HOMEBREW_BASE=/usr/local
 fi
 
-export HOMEBREW_PYTHON_VERSION="3.10"
+export HOMEBREW_PYTHON_VERSION="3.12"
 
 # This must be set for asdf-direnv to work properly. The _load_asdf_utils
 # function in asdf-direnv's command.bash is unable to determine the proper
