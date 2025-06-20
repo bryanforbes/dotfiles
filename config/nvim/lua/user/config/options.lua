@@ -43,6 +43,7 @@ opt.cursorline = true
 opt.confirm = true
 
 opt.modeline = false
+opt.exrc = true
 opt.joinspaces = false
 opt.textwidth = 0
 

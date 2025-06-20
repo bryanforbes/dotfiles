@@ -123,33 +123,28 @@ require('lazy').setup(
       end,
     },
 
-    -- Configure nvim with JSON
-    {
-      'folke/neoconf.nvim',
-      priority = 500, -- ensure this loads before lazydev and lspconfig calls
-      config = function()
-        require('neoconf').setup({
-          import = {
-            coc = false,
-          },
-        })
-      end,
-    },
-
     -- Helpers for editing neovim lua; must be setup before lspconfig
     {
       'folke/lazydev.nvim',
       ft = 'lua',
       priority = 400, -- ensure this loads before lspconfig calls happen
       config = function()
-        require('lazydev').setup()
+        ---@diagnostic disable-next-line: missing-fields
+        require('lazydev').setup({
+          library = {
+            '~/.dotfiles/.lua_types',
+            {
+              path = '~/.dotfiles/hammerspoon/Spoons/EmmyLua.spoon/annotations',
+              words = { 'hs', 'spoon' },
+            },
+          },
+        })
       end,
     },
 
     -- Language server and tool installer
     {
       'mason-org/mason.nvim',
-      tag = 'v1.11.0',
       priority = 300,
       config = function()
         ---@diagnostic disable-next-line: missing-fields
@@ -164,15 +159,20 @@ require('lazy').setup(
     -- Mason language server manager
     {
       'mason-org/mason-lspconfig.nvim',
-      tag = 'v1.32.0',
       dependencies = {
-        'folke/neoconf.nvim',
         'neovim/nvim-lspconfig',
         'SmiteshP/nvim-navic',
       },
       config = function()
-        -- TODO: remove once neoconf supports vim.lsp.config()
-        require('mason-lspconfig').setup()
+        require('mason-lspconfig').setup({
+          ensure_installed = {},
+          automatic_enable = {
+            exclude = {
+              'jedi_language_server',
+              'diagnosticls',
+            },
+          },
+        })
       end,
     },
 
@@ -456,11 +456,13 @@ require('lazy').setup(
             rust = { 'rustfmt' },
           },
           formatters = {
+            ruff_format = { require_cwd = true },
             ruff_organize_imports = { require_cwd = true },
             isort = { require_cwd = true },
             black = { require_cwd = true },
             prettier = { require_cwd = true },
             stylua = { require_cwd = true },
+            rustfmt = { require_cwd = true },
           },
         })
 
