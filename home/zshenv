@@ -93,6 +93,13 @@ path=(
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 
+if [[ -d $HOMEBREW_BASE/opt/rustup ]]; then
+    path=(
+        $HOMEBREW_BASE/opt/rustup/bin
+        $path
+    )
+fi
+
 path=(
     $CARGO_HOME/bin
     $path
