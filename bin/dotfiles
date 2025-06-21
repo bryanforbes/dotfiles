@@ -92,9 +92,7 @@ function dotfiles-brew {
     local -U brew_taps
     local -U tapped_taps
 
-    brew_taps=(
-        'homebrew/cask-fonts'   # fonts
-    )
+    brew_taps=()
     tapped_taps=("${(@f)$(brew tap)}")
 
     for tap in $brew_taps; do
@@ -112,12 +110,16 @@ function dotfiles-brew {
         'bat'                               # better cat
         'fzf'                               # fuzzy finder
         'git'                               # update from system stock git
+        'gh'                                # github wrapper
         'mise'                              # mise environment manager
         'mosh'                              # remote terminal application that allows roaming
         'neovim'                            # better vim
+        'neovim-remote'                     # controlm nvim from shell
         'node'                              # NodeJS
-        "python@${HOMEBREW_PYTHON_VERSION}" # update from stock Python
+        "python@${HOMEBREW_PYTHON_VERSION}" # update from stock python
+        'poetry'                            # python project management
         'ripgrep'                           # better grep
+        'stylua'                            # lua file formatting
         'tmux'                              # terminal multiplexer
         'zsh'                               # newer zsh
     )
@@ -196,37 +198,25 @@ function dotfiles-zsh {
 
 # Update user python2 and python3 packages
 function dotfiles-python {
-    if [[ ! -w $HOMEBREW_BASE/bin ]]; then
-        log "Skipping python update (no write permissions)"
-        return
+    local python_path="${HOMEBREW_BASE}/opt/python@${HOMEBREW_PYTHON_VERSION}"
+
+    if [[ -e "$python_path/bin/python3" ]]; then
+        local python_bin="$python_path/bin/python3"
+    else
+        local python_bin="$python_path/libexec/bin/python3"
     fi
-
-    local python_path="${HOMEBREW_BASE}/opt/python@${HOMEBREW_PYTHON_VERSION}/libexec"
-
-    # if [[ ! -e $HOMEBREW_BASE/bin/python ]] && [[ -e $HOMEBREW_BASE/bin/python3 ]]; then
-    #     logSub "Creating python link..."
-    #     link $HOMEBREW_BASE/bin/python3 $HOMEBREW_BASE/bin/python
-    # fi
-
-    log "Updating python packages..."
-    if [[ -f $python_path/bin/pip3 ]]; then
-        $python_path/bin/pip3 install --upgrade pip setuptools > /dev/null
-        $python_path/bin/pip3 install --upgrade --user pynvim neovim-remote > /dev/null
-        logSub "Updated Python 3 packages"
-    fi
-
     local python_user_base="$($python_path/bin/python3 -c 'import site; print(site.USER_BASE, end="")')"
 
-    if [[ ! -e "$python_user_base/bin/poetry" ]]; then
-        log "Installing poetry..."
-        curl -sSL https://install.python-poetry.org | $python_path/bin/python3 -
-    else
-        log "Updating poetry..."
-        $python_user_base/bin/poetry self update
-    fi
+    # if [[ ! -e "$python_user_base/bin/poetry" ]]; then
+    #     log "Installing poetry..."
+    #     curl -sSL https://install.python-poetry.org | $python_path/bin/python3 -
+    # else
+    #     log "Updating poetry..."
+    #     $python_user_base/bin/poetry self update
+    # fi
 
     log "Updating poetry completions..."
-    $python_user_base/bin/poetry completions zsh > $ZCOMPDIR/_poetry
+    poetry completions zsh > $ZCOMPDIR/_poetry
 }
 
 # Update global npm packages

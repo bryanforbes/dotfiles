@@ -80,6 +80,7 @@ if [[ -d $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION} ]]; then
     # https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
     path[$path[(ie)$HOMEBREW_BASE/bin]]=(
         $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION}/libexec/bin
+        $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION}/bin
         $HOMEBREW_BASE/bin
     )
 fi
