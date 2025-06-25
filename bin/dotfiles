@@ -226,6 +226,12 @@ function dotfiles-node {
         return
     fi
 
+    # Enable pnpm/yarn/etc.
+    if (( $+commands[corepack] )); then
+        log "Enabling corepack..."
+        corepack enable 2>&1 > /dev/null
+    fi
+
     local node_path=$1
     if [[ -z $node_path ]]; then
         log "Updating global node packages..."
