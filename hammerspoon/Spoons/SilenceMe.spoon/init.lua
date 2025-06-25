@@ -1,3 +1,31 @@
+---@class SilenceMeState
+---@field muted boolean
+---@field push_to_talk boolean
+---@field set_muted fun(self: SilenceMeState, muted: boolean)
+---@field set_push_to_talk fun(self: SilenceMeState, push_to_talk: boolean)
+
+---@class SilenceMeSpoon
+---@field __index SilenceMeSpoon
+---@field name string
+---@field version string
+---@field author string
+---@field homepage string
+---@field license string
+---@field hotkeys string[]
+---@field double_press_switches_modes boolean
+---@field use_menu boolean
+---@field push_to_talk boolean
+---@field state SilenceMeState
+---@field menu? hs.menubar
+---@field time_since_press? integer
+---@field tap? hs.eventtap
+---@field device? hs.audiodevice
+---@field init fun(self: SilenceMeSpoon)
+---@field start fun(self: SilenceMeSpoon)
+---@field stop fun(self: SilenceMeSpoon)
+
+---@type SilenceMeSpoon
+---@diagnostic disable-next-line: missing-fields
 local obj = {}
 obj.__index = obj
 
@@ -12,6 +40,7 @@ obj.double_press_switches_modes = false
 obj.use_menu = true
 obj.push_to_talk = false
 
+---@diagnostic disable-next-line: missing-fields
 obj.state = {
   muted = false,
   push_to_talk = false,
