@@ -417,13 +417,6 @@ require('lazy').setup(
           return select(1, ...)
         end
 
-        -- Run "ruff_organize_imports" formatter config, but add the F401 rule to fix
-        local ruff_organize_imports =
-          require('conform.formatters.ruff_organize_imports')
-
-        ---@diagnostic disable-next-line: param-type-mismatch
-        table.insert(ruff_organize_imports.args, 5, '--select=F401')
-
         require('conform').setup({
           -- log_level = vim.log.levels.DEBUG,
           format_on_save = function(bufnr)
@@ -457,7 +450,10 @@ require('lazy').setup(
           },
           formatters = {
             ruff_format = { require_cwd = true },
-            ruff_organize_imports = { require_cwd = true },
+            ruff_organize_imports = {
+              require_cwd = true,
+              append_args = { '--select=F401' },
+            },
             isort = { require_cwd = true },
             black = { require_cwd = true },
             prettier = { require_cwd = true },
