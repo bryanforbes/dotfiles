@@ -970,12 +970,12 @@ require('lazy').setup(
         end)
 
         -- picker
-        local root = Snacks.git.get_root()
+        local root = Snacks.git.get_root(vim.fn.getcwd())
         if root ~= nil then
           vim.keymap.set('n', '<leader>t', function()
             Snacks.picker.git_files({
               untracked = true,
-              cwd = root,
+              cwd = vim.fn.getcwd(),
             })
           end)
         else
