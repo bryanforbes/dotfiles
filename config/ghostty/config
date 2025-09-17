@@ -1,0 +1,31 @@
+# Theme
+theme = Solarized Dark Patched
+window-colorspace = display-p3
+
+# Font
+font-family = Iosevka Term Extended
+font-size = 12
+font-feature = -calt
+font-feature = -clig
+font-feature = -liga
+# font-thicken = true
+# font-thicken-strength = 0
+adjust-cell-width = -1
+
+# Window
+window-padding-x = 0
+window-padding-y = 0
+window-padding-balance = false
+window-save-state = always
+quit-after-last-window-closed = true
+
+# Mouse
+mouse-hide-while-typing = true
+
+bell-features = system
+bell-features = no-attention
+clipboard-read = allow
+clipboard-write = allow
+copy-on-select = clipboard
+
+shell-integration-features = sudo
