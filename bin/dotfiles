@@ -58,8 +58,6 @@ function dotfiles-home {
         link $file $CONFIGDIR/$file:t
     done
 
-    link $DOTFILES/tmux $HOME/.tmux
-
     if is-darwin; then
         link $DOTFILES/hammerspoon $HOME/.hammerspoon
     fi
