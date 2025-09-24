@@ -36,43 +36,12 @@ if wezterm.config_builder then
   config = wezterm.config_builder()
 end
 
-local solarized =
-  wezterm.color.get_builtin_schemes()['Solarized Dark - Patched']
-
-solarized.foreground = '#839496'
-solarized.background = '#002b36'
-solarized.selection_fg = '#93a1a1'
-solarized.selection_bg = '#073642'
-
-solarized.ansi = {
-  '#073642',
-  '#dc322f',
-  '#859900',
-  '#b58900',
-  '#268bd2',
-  '#d33682',
-  '#2aa198',
-  '#eee8d5',
-}
-
-solarized.brights = {
-  '#002b36',
-  '#cb4b16',
-  '#586e75',
-  '#657b83',
-  '#839496',
-  '#6c71c4',
-  '#93a1a1',
-  '#fdf6e3',
-}
-
 config.color_scheme = 'Solarized Dark - Patched'
 config.bold_brightens_ansi_colors = 'No'
 
 config.adjust_window_size_when_changing_font_size = false
 config.font = wezterm.font({
-  family = 'Iosevka Term',
-  stretch = 'Expanded',
+  family = 'Iosevka Term Extended',
   harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' },
 })
 config.font_size = 12.0
