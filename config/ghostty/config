@@ -1,6 +1,5 @@
 # Theme
-theme = Solarized Dark Patched
-window-colorspace = display-p3
+theme = iTerm2 Solarized Dark
 
 # Font
 font-family = Iosevka Term Extended
