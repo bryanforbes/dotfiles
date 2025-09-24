@@ -1,5 +1,3 @@
----@module 'blink.cmp.completion.windows.render.context'
-
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 
 ---@diagnostic disable-next-line: undefined-field
@@ -21,10 +19,10 @@ local defaults = require('lazy.core.config').defaults
 require('lazy').setup(
   {
     -- functions used by many plugins
-    'nvim-lua/plenary.nvim',
+    { 'nvim-lua/plenary.nvim', lazy = true },
 
     -- icons used by many plugins
-    'nvim-tree/nvim-web-devicons',
+    { 'nvim-tree/nvim-web-devicons', lazy = true },
 
     -- Solarized
     {
@@ -33,6 +31,32 @@ require('lazy').setup(
       priority = 1000,
       dependencies = {
         'tjdevries/colorbuddy.nvim',
+        config = function()
+          -- patch colorbuddy to fix https://github.com/tjdevries/colorbuddy.nvim/issues/50
+          local cb = require('colorbuddy')
+          local old_group_apply = cb.Group.apply
+          ---@diagnostic disable-next-line: inject-field
+          cb.Group.apply = function(obj)
+            if obj.__default__ ~= false then
+              old_group_apply(obj)
+            end
+
+            local hl = vim.tbl_extend('error', {
+              fg = obj.fg:to_vim(),
+              bg = obj.bg:to_vim(),
+            }, obj.style:keys())
+
+            if obj.guisp ~= nil then
+              hl['sp'] = obj.guisp:to_vim()
+            end
+
+            if obj.blend ~= nil then
+              hl['blend'] = obj.blend
+            end
+
+            vim.api.nvim_set_hl(0, obj.name, hl)
+          end
+        end,
       },
 
       config = function()
@@ -88,6 +112,35 @@ require('lazy').setup(
         Group.link('BlinkCmpMenuSelection', groups.CursorLine)
         Group.link('BlinkCmpKind', groups.CmpItemKind)
 
+        Group.new(
+          'DiagnosticUnderlineError',
+          colors.none,
+          colors.none,
+          styles.undercurl,
+          colors.red
+        )
+        Group.new(
+          'DiagnosticUnderlineWarn',
+          colors.none,
+          colors.none,
+          styles.undercurl,
+          colors.yellow
+        )
+        Group.new(
+          'DiagnosticUnderlineInfo',
+          colors.none,
+          colors.none,
+          styles.undercurl,
+          colors.blue
+        )
+        Group.new(
+          'DiagnosticUnderlineHint',
+          colors.none,
+          colors.none,
+          styles.undercurl,
+          colors.cyan
+        )
+
         for _, kind in pairs({
           'Text',
           'Method',
@@ -123,197 +176,61 @@ require('lazy').setup(
       end,
     },
 
-    -- Helpers for editing neovim lua; must be setup before lspconfig
+    -- Helpers for editing neovim lua
     {
       'folke/lazydev.nvim',
       ft = 'lua',
-      priority = 400, -- ensure this loads before lspconfig calls happen
-      config = function()
-        ---@diagnostic disable-next-line: missing-fields
-        require('lazydev').setup({
-          library = {
-            '~/.dotfiles/.lua_types',
-            {
-              path = '~/.dotfiles/hammerspoon/Spoons/EmmyLua.spoon/annotations',
-              words = { 'hs', 'spoon' },
-            },
+      cmd = 'LazyDev',
+      opts = {
+        library = {
+          { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+          { path = 'snacks.nvim', words = { 'Snacks' } },
+          '~/.dotfiles/.lua_types',
+          {
+            path = '~/.dotfiles/hammerspoon/Spoons/EmmyLua.spoon/annotations',
+            words = { 'hs', 'spoon' },
           },
-        })
-      end,
+        },
+      },
     },
 
     -- Language server and tool installer
     {
       'mason-org/mason.nvim',
-      priority = 300,
-      config = function()
-        ---@diagnostic disable-next-line: missing-fields
-        require('mason').setup({
-          ui = {
-            border = 'rounded',
-          },
-        })
-      end,
+      opts = {
+        ui = {
+          border = 'rounded',
+        },
+      },
     },
 
     -- Mason language server manager
+    { 'SmiteshP/nvim-navic', lazy = true },
     {
       'mason-org/mason-lspconfig.nvim',
-      dependencies = {
-        'neovim/nvim-lspconfig',
-        'SmiteshP/nvim-navic',
-      },
-      config = function()
-        require('mason-lspconfig').setup({
-          ensure_installed = {},
-          automatic_enable = {
-            exclude = {
-              'jedi_language_server',
-              'diagnosticls',
-            },
+      dependencies = { 'nvim-lspconfig' },
+      ---@module 'mason-lspconfig'
+      ---@type MasonLspconfigSettings
+      opts = {
+        ensure_installed = {},
+        automatic_enable = {
+          exclude = {
+            'jedi_language_server',
+            'diagnosticls',
           },
-        })
-      end,
-    },
-
-    -- Fuzzy finder
-    {
-      'ibhagwan/fzf-lua',
-
-      dependencies = {
-        'nvim-lua/plenary.nvim',
-        'nvim-tree/nvim-web-devicons',
-        {
-          dir = vim.env.HOMEBREW_BASE .. '/opt/fzf',
         },
       },
-
-      cond = function()
-        return vim.fn.executable('fzf') == 1
-      end,
-
-      config = function()
-        require('fzf-lua').setup({
-          'fzf-native',
-
-          winopts = {
-            row = 0,
-            col = 0.5,
-            width = 0.7,
-            height = 0.5,
-
-            preview = {
-              hidden = 'hidden',
-            },
-          },
-
-          fzf_opts = {
-            ['--info'] = 'hidden',
-            ['--pointer'] = ' ',
-            ['--margin'] = '0,1',
-          },
-
-          fzf_colors = {
-            ['bg+'] = { 'bg', 'Normal' },
-            ['gutter'] = { 'bg', 'Normal' },
-          },
-
-          buffers = {
-            no_header = true,
-          },
-
-          git = {
-            files = {
-              cmd = 'git ls-files --cached --others --exclude-standard',
-            },
-          },
-
-          grep = {
-            no_header = true,
-          },
-
-          lsp = {
-            -- make lsp requests synchronous so they work with null-ls
-            async_or_timeout = 3000,
-
-            winopts = {
-              preview = {
-                hidden = 'nohidden',
-              },
-            },
-          },
-
-          diagnostics = {
-            severity_limit = vim.diagnostic.severity.HINT,
-          },
-        })
-
-        --local Path = require('plenary.path')
-
-        --if Path:new('.git'):is_dir() then
-        --  vim.keymap.set('n', '<leader>t', function()
-        --    require('fzf-lua').git_files()
-        --  end)
-        --else
-        --  vim.keymap.set('n', '<leader>t', function()
-        --    require('fzf-lua').files()
-        --  end)
-        --end
-
-        --vim.keymap.set('n', '<leader>T', function()
-        --  require('fzf-lua').files()
-        --end)
-        --vim.keymap.set('n', '<leader>b', function()
-        --  require('fzf-lua').buffers()
-        --end)
-        --vim.keymap.set('n', '<leader>/', function()
-        --  require('fzf-lua').blines()
-        --end)
-        --vim.keymap.set('n', '<leader>a', function()
-        --  require('fzf-lua').live_grep_resume()
-        --end)
-        --vim.keymap.set('n', '<leader>h', function()
-        --  require('fzf-lua').help_tags()
-        --end)
-        --vim.keymap.set('n', '<leader>e', function()
-        --  require('fzf-lua').diagnostics_document({ sort = true })
-        --end)
-        --vim.keymap.set('n', '<leader>E', function()
-        --  require('fzf-lua').diagnostics_workspace({ sort = true })
-        --end)
-
-        --vim.keymap.set('n', '<leader>lr', function()
-        --  require('fzf-lua').lsp_references()
-        --end)
-        --vim.keymap.set('n', '<leader>ls', function()
-        --  require('fzf-lua').lsp_document_symbols()
-        --end)
-        --vim.keymap.set('n', '<leader>la', function()
-        --  require('fzf-lua').lsp_code_actions()
-        --end)
-      end,
-    },
-
-    {
-      'qpkorr/vim-bufkill',
-      enabled = false,
-      init = function()
-        vim.g.BufKillCreateMappings = 0
-
-        vim.keymap.set('', '<leader>d', '<cmd>BW!<cr>')
-      end,
     },
 
     {
       'tpope/vim-fugitive',
-
       event = 'BufEnter',
+    },
 
-      config = function()
-        vim.keymap.set('', '<leader>gd', '<cmd>Gdiffsplit<cr>')
-        vim.keymap.set('', '<leader>gc', '<cmd>Git commit -v<cr>')
-        vim.keymap.set('', '<leader>gs', '<cmd>Git<cr>')
-      end,
+    {
+      'lewis6991/gitsigns.nvim',
+      dependencies = { 'tpope/vim-fugitive' },
+      event = 'BufEnter',
     },
 
     {
@@ -323,12 +240,7 @@ require('lazy').setup(
 
     {
       'tpope/vim-surround',
-
       event = 'BufEnter',
-
-      config = function()
-        vim.keymap.set('n', 'dsf', 'ds)db', { silent = true, remap = true })
-      end,
     },
 
     {
@@ -337,46 +249,25 @@ require('lazy').setup(
 
     {
       'andymass/vim-matchup',
-
-      -- config = function()
+      -- init = function()
       --   vim.g.matchup_matchparen_offscreen = { method = 'popup' }
       -- end,
     },
 
     {
       'terryma/vim-expand-region',
-
-      config = function()
-        vim.keymap.set(
-          'v',
-          'v',
-          '<Plug>(expand_region_expand)',
-          { remap = true }
-        )
-        vim.keymap.set(
-          'v',
-          '<C-v>',
-          '<Plug>(expand_region_shrink)',
-          { remap = true }
-        )
-      end,
     },
 
     -- Filetype support
     {
       'neoclide/jsonc.vim',
-      'jeetsukumaran/vim-python-indent-black',
+      { 'jeetsukumaran/vim-python-indent-black', ft = 'python' },
     },
 
     -- Treesitter
     {
       'nvim-treesitter/nvim-treesitter',
-      dependencies = {
-        'nvim-treesitter/playground',
-      },
-
       build = ':TSUpdate',
-
       config = function()
         require('nvim-treesitter.configs').setup({
           auto_install = true,
@@ -402,7 +293,19 @@ require('lazy').setup(
     -- Code formatting
     {
       'stevearc/conform.nvim',
-      config = function()
+      event = { 'BufWritePre' },
+      cmd = { 'ConformInfo', 'Format' },
+      keys = {
+        {
+          '<leader>F',
+          function()
+            require('conform').format({ lsp_fallback = true })
+          end,
+          mode = '',
+          desc = 'Format buffer',
+        },
+      },
+      opts = function()
         ---@param bufnr integer
         ---@param ... string
         ---@return string
@@ -417,12 +320,16 @@ require('lazy').setup(
           return select(1, ...)
         end
 
-        require('conform').setup({
+        ---@module 'conform'
+        ---@type conform.setupOpts
+        return {
           -- log_level = vim.log.levels.DEBUG,
           format_on_save = function(bufnr)
             local bufname = vim.api.nvim_buf_get_name(bufnr)
 
-            if bufname:match('^fugitive://') then
+            if
+              bufname:match('^fugitive://') or bufname:match('^copilot://')
+            then
               return
             end
 
@@ -460,326 +367,309 @@ require('lazy').setup(
             stylua = { require_cwd = true },
             rustfmt = { require_cwd = true },
           },
-        })
+        }
+      end,
+      ---@module 'conform'
+      ---@param opts conform.setupOpts
+      config = function(_, opts)
+        require('conform').setup(opts)
 
         vim.api.nvim_create_user_command('Format', function()
           require('conform').format({ lsp_fallback = true })
         end, {})
-
-        vim.keymap.set('n', '<leader>F', function()
-          require('conform').format({ lsp_fallback = true })
-        end, {})
       end,
+    },
+
+    -- Copilot
+    {
+      'zbirenbaum/copilot.lua',
+      event = 'BufReadPost',
+      cmd = 'Copilot',
+      opts = {
+        suggestion = {
+          enabled = false,
+          auto_trigger = true,
+        },
+        panel = { enabled = false },
+        filetypes = {
+          ['*'] = function()
+            return vim.bo.filetype ~= 'bigfile'
+          end,
+        },
+      },
+    },
+
+    -- CodeCompanion
+    -- This should be loaded after blink for proper integration
+    {
+      'olimorris/codecompanion.nvim',
+      cmd = {
+        'CodeCompanion',
+        'CodeCompanionActions',
+        'CodeCompanionChat',
+        'CodeCompanionCmd',
+      },
+      opts = {
+        strategies = {
+          chat = {
+            adapter = 'copilot',
+          },
+          inline = {
+            adapter = 'copilot',
+          },
+          cmd = {
+            adapter = 'copilot',
+          },
+        },
+      },
+    },
+
+    -- render-markdown.nvim
+    {
+      'MeanderingProgrammer/render-markdown.nvim',
+      ft = { 'markdown', 'codecompanion' },
+      opts = {
+        anti_conceal = { enabled = false },
+        file_types = {
+          'markdown',
+          'codecompanion',
+        },
+        win_options = {
+          conceallevel = {
+            default = vim.o.conceallevel,
+            rendered = 3,
+          },
+          concealcursor = {
+            default = vim.o.concealcursor,
+            rendered = 'n',
+          },
+        },
+      },
     },
 
     -- Completions
     {
+      'onsails/lspkind.nvim',
+      lazy = true,
+      opts = {
+        symbol_map = {
+          -- Add a copilot icon to the default set
+          Copilot = '',
+        },
+      },
+    },
+    {
+      'L3MON4D3/LuaSnip',
+      lazy = true,
+      version = 'v2.*',
+      dependencies = { 'rafamadriz/friendly-snippets' },
+      config = function()
+        require('luasnip.loaders.from_vscode').lazy_load()
+      end,
+    },
+    {
       'saghen/blink.cmp',
       -- enabled = false,
       version = '1.*',
-      dependencies = {
-        { 'L3MON4D3/LuaSnip', version = 'v2.*' },
-        'onsails/lspkind.nvim',
-      },
-      config = function()
-        local has_words_before = function()
-          unpack = unpack or table.unpack
-          local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-          return col ~= 0
-            and vim.api
-                .nvim_buf_get_lines(0, line - 1, line, true)[1]
-                :sub(col, col)
-                :match('%s')
-              == nil
-        end
+      dependencies = { 'fang2hou/blink-copilot' },
+      event = { 'InsertEnter', 'CmdlineEnter' },
+      ---@module 'blink.cmp'
+      ---@type blink.cmp.Config
+      opts = {
+        keymap = {
+          preset = 'none',
 
-        require('blink.cmp').setup({
-          keymap = {
-            preset = 'none',
-
-            ['<tab>'] = {
-              'select_next',
-              'snippet_forward',
-              function(cmp)
-                if has_words_before() then
-                  return cmp.show()
-                end
-              end,
-              'fallback',
-            },
-            ['<s-tab>'] = {
-              'select_prev',
-              'snippet_backward',
-              'fallback',
-            },
-            ['<up>'] = { 'select_prev', 'fallback' },
-            ['<c-k>'] = { 'select_prev', 'fallback' },
-            ['<down>'] = { 'select_next', 'fallback' },
-            ['<c-j>'] = { 'select_next', 'fallback' },
-            ['<c-space>'] = {
-              'show',
-              'show_documentation',
-              'hide_documentation',
-            },
-            ['<cr>'] = { 'accept', 'fallback' },
+          ['<tab>'] = {
+            'select_next',
+            'snippet_forward',
+            'fallback',
           },
-          snippets = { preset = 'luasnip' },
-          completion = {
-            accept = {
-              auto_brackets = {
-                enabled = false,
-              },
+          ['<s-tab>'] = {
+            'select_prev',
+            'snippet_backward',
+            'fallback',
+          },
+          ['<up>'] = { 'select_prev', 'fallback' },
+          ['<c-k>'] = { 'select_prev', 'fallback' },
+          ['<down>'] = { 'select_next', 'fallback' },
+          ['<c-j>'] = { 'select_next', 'fallback' },
+          ['<c-space>'] = {
+            'show',
+            'show_documentation',
+            'hide_documentation',
+          },
+          ['<c-e>'] = { 'hide', 'fallback' },
+          ['<cr>'] = { 'accept', 'fallback' },
+        },
+        snippets = { preset = 'luasnip' },
+        completion = {
+          accept = {
+            auto_brackets = {
+              enabled = false,
             },
-            list = {
-              selection = {
-                auto_insert = false,
-                preselect = false,
-              },
-              cycle = {
-                from_bottom = true,
-                from_top = true,
-              },
+          },
+          trigger = {
+            show_in_snippet = false,
+          },
+          list = {
+            selection = {
+              auto_insert = false,
+              preselect = false,
             },
-            menu = {
-              draw = {
-                columns = {
-                  { 'label' },
-                  { 'kind_icon', 'kind', gap = 1 },
-                  { 'label_description' },
+            cycle = {
+              from_bottom = true,
+              from_top = true,
+            },
+          },
+          menu = {
+            draw = {
+              columns = {
+                { 'label' },
+                { 'kind_icon', 'kind', gap = 1 },
+                { 'label_description' },
+              },
+              components = {
+                kind_icon = {
+                  ---@param ctx blink.cmp.DrawItemContext
+                  text = function(ctx)
+                    local icon = ctx.kind_icon
+                    if vim.tbl_contains({ 'Path' }, ctx.source_name) then
+                      local dev_icon, _ =
+                        require('nvim-web-devicons').get_icon(ctx.label)
+                      if dev_icon then
+                        icon = dev_icon
+                      end
+                    else
+                      icon = require('lspkind').symbolic(ctx.kind, {
+                        mode = 'symbol',
+                      })
+                    end
+
+                    return icon .. ctx.icon_gap
+                  end,
+
+                  ---@param ctx blink.cmp.DrawItemContext
+                  highlight = function(ctx)
+                    local hl = ctx.kind_hl
+                    if vim.tbl_contains({ 'Path' }, ctx.source_name) then
+                      local dev_icon, dev_hl =
+                        require('nvim-web-devicons').get_icon(ctx.label)
+                      if dev_icon then
+                        hl = dev_hl
+                      end
+                    end
+                    return hl
+                  end,
                 },
-                components = {
-                  kind_icon = {
-                    ---@param ctx blink.cmp.DrawItemContext
-                    text = function(ctx)
-                      local icon = ctx.kind_icon
-                      if vim.tbl_contains({ 'Path' }, ctx.source_name) then
-                        local dev_icon, _ =
-                          require('nvim-web-devicons').get_icon(ctx.label)
-                        if dev_icon then
-                          icon = dev_icon
-                        end
-                      else
-                        icon = require('lspkind').symbolic(ctx.kind, {
-                          mode = 'symbol',
-                        })
+                kind = {
+                  ---@param ctx blink.cmp.DrawItemContext
+                  highlight = function(ctx)
+                    local hl = ctx.kind_hl
+                    if vim.tbl_contains({ 'Path' }, ctx.source_name) then
+                      local dev_icon, dev_hl =
+                        require('nvim-web-devicons').get_icon(ctx.label)
+                      if dev_icon then
+                        hl = dev_hl
                       end
-
-                      return icon .. ctx.icon_gap
-                    end,
-
-                    ---@param ctx blink.cmp.DrawItemContext
-                    highlight = function(ctx)
-                      local hl = ctx.kind_hl
-                      if vim.tbl_contains({ 'Path' }, ctx.source_name) then
-                        local dev_icon, dev_hl =
-                          require('nvim-web-devicons').get_icon(ctx.label)
-                        if dev_icon then
-                          hl = dev_hl
-                        end
-                      end
-                      return hl
-                    end,
-                  },
-                  kind = {
-                    ---@param ctx blink.cmp.DrawItemContext
-                    highlight = function(ctx)
-                      local hl = ctx.kind_hl
-                      if vim.tbl_contains({ 'Path' }, ctx.source_name) then
-                        local dev_icon, dev_hl =
-                          require('nvim-web-devicons').get_icon(ctx.label)
-                        if dev_icon then
-                          hl = dev_hl
-                        end
-                      end
-                      return hl
-                    end,
-                  },
+                    end
+                    return hl
+                  end,
                 },
               },
             },
-            documentation = {
-              auto_show = true,
+          },
+          documentation = {
+            auto_show = true,
+          },
+        },
+        sources = {
+          default = { 'lsp', 'copilot', 'path', 'snippets' },
+          per_filetype = {
+            lua = {
+              inherit_defaults = true,
+              'lazydev',
             },
           },
-          sources = {
-            default = { 'lsp', 'path', 'snippets', 'lazydev' },
-            providers = {
-              lazydev = {
-                name = 'LazyDev',
-                module = 'lazydev.integrations.blink',
-                fallbacks = { 'lsp' },
-                -- make lazydev completions top priority (see `:h blink.cmp`)
-                -- score_offset = 100,
-              },
+          providers = {
+            lazydev = {
+              name = 'LazyDev',
+              module = 'lazydev.integrations.blink',
+              fallbacks = { 'lsp' },
+              -- make lazydev completions top priority (see `:h blink.cmp`)
+              -- score_offset = 100,
+            },
+            copilot = {
+              name = 'copilot',
+              module = 'blink-copilot',
+              score_offset = 100,
+              async = true,
             },
           },
-          fuzzy = { implementation = 'prefer_rust_with_warning' },
-          cmdline = {
-            enabled = false,
-          },
-        })
-      end,
-    },
-
-    {
-      'hrsh7th/nvim-cmp',
-      enabled = false,
-      dependencies = {
-        'nvim-lua/plenary.nvim',
-        'hrsh7th/cmp-nvim-lsp',
-        'hrsh7th/cmp-path',
-        { 'L3MON4D3/LuaSnip', version = 'v2.*' },
-        'saadparwaiz1/cmp_luasnip',
-        'onsails/lspkind.nvim',
+        },
+        fuzzy = { implementation = 'prefer_rust_with_warning' },
+        cmdline = {
+          enabled = false,
+        },
       },
-      event = 'BufEnter',
-      init = function()
-        vim.opt.completeopt = { 'menuone', 'noselect' }
-      end,
-      config = function()
-        local cmp = require('cmp')
-        local luasnip = require('luasnip')
-        local functional = require('plenary.functional')
-
-        local has_words_before = function()
-          unpack = unpack or table.unpack
-          local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-          return col ~= 0
-            and vim.api
-                .nvim_buf_get_lines(0, line - 1, line, true)[1]
-                :sub(col, col)
-                :match('%s')
-              == nil
-        end
-
-        local function select_fn(cmp_function, fallback)
-          if cmp.visible() then
-            cmp_function({ behavior = cmp.SelectBehavior.Select })
-          else
-            fallback()
-          end
-        end
-
-        local select_next =
-          cmp.mapping(functional.partial(select_fn, cmp.select_next_item))
-        local select_prev =
-          cmp.mapping(functional.partial(select_fn, cmp.select_prev_item))
-
-        cmp.setup({
-          snippet = {
-            expand = function(args)
-              luasnip.lsp_expand(args.body)
-            end,
-          },
-          mapping = {
-            ['<tab>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then
-                cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-              elseif luasnip.expand_or_locally_jumpable() then
-                luasnip.expand_or_jump()
-              elseif has_words_before() then
-                cmp.complete()
-              else
-                fallback()
-              end
-            end, { 'i', 's' }),
-            ['<c-j>'] = select_next,
-            ['<down>'] = select_next,
-            ['<s-tab>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then
-                cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
-              elseif luasnip.locally_jumpable(-1) then
-                luasnip.jump(-1)
-              else
-                fallback()
-              end
-            end, { 'i', 's' }),
-            ['<c-k>'] = select_prev,
-            ['<up>'] = select_prev,
-            ['<c-space>'] = cmp.mapping.complete(),
-            ['<cr>'] = cmp.mapping.confirm(),
-          },
-          sources = cmp.config.sources({
-            { name = 'path' },
-            { name = 'nvim_lsp' },
-          }),
-          formatting = {
-            format = require('lspkind').cmp_format(),
-          },
-        })
-      end,
     },
 
     -- LuaLine
     {
       'nvim-lualine/lualine.nvim',
-
       dependencies = {
         'nvim-treesitter/nvim-treesitter',
         'arkav/lualine-lsp-progress',
-        'SmiteshP/nvim-navic',
       },
-
       event = 'VeryLazy',
-
-      config = function()
-        require('lualine').setup({
-          options = {
-            theme = 'solarized',
-            component_separators = '|',
+      opts = {
+        options = {
+          theme = 'solarized',
+          component_separators = '|',
+        },
+        sections = {
+          lualine_a = { 'mode' },
+          lualine_b = {
+            { 'FugitiveHead', icon = '' },
           },
-          sections = {
-            lualine_a = { 'mode' },
-            lualine_b = {
-              { 'FugitiveHead', icon = '' },
-            },
-            lualine_c = {
-              { 'diagnostics', sources = { 'nvim_diagnostic' } },
-              {
-                'lsp_progress',
-                display_components = { 'spinner' },
-                spinner_symbols = { '⠖', '⠲', '⠴', '⠦' },
-                timer = { spinner = 250 },
-                padding = { left = 1, right = 0 },
-                separator = '',
-              },
-            },
-            lualine_x = {
-              { 'fileformat', icons_enabled = false },
-              'encoding',
-              'filetype',
-            },
-            lualine_y = { 'progress' },
-            lualine_z = { 'location' },
-          },
-          inactive_sections = {
-            lualine_c = {},
-          },
-          winbar = {
-            lualine_a = {},
-            lualine_b = {
-              { 'filename', path = 1 },
-            },
-            lualine_c = {
-              {
-                function()
-                  return require('nvim-navic').get_location()
-                end,
-                cond = function()
-                  return require('nvim-navic').is_available()
-                end,
-              },
-            },
-            lualine_x = {},
-          },
-          inactive_winbar = {
-            lualine_c = {
-              { 'filename', path = 1 },
+          lualine_c = {
+            { 'diagnostics', sources = { 'nvim_diagnostic' } },
+            {
+              'lsp_progress',
+              display_components = { 'spinner' },
+              spinner_symbols = { '⠖', '⠲', '⠴', '⠦' },
+              timer = { spinner = 250 },
+              padding = { left = 1, right = 0 },
+              separator = '',
             },
           },
-          extensions = { 'fugitive', 'nvim-tree' },
-        })
-      end,
+          lualine_x = {
+            { 'fileformat', icons_enabled = false },
+            'encoding',
+            'filetype',
+          },
+          lualine_y = { 'progress' },
+          lualine_z = { 'location' },
+        },
+        inactive_sections = {
+          lualine_c = {},
+        },
+        winbar = {
+          lualine_a = {},
+          lualine_b = {
+            { 'filename', path = 1 },
+          },
+          lualine_c = {
+            { 'navic' },
+          },
+          lualine_x = {},
+        },
+        inactive_winbar = {
+          lualine_c = {
+            { 'filename', path = 1 },
+          },
+        },
+        extensions = { 'fugitive', 'nvim-tree' },
+      },
     },
 
     -- Neotree
@@ -787,19 +677,26 @@ require('lazy').setup(
       'nvim-neo-tree/neo-tree.nvim',
       branch = 'v3.x',
       dependencies = {
-        'nvim-lua/plenary.nvim',
         'nvim-tree/nvim-web-devicons',
         'MunifTanjim/nui.nvim',
       },
-      lazy = false,
+      cmd = 'Neotree',
       keys = {
         { '<leader>f', '<cmd>Neotree reveal toggle<cr>', desc = 'NeoTree' },
       },
       init = function()
         vim.g.neo_tree_remove_legacy_commands = 1
       end,
-      config = function()
-        require('neo-tree').setup({
+      opts = function()
+        local function on_move(data)
+          Snacks.rename.on_rename_file(data.source, data.destination)
+        end
+
+        local events = require('neo-tree.events')
+
+        ---@module 'neo-tree'
+        ---@type neotree.Config
+        return {
           close_if_last_window = true,
           enable_git_status = true,
           use_libuv_file_watcher = true,
@@ -807,225 +704,117 @@ require('lazy').setup(
           window = {
             width = 35,
           },
-        })
+          event_handlers = {
+            { event = events.FILE_MOVED, handler = on_move },
+            { event = events.FILE_RENAMED, handler = on_move },
+          },
+        }
       end,
-    },
-
-    -- Code navigation
-    {
-      'folke/flash.nvim',
-      event = 'VeryLazy',
-      config = function()
-        require('flash').setup()
-      end,
-      keys = {
-        -- {
-        --   's',
-        --   mode = { 'n', 'o', 'x' },
-        --   function()
-        --     require('flash').jump()
-        --   end,
-        --   desc = 'Flash',
-        -- },
-        -- {
-        --   'S',
-        --   mode = { 'n', 'o', 'x' },
-        --   function()
-        --     require('flash').treesitter()
-        --   end,
-        --   desc = 'Flash Treesitter',
-        -- },
-        {
-          'r',
-          mode = 'o',
-          function()
-            require('flash').remote()
-          end,
-          desc = 'Remote Flash',
-        },
-        {
-          'R',
-          mode = { 'o', 'x' },
-          function()
-            require('flash').treesitter_search()
-          end,
-          desc = 'Treesitter Search',
-        },
-        {
-          '<c-s>',
-          mode = { 'c' },
-          function()
-            require('flash').toggle()
-          end,
-          desc = 'Toggle Flash Search',
-        },
-      },
     },
 
     -- Lightbulb to indicate code actions
     {
       'kosayoda/nvim-lightbulb',
-
-      config = function()
-        vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-          pattern = '*',
-          callback = function()
-            require('nvim-lightbulb').update_lightbulb()
-          end,
-        })
-      end,
+      ---@module 'nvim-lightbulb'
+      ---@type nvim-lightbulb.Config
+      opts = {
+        autocmd = { enabled = true, updatetime = -1 },
+        action_kinds = { 'quickfix', 'source' },
+      },
     },
 
     {
       'folke/snacks.nvim',
       priority = 2000,
       lazy = false,
-      config = function()
+      ---@type snacks.Config
+      opts = {
+        bigfile = {},
+        bufdelete = {},
+        notifier = {},
+        indent = {
+          animate = { enabled = false },
+          indent = {
+            char = '┊',
+            only_current = true,
+          },
+          scope = {
+            char = '┊',
+          },
+        },
+        input = {
+          icon_pos = false,
+        },
+        picker = {
+          formatters = {
+            file = {
+              icon_width = 3,
+            },
+          },
+          icons = {
+            files = {
+              file = '',
+            },
+          },
+          layout = {
+            layout = {
+              width = 0.7,
+              height = 0.5,
+              border = 'rounded',
+              {
+                border = 'bottom',
+              },
+            },
+          },
+          win = {
+            input = {
+              keys = {
+                ['<Esc>'] = { 'close', mode = { 'n', 'i' } },
+              },
+            },
+            list = {
+              -- Make file truncation consider window width.
+              -- <https://github.com/folke/snacks.nvim/issues/1217#issuecomment-2661465574>
+              on_buf = function(self)
+                self:execute('calculate_file_truncate_width')
+              end,
+            },
+          },
+          actions = {
+            -- Make file truncation consider window width.
+            -- <https://github.com/folke/snacks.nvim/issues/1217#issuecomment-2661465574>
+            calculate_file_truncate_width = function(self)
+              local width = self.list.win:size().width
+              self.opts.formatters.file.truncate = width - 6
+            end,
+          },
+        },
+        styles = {
+          input = {
+            title_pos = 'left',
+            relative = 'cursor',
+            row = -3,
+          },
+        },
+      },
+      ---@param opts snacks.Config
+      config = function(_, opts)
         local Snacks = require('snacks')
 
         -- Add snacks.input styles to Snacks.config.styles
         require('snacks.input')
 
-        Snacks.setup({
-          bufdelete = {},
-          notifier = {},
-          indent = {
-            animate = { enabled = false },
-            indent = {
-              char = '┊',
-              only_current = true,
-            },
-            scope = {
-              char = '┊',
-            },
-          },
-          input = {
-            icon_pos = false,
-          },
-          picker = {
-            formatters = {
-              file = {
-                icon_width = 3,
-              },
-            },
-            ---@diagnostic disable-next-line: missing-fields
-            icons = {
-              files = {
-                file = '',
-              },
-            },
-            layout = vim.tbl_deep_extend(
-              'force',
-              require('snacks.picker.config.layouts').vscode,
-              {
-                layout = {
-                  width = 0.7,
-                  height = 0.5,
-                  border = 'rounded',
-                  {
-                    border = 'bottom',
-                  },
-                },
-              }
-            ),
-            win = {
-              input = {
-                keys = {
-                  ['<Esc>'] = { 'close', mode = { 'n', 'i' } },
-                },
-              },
-              list = {
-                -- Make file truncation consider window width.
-                -- <https://github.com/folke/snacks.nvim/issues/1217#issuecomment-2661465574>
-                on_buf = function(self)
-                  self:execute('calculate_file_truncate_width')
-                end,
-              },
-            },
-            actions = {
-              -- Make file truncation consider window width.
-              -- <https://github.com/folke/snacks.nvim/issues/1217#issuecomment-2661465574>
-              calculate_file_truncate_width = function(self)
-                local width = self.list.win:size().width
-                self.opts.formatters.file.truncate = width - 6
-              end,
-            },
-          },
-          styles = {
-            input = {
-              title_pos = 'left',
-              relative = 'cursor',
-              row = -3,
-              wo = {
-                winhighlight = Snacks.config.styles.input.wo.winhighlight
-                  .. ',LineNr:SnacksInputLineNr',
-              },
-            },
-          },
-        })
+        opts.picker.layout = vim.tbl_deep_extend(
+          'force',
+          require('snacks.picker.config.layouts').vscode,
+          opts.picker.layout
+        )
+        opts.styles.input.wo = {
+          winhighlight = Snacks.config.styles.input.wo.winhighlight
+            .. ',LineNr:SnacksInputLineNr',
+        }
 
-        -- bufdelete
-        vim.keymap.set('', '<leader>d', function()
-          Snacks.bufdelete.delete({ wipe = true })
-        end)
-
-        -- picker
-        local root = Snacks.git.get_root(vim.fn.getcwd())
-        if root ~= nil then
-          vim.keymap.set('n', '<leader>t', function()
-            Snacks.picker.git_files({
-              untracked = true,
-              cwd = vim.fn.getcwd(),
-            })
-          end)
-        else
-          vim.keymap.set('n', '<leader>t', function()
-            Snacks.picker.files()
-          end)
-        end
-
-        vim.keymap.set('n', '<leader>T', function()
-          Snacks.picker.files()
-        end)
-        vim.keymap.set('n', '<leader>b', function()
-          Snacks.picker.buffers({
-            current = false,
-            sort_lastused = true,
-            -- matcher = {
-            --   sort_empty = true,
-            --   on_match = function(_, item)
-            --     if item.flags and item.flags:find('#') then
-            --       item.score = item.score + 5
-            --     end
-            --   end,
-            -- },
-          })
-        end)
-        vim.keymap.set('n', '<leader>/', function()
-          Snacks.picker.lines()
-        end)
-        vim.keymap.set('n', '<leader>a', function()
-          Snacks.picker.grep()
-        end)
-        vim.keymap.set('n', '<leader>h', function()
-          Snacks.picker.help()
-        end)
-        vim.keymap.set('n', '<leader>e', function()
-          Snacks.picker.diagnostics_buffer()
-        end)
-        vim.keymap.set('n', '<leader>E', function()
-          Snacks.picker.diagnostics()
-        end)
-
-        vim.keymap.set('n', '<leader>lr', function()
-          Snacks.picker.lsp_references()
-        end)
-        vim.keymap.set('n', '<leader>ls', function()
-          Snacks.picker.lsp_symbols()
-        end)
-        vim.keymap.set('n', '<leader>la', function()
-          vim.lsp.buf.code_action()
-        end)
+        require('snacks').setup(opts)
       end,
     },
   },

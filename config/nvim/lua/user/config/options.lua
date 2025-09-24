@@ -129,6 +129,7 @@ g.typescript_indent_disable = 1
 -- diagnostics
 vim.diagnostic.config({
   virtual_text = false,
+  underline = true,
   severity_sort = true,
   float = {
     border = 'rounded',
@@ -137,19 +138,20 @@ vim.diagnostic.config({
     title = 'Diagnostics:',
     title_pos = 'left',
     focusable = false,
+    source = 'if_many',
   },
   signs = {
     text = {
-      [vim.diagnostic.severity.ERROR] = '',
-      [vim.diagnostic.severity.WARN] = '',
-      [vim.diagnostic.severity.INFO] = '',
-      [vim.diagnostic.severity.HINT] = '',
+      [vim.diagnostic.severity.ERROR] = '',
+      [vim.diagnostic.severity.WARN] = '',
+      [vim.diagnostic.severity.INFO] = '',
+      [vim.diagnostic.severity.HINT] = '',
     },
-    texthl = {
-      [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
-      [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
-      [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
-      [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
+    numhl = {
+      [vim.diagnostic.severity.ERROR] = 'DiagnosticError',
+      [vim.diagnostic.severity.WARN] = 'DiagnosticWarn',
+      [vim.diagnostic.severity.INFO] = 'DiagnosticInfo',
+      [vim.diagnostic.severity.HINT] = 'DiagnosticHint',
     },
   },
 })

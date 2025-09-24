@@ -1,6 +1,6 @@
 -- Logging
--- vim.lsp.set_log_level('debug')
--- vim.lsp.log.set_format_func(vim.inspect)
+vim.lsp.set_log_level('error')
+vim.lsp.log.set_format_func(vim.inspect)
 
 -- Give LSP floats rounded borders
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
@@ -11,24 +11,7 @@ function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
   return orig_util_open_floating_preview(contents, syntax, opts, ...)
 end
 
----@param buffer integer
----@param method string
-local function lsp_method_supported(buffer, method)
-  local active_clients = vim.lsp.get_clients({ bufnr = buffer })
-
-  for _, active_client in pairs(active_clients) do
-    if active_client:supports_method(method) then
-      return true
-    end
-  end
-end
-
----@param buffer integer
-local function organize_imports(buffer)
-  if not lsp_method_supported(buffer, 'textDocument/codeAction') then
-    return
-  end
-
+local function organize_imports()
   vim.lsp.buf.code_action({
     context = {
       diagnostics = {},
@@ -43,8 +26,6 @@ end
 ---@param buffer integer
 local function on_attach(client, buffer)
   -- print('on_attach: ' .. client.name .. ' ' .. bufnr)
-
-  buffer = buffer or 0
 
   if client:supports_method('textDocument/documentSymbol', buffer) then
     require('nvim-navic').attach(client, buffer)
@@ -85,10 +66,13 @@ local function on_attach(client, buffer)
     end, { buffer = buffer })
   end
 
-  if client:supports_method('textDocument/formatting', buffer) then
-    vim.api.nvim_buf_create_user_command(buffer, 'OrganizeImports', function()
-      organize_imports(buffer)
-    end, { desc = 'Organize imports' })
+  if client:supports_method('textDocument/codeAction', buffer) then
+    vim.api.nvim_buf_create_user_command(
+      buffer,
+      'OrganizeImports',
+      organize_imports,
+      { desc = 'Organize imports' }
+    )
   end
 
   vim.api.nvim_create_autocmd('CursorHold', {
@@ -100,6 +84,7 @@ local function on_attach(client, buffer)
 end
 
 vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('UserLspConfig', {}),
   callback = function(args)
     local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
     local buffer = args.buf
@@ -121,3 +106,14 @@ vim.lsp.handlers['client/registerCapability'] = function(err, res, ctx)
 
   return result
 end
+
+-- The following langauge servers should NOT be managed by Mason. Because Mason puts
+-- its `bin` directory at the beginning of `vim.env.PATH`, project-specific versions
+-- of these tools will not be used. For now, I've decided the easiest way to handle
+-- this is to rely on project-specific tools using a venv that is activated by mise.
+-- This behavior is not a problem for other language servers because they defer to
+-- the project-specific tool. In the case of ruff, Mason's `bin` path affects the
+-- version of ruff that conform.nvim uses.
+vim.lsp.enable('pyright')
+vim.lsp.enable('basedpyright')
+vim.lsp.enable('ruff')

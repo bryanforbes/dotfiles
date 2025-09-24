@@ -78,3 +78,106 @@ vim.keymap.set(
   ':set list!<cr>',
   { remap = true, desc = 'Toggle list mode' }
 )
+
+-- Delete and wipeout buffer
+vim.keymap.set('', '<leader>d', function()
+  Snacks.bufdelete.delete({ wipe = true })
+end, { desc = 'Delete and wipeout buffer' })
+
+-- Git file picker
+local root = Snacks.git.get_root(vim.fn.getcwd())
+if root ~= nil then
+  vim.keymap.set('n', '<leader>t', function()
+    Snacks.picker.git_files({
+      untracked = true,
+      cwd = vim.fn.getcwd(),
+    })
+  end, { desc = 'Find git files' })
+else
+  vim.keymap.set('n', '<leader>t', function()
+    Snacks.picker.files()
+  end, { desc = 'Find files' })
+end
+
+-- Regular file picker
+vim.keymap.set('n', '<leader>T', function()
+  Snacks.picker.files()
+end, { desc = 'Find files' })
+
+-- Buffer picker
+vim.keymap.set('n', '<leader>b', function()
+  Snacks.picker.buffers({
+    current = false,
+    sort_lastused = true,
+  })
+end, { desc = 'Find buffers' })
+
+-- Line picker
+vim.keymap.set('n', '<leader>/', function()
+  Snacks.picker.lines()
+end, { desc = 'Find lines in current buffer' })
+
+-- Grep
+vim.keymap.set('n', '<leader>a', function()
+  Snacks.picker.grep()
+end, { desc = 'Search for a string in the current working directory' })
+
+-- Help picker
+vim.keymap.set('n', '<leader>h', function()
+  Snacks.picker.help()
+end, { desc = 'Find help' })
+
+-- File diagnostics picker
+vim.keymap.set('n', '<leader>e', function()
+  Snacks.picker.diagnostics_buffer()
+end, { desc = 'Show diagnostics for current buffer' })
+
+-- Workspace diagnostics picker
+vim.keymap.set('n', '<leader>E', function()
+  Snacks.picker.diagnostics()
+end, { desc = 'Show diagnostics for current workspace' })
+
+-- Symbol references
+vim.keymap.set('n', '<leader>lr', function()
+  Snacks.picker.lsp_references()
+end, { desc = 'Show references to the current symbol' })
+
+-- Symbol picker
+vim.keymap.set('n', '<leader>ls', function()
+  Snacks.picker.lsp_symbols()
+end, { desc = 'Show symbols in current file' })
+
+-- Code actions
+vim.keymap.set('n', '<leader>la', function()
+  vim.lsp.buf.code_action()
+end, { desc = 'Show code actions' })
+
+-- Git operations
+vim.keymap.set('', '<leader>gd', '<cmd>Gdiffsplit<cr>', { desc = 'Git Diff' })
+vim.keymap.set(
+  '',
+  '<leader>gc',
+  '<cmd>Git commit -v<cr>',
+  { desc = 'Git Commit' }
+)
+vim.keymap.set('', '<leader>gs', '<cmd>Git<cr>', { desc = 'Git Status' })
+
+-- File editing shortcuts
+vim.keymap.set(
+  'n',
+  'dsf',
+  'ds)db',
+  { silent = true, remap = true, desc = 'Delete the surrounding function call' }
+)
+vim.keymap.set(
+  'v',
+  'v',
+  '<Plug>(expand_region_expand)',
+  { remap = true, desc = 'Expand the visual selection' }
+)
+vim.keymap.set(
+  'v',
+  '<C-v>',
+  '<Plug>(expand_region_shrink)',
+  { remap = true, desc = 'Shrink the visual selection' }
+)
