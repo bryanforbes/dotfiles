@@ -118,6 +118,7 @@ function dotfiles-brew {
         'poetry'                            # python project management
         'ripgrep'                           # better grep
         'stylua'                            # lua file formatting
+        'tree-sitter-cli'                   # tree-sitter CLI
         'tmux'                              # terminal multiplexer
         'zsh'                               # newer zsh
     )
@@ -133,15 +134,15 @@ function dotfiles-brew {
             'gnu-tar'             # GNU tar
             'gnupg'               # update from stock gnupg
             'font-iosevka'        # iosevka font
-            'font-hack-nerd-font' # hack font with glyphs
             'sf-symbols'          # UI fonts from Apple
-            'wezterm'             # Terminal emulator
+            'ghostty'             # Terminal emulator
             'hammerspoon'         # OS X automation via lua
             'raycast'             # cmd-space launcher
             'keyman'              # Ancient Greek keyboard
             'moom'                # Window placement
             'stay'                # Window placement memory
             'dropbox'             # Dropbox
+            'stillcolor'          # Fix monitor flicker
         )
     fi
 
