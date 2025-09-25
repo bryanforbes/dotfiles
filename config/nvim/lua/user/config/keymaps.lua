@@ -36,25 +36,25 @@ vim.keymap.set(
   '',
   '<C-h>',
   require('user.win_move').left,
-  { silent = true, remap = true, desc = 'Move left' }
+  { remap = true, desc = 'Move left' }
 )
 vim.keymap.set(
   '',
   '<C-j>',
   require('user.win_move').down,
-  { silent = true, remap = true, desc = 'Move down' }
+  { remap = true, desc = 'Move down' }
 )
 vim.keymap.set(
   '',
   '<C-k>',
   require('user.win_move').up,
-  { silent = true, remap = true, desc = 'Move up' }
+  { remap = true, desc = 'Move up' }
 )
 vim.keymap.set(
   '',
   '<C-l>',
   require('user.win_move').right,
-  { silent = true, remap = true, desc = 'Move right' }
+  { remap = true, desc = 'Move right' }
 )
 vim.keymap.set(
   '',
@@ -167,7 +167,7 @@ vim.keymap.set(
   'n',
   'dsf',
   'ds)db',
-  { silent = true, remap = true, desc = 'Delete the surrounding function call' }
+  { remap = true, desc = 'Delete the surrounding function call' }
 )
 vim.keymap.set(
   'v',

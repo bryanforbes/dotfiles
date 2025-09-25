@@ -765,6 +765,7 @@ require('lazy').setup(
         input = {
           icon_pos = false,
         },
+        toggle = {},
         picker = {
           formatters = {
             file = {

@@ -44,22 +44,6 @@ local function on_attach(client, buffer)
     end, { buffer = buffer })
   end
 
-  if client:supports_method('textDocument/hover', buffer) then
-    vim.keymap.set('', 'K', function()
-      -- Ignore CursorHold when requesting hover so the diagnostic float doesn't
-      -- close the hover after a second
-      vim.opt.eventignore = { 'CursorHold' }
-      vim.api.nvim_create_autocmd('CursorMoved', {
-        buffer = buffer,
-        once = true,
-        callback = function()
-          vim.opt.eventignore = {}
-        end,
-      })
-      vim.lsp.buf.hover()
-    end, { buffer = buffer })
-  end
-
   if client:supports_method('textDocument/rename', buffer) then
     vim.keymap.set('', '<leader>r', function()
       vim.lsp.buf.rename()
@@ -74,13 +58,6 @@ local function on_attach(client, buffer)
       { desc = 'Organize imports' }
     )
   end
-
-  vim.api.nvim_create_autocmd('CursorHold', {
-    buffer = buffer,
-    callback = function()
-      vim.diagnostic.open_float({ bufnr = buffer, scope = 'cursor' })
-    end,
-  })
 end
 
 vim.api.nvim_create_autocmd('LspAttach', {

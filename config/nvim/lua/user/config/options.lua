@@ -4,7 +4,7 @@ local g = vim.g
 -- Set leader for mappings
 g.mapleader = ','
 
-opt.shortmess = opt.shortmess + 'Ic'
+opt.shortmess:append({ I = true, c = true, s = true, S = true })
 
 opt.autoindent = true
 opt.smartindent = false
@@ -17,6 +17,7 @@ opt.history = 1000
 opt.ruler = true
 opt.showcmd = true
 opt.cmdheight = 0
+opt.messagesopt = { 'wait:2000', 'history:500' }
 opt.laststatus = 0
 opt.showmode = true
 opt.hlsearch = true
@@ -49,7 +50,8 @@ opt.textwidth = 0
 
 opt.wildmenu = true
 opt.wildmode = 'list:longest'
-opt.completeopt = opt.completeopt + { 'noinsert', 'menuone', 'noselect' }
+---@diagnostic disable-next-line: undefined-field
+opt.completeopt:append({ 'noinsert', 'menuone', 'noselect' })
 
 opt.fileformats = { 'unix', 'mac', 'dos' }
 opt.spelllang = 'en'
@@ -128,7 +130,12 @@ g.typescript_indent_disable = 1
 
 -- diagnostics
 vim.diagnostic.config({
+  update_in_insert = false,
   virtual_text = false,
+  virtual_lines = {
+    severity = { min = vim.diagnostic.severity.INFO },
+    current_line = true,
+  },
   underline = true,
   severity_sort = true,
   float = {
