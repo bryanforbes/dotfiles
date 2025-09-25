@@ -275,10 +275,10 @@ require('lazy').setup(
       lazy = false,
       build = ':TSUpdate',
       config = function()
-        require('nvim-treesitter.config').setup()
-
-        local ts = require('nvim-treesitter.install')
+        local ts = require('nvim-treesitter')
         local parsers = ts.get_installed('parsers')
+
+        ts.setup()
 
         ---@param ft string
         local function try_install_parser(ft)
