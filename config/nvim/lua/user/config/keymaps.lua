@@ -127,6 +127,11 @@ vim.keymap.set('n', '<leader>h', function()
   Snacks.picker.help()
 end, { desc = 'Find help' })
 
+-- Notifications picker
+vim.keymap.set('n', '<leader>n', function()
+  Snacks.notifier.show_history()
+end, { desc = 'Show notifications' })
+
 -- File diagnostics picker
 vim.keymap.set('n', '<leader>e', function()
   Snacks.picker.diagnostics_buffer()
