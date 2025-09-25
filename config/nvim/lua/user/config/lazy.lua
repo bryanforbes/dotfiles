@@ -208,7 +208,7 @@ require('lazy').setup(
     { 'SmiteshP/nvim-navic', lazy = true },
     {
       'mason-org/mason-lspconfig.nvim',
-      dependencies = { 'nvim-lspconfig' },
+      dependencies = { 'neovim/nvim-lspconfig' },
       ---@module 'mason-lspconfig'
       ---@type MasonLspconfigSettings
       opts = {
