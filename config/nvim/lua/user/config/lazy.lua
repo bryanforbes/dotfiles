@@ -261,31 +261,51 @@ require('lazy').setup(
     -- Filetype support
     {
       'neoclide/jsonc.vim',
-      { 'jeetsukumaran/vim-python-indent-black', ft = 'python' },
+      {
+        'jeetsukumaran/vim-python-indent-black',
+        enabled = false,
+        ft = 'python',
+      },
     },
 
     -- Treesitter
     {
       'nvim-treesitter/nvim-treesitter',
+      branch = 'main',
+      lazy = false,
       build = ':TSUpdate',
       config = function()
-        require('nvim-treesitter.configs').setup({
-          auto_install = true,
-          sync_install = true,
-          ensure_installed = {},
-          modules = {},
-          ignore_install = {},
-          highlight = {
-            enable = true,
-            additional_vim_regex_highlighting = true,
-          },
-          indent = {
-            enable = true,
-            disable = { 'python' },
-          },
-          matchup = {
-            enable = true,
-          },
+        require('nvim-treesitter.config').setup()
+
+        local ts = require('nvim-treesitter.install')
+        local parsers = ts.get_installed('parsers')
+
+        ---@param ft string
+        local function try_install_parser(ft)
+          local lang = vim.treesitter.language.get_lang(ft)
+          if lang ~= nil and not vim.tbl_contains(parsers, lang) then
+            ts.install({ lang }):wait(300000)
+            table.insert(parsers, lang)
+          end
+        end
+
+        try_install_parser(vim.bo.filetype)
+
+        vim.api.nvim_create_autocmd('FileType', {
+          pattern = '*',
+          group = vim.api.nvim_create_augroup(
+            'user_treesitter',
+            { clear = true }
+          ),
+          callback = function(args)
+            try_install_parser(args.match)
+
+            pcall(vim.treesitter.start)
+            vim.bo[args.buf].syntax = 'on'
+
+            vim.bo[args.buf].indentexpr =
+              "v:lua.require'nvim-treesitter'.indentexpr()"
+          end,
         })
       end,
     },

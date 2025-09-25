@@ -265,7 +265,7 @@ function dotfiles-vim {
         nvim --headless -c ':Lazy! restore' -c 'quitall' 2>&1 > /dev/null
     fi
 
-    nvim --headless -c 'TSUpdateSync | lua io.flush()' -c 'quitall' 2>&1 > /dev/null
+    nvim --headless -c 'lua require("nvim-treesitter").update():wait(300000) io.flush()' -c 'quitall' 2>&1 > /dev/null
 }
 
 cd $HOME
