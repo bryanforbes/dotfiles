@@ -3,6 +3,10 @@
 source $HOME/.dotfiles/zsh/common.zsh
 source $HOME/.dotfiles/zsh/utilities.zsh
 
+export HOMEBREW_AUTO_UPDATE_SECS=300
+export HOMEBREW_BUNDLE_NO_UPGRADE=1
+export HOMEBREW_BUNDLE_FILE="${DOTFILES}/Brewfile"
+
 function generate_terminfo {
     local term_name="$1"
 
@@ -85,75 +89,16 @@ function dotfiles-brew {
 
     log "Updating brew packages..."
 
-    logSub "Checking for missing brew taps..."
-
-    local -U brew_taps
-    local -U tapped_taps
-
-    brew_taps=()
-    tapped_taps=("${(@f)$(brew tap)}")
-
-    for tap in $brew_taps; do
-        if ((! $tapped_taps[(Ie)$tap])); then
-            brew tap $tap
-        fi
-    done
-
     logSub "Checking for missing brew packages..."
 
-    local -U brew_packages
-    local -A brew_packages_args
-
-    brew_packages=(
-        'bat'                               # better cat
-        'fzf'                               # fuzzy finder
-        'git'                               # update from system stock git
-        'gh'                                # github wrapper
-        'mise'                              # mise environment manager
-        'mosh'                              # remote terminal application that allows roaming
-        'neovim'                            # better vim
-        'neovim-remote'                     # controlm nvim from shell
-        'node'                              # NodeJS
-        "python@${HOMEBREW_PYTHON_VERSION}" # update from stock python
-        'poetry'                            # python project management
-        'ripgrep'                           # better grep
-        'stylua'                            # lua file formatting
-        'tree-sitter-cli'                   # tree-sitter CLI
-        'tmux'                              # terminal multiplexer
-        'zsh'                               # newer zsh
-    )
-
-    # brew_packages_args[mosh]='--HEAD'
-
-    if is-darwin; then
-        brew_packages=(
-            $brew_packages
-            'coreutils'           # GNU coreutils
-            'blueutil'            # bluetooth CLI
-            'gnu-sed'             # GNU sed
-            'gnu-tar'             # GNU tar
-            'gnupg'               # update from stock gnupg
-            'font-iosevka'        # iosevka font
-            'sf-symbols'          # UI fonts from Apple
-            'ghostty'             # Terminal emulator
-            'hammerspoon'         # OS X automation via lua
-            'raycast'             # cmd-space launcher
-            'keyman'              # Ancient Greek keyboard
-            'moom'                # Window placement
-            'stay'                # Window placement memory
-            'dropbox'             # Dropbox
-            'stillcolor'          # Fix monitor flicker
-        )
+    brew bundle check &> /dev/null
+    if (( $? != 0 )); then
+        logSub "Installing missing brew packages..."
+        brew bundle install
     fi
 
-    local installed_packages=("${(@f)$(brew list -1)}")
-
-    for pkg in $brew_packages; do
-        if ((! $installed_packages[(Ie)$pkg])); then
-            logSub "Installing $pkg..."
-            brew install $pkg ${(z)${brew_packages_args[$pkg]:-''}}
-        fi
-    done
+    # Let the shell know about new packages
+    rehash
 
     logSub "Updating installed brew packages..."
     brew upgrade

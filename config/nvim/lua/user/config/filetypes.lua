@@ -15,6 +15,7 @@ vim.filetype.add({
     ['tsconfifg.json'] = 'jsonc',
     ['jsconfig.json'] = 'jsonc',
     ['intern.json'] = 'jsonc',
+    ['Brewfile'] = 'ruby',
   },
   pattern = {
     ['.*%.html%.jin'] = 'htmljinja',
@@ -23,6 +24,7 @@ vim.filetype.add({
     ['.*/zsh/functions/.*'] = 'zsh',
     ['~/%.dotfiles/bin/.*'] = 'zsh',
     ['~/%.dotfiles/home/zsh.*'] = 'zsh',
+    ['~/%.dotfiles/home/editorconfig'] = 'editorconfig',
     ['.*/doc/.*%.txt$'] = function(_, bufnr)
       local line = vim.filetype._getline(bufnr, -1)
       local ml = line:find('^vim:') or line:find('%svim:')
