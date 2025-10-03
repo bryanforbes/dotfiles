@@ -9,10 +9,10 @@ vim.filetype.add({
     ['.jscsrc'] = 'json',
     ['.bowerrc'] = 'json',
     ['.tslintrc'] = 'json',
-    ['.eslintrc'] = 'json',
+    ['.eslintrc'] = 'jsonc',
     ['.dojorc'] = 'json',
     ['.prettierrc'] = 'json',
-    ['tsconfifg.json'] = 'jsonc',
+    ['tsconfig.json'] = 'jsonc',
     ['jsconfig.json'] = 'jsonc',
     ['intern.json'] = 'jsonc',
     ['Brewfile'] = 'ruby',
@@ -25,19 +25,5 @@ vim.filetype.add({
     ['~/%.dotfiles/bin/.*'] = 'zsh',
     ['~/%.dotfiles/home/zsh.*'] = 'zsh',
     ['~/%.dotfiles/home/editorconfig'] = 'editorconfig',
-    ['.*/doc/.*%.txt$'] = function(_, bufnr)
-      local line = vim.filetype._getline(bufnr, -1)
-      local ml = line:find('^vim:') or line:find('%svim:')
-      vim.print(line)
-      if
-        ml
-        and vim.filetype._matchregex(
-          line:sub(ml),
-          [[\<\(ft\|filetype\)=help\>]]
-        )
-      then
-        return 'help'
-      end
-    end,
   },
 })

@@ -187,7 +187,15 @@ require('lazy').setup(
         library = {
           { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
           { path = 'snacks.nvim', words = { 'Snacks' } },
-          '~/.dotfiles/.lua_types',
+          { path = '~/.dotfiles/.lua_types/wezterm', mods = { 'wezterm' } },
+          {
+            path = '~/.dotfiles/.lua_types/colorbuddy',
+            mods = { 'colorbuddy', 'neosolarized' },
+          },
+          {
+            path = '~/.dotfiles/.lua_types/neosolarized',
+            mods = { 'neosolarized' },
+          },
           {
             path = '~/.dotfiles/hammerspoon/Spoons/EmmyLua.spoon/annotations',
             words = { 'hs', 'spoon' },
@@ -276,22 +284,12 @@ require('lazy').setup(
       branch = 'main',
       lazy = false,
       build = ':TSUpdate',
-      config = function()
-        local ts = require('nvim-treesitter')
-        local parsers = ts.get_installed('parsers')
+      ---@module "nvim-treesitter"
+      ---@param opts TSConfig
+      config = function(_, opts)
+        local ts = require('user.util.treesitter')
 
-        ts.setup()
-
-        ---@param ft string
-        local function try_install_parser(ft)
-          local lang = vim.treesitter.language.get_lang(ft)
-          if lang ~= nil and not vim.tbl_contains(parsers, lang) then
-            ts.install({ lang }):wait(300000)
-            table.insert(parsers, lang)
-          end
-        end
-
-        try_install_parser(vim.bo.filetype)
+        ts.setup(opts)
 
         vim.api.nvim_create_autocmd('FileType', {
           pattern = '*',
@@ -300,13 +298,15 @@ require('lazy').setup(
             { clear = true }
           ),
           callback = function(args)
-            try_install_parser(args.match)
+            ts.install_parser(args.match)
 
             pcall(vim.treesitter.start)
             vim.bo[args.buf].syntax = 'on'
 
-            vim.bo[args.buf].indentexpr =
-              "v:lua.require'nvim-treesitter'.indentexpr()"
+            if ts.has_query(args.match, 'indents') then
+              vim.bo[args.buf].indentexpr =
+                "v:lua.require'nvim-treesitter'.indentexpr()"
+            end
           end,
         })
       end,
@@ -639,7 +639,6 @@ require('lazy').setup(
     {
       'nvim-lualine/lualine.nvim',
       dependencies = {
-        'nvim-treesitter/nvim-treesitter',
         'arkav/lualine-lsp-progress',
       },
       event = 'VeryLazy',
@@ -768,6 +767,7 @@ require('lazy').setup(
           icon_pos = false,
         },
         toggle = {},
+        scratch = {},
         picker = {
           formatters = {
             file = {
