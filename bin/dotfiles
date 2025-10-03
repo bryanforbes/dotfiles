@@ -67,10 +67,9 @@ function dotfiles-home {
     fi
 
     makedir $CACHEDIR/tmux
-    makedir $DATADIR/nvim/sessions
-    makedir $DATADIR/nvim/swap
-    makedir $DATADIR/nvim/backup
-    makedir $DATADIR/nvim/undo
+    makedir $STATEDIR/nvim/swap
+    makedir $STATEDIR/nvim/backup
+    makedir $STATEDIR/nvim/undo
     makedir $ZCOMPDIR
     makedir $ZPLUGDIR
     makedir $ZFUNCDIR
@@ -257,6 +256,47 @@ function dotfiles-tmux {
 
 # Update vim plugins
 function dotfiles-vim {
+    # Migrate neovim state files from data directory to state directory
+    local nvim_data_dir="$DATADIR/nvim"
+    local nvim_state_dir="$STATEDIR/nvim"
+    local migration_files=("swap" "backup" "undo" "shada" "trust" "log" "blink" "lazy/readme" "lazy/pkg-cache.lua" "lazy/state.json")
+    local files_to_migrate=()
+
+    for file in "${migration_files[@]}"; do
+        if [[ -e "$nvim_data_dir/$file" && ! -L "$nvim_data_dir/$file" ]]; then
+            files_to_migrate+=("$file")
+        fi
+    done
+
+    if (( ${#files_to_migrate[@]} > 0 )); then
+        log "Migrating neovim state files..."
+
+        for file in "${files_to_migrate[@]}"; do
+            local data_file="$nvim_data_dir/$file"
+            local state_file="$nvim_state_dir/$file"
+
+            if [[ -L "$state_file" ]]; then
+                local target="$($HOMEBREW_BASE/opt/coreutils/libexec/gnubin/readlink -f "$state_file")"
+
+                if [[ "$target" == "$data_file" ]]; then
+                    rm -f "$state_file"
+                    logSub "Removed old state symlink $file"
+                else
+                    logSub "Skipping migration of $file (symlink points elsewhere: $target)"
+                    continue
+                fi
+            fi
+
+            if [[ ! -e "$state_file" ]]; then
+                mkdir -p "${state_file:h}"
+                mv -n "$data_file" "$state_file"
+                logSub "Migrated $file to state directory"
+            else
+                logSub "Skipping migration of $file (destination exists)"
+            fi
+        done
+    fi
+
     log "Updating vim plugins..."
 
     if [[ -z "$SSH_CONNECTION" ]]; then

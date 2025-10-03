@@ -86,14 +86,10 @@ end
 opt.clipboard = { 'unnamed' }
 opt.termguicolors = true
 
-local datadir = os.getenv('DATADIR')
-if datadir and vim.fn.isdirectory(datadir) == 1 then
-  datadir = datadir .. '/nvim'
-
-  opt.directory = datadir .. '/swap'
-  opt.undodir = datadir .. '/undo'
-  opt.backupdir = datadir .. '/backup'
-end
+local state_dir = vim.fn.stdpath('state')
+opt.directory = vim.fs.joinpath(state_dir, 'swap')
+opt.undodir = vim.fs.joinpath(state_dir, 'undo')
+opt.backupdir = vim.fs.joinpath(state_dir, 'backup')
 
 opt.backupcopy = 'yes'
 opt.updatecount = 20

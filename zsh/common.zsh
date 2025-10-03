@@ -2,10 +2,12 @@ export DOTFILES=$HOME/.dotfiles
 export CACHEDIR=$HOME/.cache
 export CONFIGDIR=$HOME/.config
 export DATADIR=$HOME/.local/share
+export STATEDIR=$HOME/.local/state
 
 export XDG_CACHE_HOME=$CACHEDIR
 export XDG_CONFIG_HOME=$CONFIGDIR
 export XDG_DATA_HOME=$DATADIR
+export XDG_STATE_HOME=$STATEDIR
 
 export ZCACHEDIR=$CACHEDIR/zsh
 export ZDATADIR=$DATADIR/zsh
