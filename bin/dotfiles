@@ -67,9 +67,8 @@ function dotfiles-home {
     fi
 
     makedir $CACHEDIR/tmux
-    makedir $STATEDIR/nvim/swap
-    makedir $STATEDIR/nvim/backup
-    makedir $STATEDIR/nvim/undo
+    makedir $DATADIR/nvim
+    makedir $STATEDIR/nvim
     makedir $ZCOMPDIR
     makedir $ZPLUGDIR
     makedir $ZFUNCDIR
