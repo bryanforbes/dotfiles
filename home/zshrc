@@ -60,15 +60,15 @@ fi
 # Editors
 # ----------------------------------------------------------------------------
 if (( $+commands[nvim] )); then
-    export SUDO_EDITOR=nvim
+    export VISUAL=$(whence -p nvim)
 elif (( $+commands[vim] )); then
-    export SUDO_EDITOR=vim
+    export VISUAL=$(whence -p vim)
 else
-    export SUDO_EDITOR=vi
+    export VISUAL=$(whence -p vi)
 fi
 
-export EDITOR=$SUDO_EDITOR
-export VISUAL=$SUDO_VISUAL
+export EDITOR=$VISUAL
+export SUDO_EDITOR=$VISUAL
 
 # Turn on color for everything
 # ------------------------------------------------------------------------
