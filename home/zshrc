@@ -6,15 +6,19 @@ typeset -gU cdpath fpath manpath
 # ------------------------------------------------------------------------
 # The fpath should be initialized before trying to load plugins (with zfetch)
 # or trying to initialize completions
-fpath=(
+typeset -gU local_fpath=(
+    $ZFUNCDIR
     $DOTFILES/zsh/functions
+)
+fpath=(
+    $local_fpath
     $fpath
 )
 
 # Autoload all user shell functions, following symlinks
 # ------------------------------------------------------------------------
 if [[ -d $DOTFILES/zsh/functions ]]; then
-    autoload -Uz $DOTFILES/zsh/functions/*(:t)
+    for func in $DOTFILES/zsh/functions/*(:t); autoload -Uz $func
 fi
 
 # Plugin init
@@ -87,41 +91,36 @@ fi
 # ------------------------------------------------------------------------
 # The completion system should be configured and enabled before sourcing
 # completion plugins
-export ZCOMPFILE=$ZCACHEDIR/zcompdump
 
 # Completion directories should be added to the fpath before compinit is called
 fpath=(
-    $ZFUNCDIR
     $ZCOMPDIR
-    $DOTFILES/zsh/functions
+    $local_fpath
     $ZPLUGDIR/zsh-users/zsh-completions/src
     $ZPLUGDIR/sindresorhus/pure
-    $HOMEBREW_BASE/share/zsh/site-functions
-    $HOMEBREW_BASE/share/zsh/functions
-    /usr/share/zsh/vendor-completions
     $fpath
 )
+
+unset local_fpath
 
 # Load and initialize the completion system, ignoring insecure directories.
 # Note that fpath should be configured before calling compinit.
 # (https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh)
 autoload -Uz compinit
-if [[ ! -f $ZCOMPFILE ]]; then
-    compinit -i -d $ZCOMPFILE
-elif is-linux; then
-    # Only try to rebuild the comp dump once a day
-    if [[ $(date +'%j') != $(date --date="$(stat --printf='%y' $ZCOMPFILE)" +'%j') ]]; then
-        compinit -i -d $ZCOMPFILE
-    else
-        compinit -C -i -d $ZCOMPFILE
-    fi
+export ZCOMPFILE=$ZCACHEDIR/zcompdump
+
+# Regenerate zcompdump file if it is missing or modified in the last 20 hours.
+# The parameter expansion flags used:
+# #q     treats the rest as glob qualifiers
+# N      if nothing matches, return null instead of reporting an error
+# mh-20  only match if the file was modified in the last 20 hours
+if [[ $ZCOMPFILE(#qNmh-20) ]]; then
+    # -C (skip function check) implies -i (skip security check).
+    compinit -C -d "$ZCOMPFILE"
 else
-    # Only try to rebuild the comp dump once a day
-    if [[ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' $ZCOMPFILE) ]]; then
-        compinit -i -d $ZCOMPFILE
-    else
-        compinit -C -i -d $ZCOMPFILE
-    fi
+    compinit -i -d "$ZCOMPFILE"
+    # Keep $ZCOMPFILE younger than cache time even if it isn't regenerated.
+    touch "$ZCOMPFILE"
 fi
 
 # Kitty shell integration
@@ -136,7 +135,10 @@ fi
 {
     # Compile zcompdump, if modified, to increase startup speed.
     if [[ -s "$ZCOMPFILE" && (! -s "${ZCOMPFILE}.zwc" || "$ZCOMPFILE" -nt "${ZCOMPFILE}.zwc") ]] then
-        zcompile "$ZCOMPFILE"
+        if command mkdir "${ZCOMPFILE}.zwc.lock" 2>/dev/null; then
+            zcompile "$ZCOMPFILE"
+            command rmdir  "${ZCOMPFILE}.zwc.lock" 2>/dev/null
+        fi
     fi
 } &!
 
@@ -152,12 +154,12 @@ if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
     unset dest
 fi
 
-# Use caching to make completion for commands such as dpkg and apt usable.
-zstyle ':completion::complete:*' use-cache on
-zstyle ':completion::complete:*' cache-path "${ZCACHEDIR}/zcompcache"
+# Use caching to make completion for commands with many options usable.
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "${ZCACHEDIR}/zcompcache"
 
-# Case-insensitive (all), partial-word, and then substring completion.
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' '+r:|[._-]=* r:|=*' '+l:|=* r:|=*'
+# Case-insensitive (all), partial-word, and then substring completion
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+r:|[._-]=* r:|=*' '+l:|=* r:|=*'
 
 # Group matches and describe
 zstyle ':completion:*'              menu select
@@ -206,7 +208,7 @@ zstyle ':completion::*:(-command-|export):*' fake-parameters ${${${_comps[(I)-va
 
 # Populate hostname completion
 zstyle -e ':completion:*:hosts' hosts 'reply=(
-    ${=${=${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) 2>/dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
+    ${=${=${=${${(f)"$(cat {/etc/ssh/ssh_,~/.ssh/}known_hosts(|2)(N) 2> /dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
     ${=${(f)"$(cat /etc/hosts(|)(N) <<(ypcat hosts 2>/dev/null))"}%%\#*}
     ${=${${${${(@M)${(f)"$(cat ~/.ssh/config 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
 )'
@@ -671,18 +673,23 @@ prompt pure
 
 # tmux
 # --------------------------------------------------------------------------
-if [[ -n "$SSH_TTY" ]]; then
-    if [[ -z "$TMUX" && -z "$EMACS" && -z "$VIM" && -z "$INSIDE_EMACS" && "$TERM_PROGRAM" != "vscode" ]]; then
-        tmux start-server
-
-        if ! tmux has-session 2> /dev/null; then
-            tmux new-session -d -s default \; set-option -t default destroy-unattached off &> /dev/null
-        fi
-
-        # Attach to the last session used. (detach first)
-        exec tmux attach-session -d
-    fi
+if [[ -z "$ZSH_TMUX_AUTOSTART" ]]; then
+    ZSH_TMUX_AUTOSTART=${${SSH_TTY:+1}:-0}
 fi
+
+if [[ "$ZSH_TMUX_AUTOSTART" == "1" && -z "$TMUX" && -z "$VIM" && -z "$EMACS" && -z "$INSIDE_EMACS" && "$TERM_PROGRAM" != "vscode" ]]; then
+    tmux start-server
+
+    if ! tmux has-session 2> /dev/null; then
+        tmux new-session -d -s default \; set-option -t default destroy-unattached off &> /dev/null
+    fi
+
+    # Attach to the last session used. (detach first)
+    exec tmux attach-session -d
+fi
+
+export ZSH_TMUX_AUTOSTARTED="$ZSH_TMUX_AUTOSTART"
+unset ZSH_TMUX_AUTOSTART
 
 # Local config
 # --------------------------------------------------------------------------

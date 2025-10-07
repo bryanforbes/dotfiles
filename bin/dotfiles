@@ -108,7 +108,7 @@ function dotfiles-brew {
 
     # Update mise zsh completions
     if (( $+commands[mise] )); then
-        mise completions zsh >! $ZFUNCDIR/_mise
+        mise completions zsh >! $ZCOMPDIR/_mise
     fi
 }
 

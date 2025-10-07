@@ -18,6 +18,7 @@ source $HOME/.dotfiles/zsh/common.zsh
 [[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
 [[ -d "$CONFIGDIR" ]] || mkdir -p "$CONFIGDIR"
 [[ -d "$DATADIR" ]] || mkdir -p "$DATADIR"
+[[ -d "$STATEDIR" ]] || mkdir -p "$STATEDIR"
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
 [[ -d "$ZDATADIR" ]] || mkdir -p "$ZDATADIR"
 [[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
