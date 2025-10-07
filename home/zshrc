@@ -673,23 +673,35 @@ prompt pure
 
 # tmux
 # --------------------------------------------------------------------------
-if [[ -z "$ZSH_TMUX_AUTOSTART" ]]; then
-    ZSH_TMUX_AUTOSTART=${${SSH_TTY:+1}:-0}
-fi
+function _zsh_tmux_update_environment_preexec {
+    eval $(tmux show-environment -s)
+}
 
-if [[ "$ZSH_TMUX_AUTOSTART" == "1" && -z "$TMUX" && -z "$VIM" && -z "$EMACS" && -z "$INSIDE_EMACS" && "$TERM_PROGRAM" != "vscode" ]]; then
-    tmux start-server
-
-    if ! tmux has-session 2> /dev/null; then
-        tmux new-session -d -s default \; set-option -t default destroy-unattached off &> /dev/null
+if (( ${+commands[tmux]} )); then
+    if [[ -z "$ZSH_TMUX_AUTOSTART" ]]; then
+        ZSH_TMUX_AUTOSTART=${${SSH_TTY:+1}:-0}
     fi
 
-    # Attach to the last session used. (detach first)
-    exec tmux attach-session -d
-fi
+    if [[ "$ZSH_TMUX_AUTOSTART" == "1" && -z "$TMUX" && -z "$VIM" && -z "$EMACS" && -z "$INSIDE_EMACS" && "$TERM_PROGRAM" != "vscode" ]]; then
+        tmux start-server
 
-export ZSH_TMUX_AUTOSTARTED="$ZSH_TMUX_AUTOSTART"
-unset ZSH_TMUX_AUTOSTART
+        if ! tmux has-session 2> /dev/null; then
+            tmux new-session -d -s default \; set-option -t default destroy-unattached off &> /dev/null
+        fi
+
+        export ZSH_TMUX_AUTOSTARTED=1
+
+        # Attach to the last session used. (detach first)
+        exec tmux attach-session -d
+    fi
+
+    if [[ -n "$TMUX" ]]; then
+        autoload -U add-zsh-hook
+        add-zsh-hook preexec _zsh_tmux_update_environment_preexec
+    fi
+
+    unset ZSH_TMUX_AUTOSTART
+fi
 
 # Local config
 # --------------------------------------------------------------------------
