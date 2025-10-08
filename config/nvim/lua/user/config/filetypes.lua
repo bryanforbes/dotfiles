@@ -27,3 +27,5 @@ vim.filetype.add({
     ['~/%.dotfiles/home/editorconfig'] = 'editorconfig',
   },
 })
+
+vim.treesitter.language.register('ini', 'systemd')
