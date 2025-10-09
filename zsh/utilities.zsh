@@ -1,4 +1,18 @@
-autoload colors; colors
+# utilities.zsh
+# ============================================================================
+# Purpose: Utility functions for logging and setup scripts
+# Sourced by: Setup/installation scripts that need colored output and helpers
+#
+# Functions provided:
+#   - log, logSub, err: Colored logging functions
+#   - makedir: Create directory with optional logging
+#   - link: Create symlink with optional logging
+#   - dot-sleep: Animated progress indicator
+# ============================================================================
+
+if ! (( $+functions[colors] )); then
+  autoload -Uz colors && colors
+fi
 
 # Log output
 function log {
@@ -29,8 +43,8 @@ function makedir {
         shift
     fi
 
-    if [[ ! -d $1 ]]; then
-        mkdir -p $1
+    if [[ ! -d "$1" ]]; then
+        mkdir -p "$1"
 
         if (( ! $quiet )); then
             if [[ -z "$2" ]]; then
@@ -51,7 +65,7 @@ function link {
     fi
 
     if [[ ! -r $2 ]]; then
-        ln -s $1 $2
+        ln -s "$1" "$2"
 
         if (( ! $quiet )); then
             if [[ -z "$3" ]]; then

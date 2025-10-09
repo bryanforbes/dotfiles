@@ -20,7 +20,7 @@ for directory in $directories; do
         tmux new-window -c "$directory" -n "$(basename $directory)"
     else
         if [[ "$directory" != "$PWD" ]]; then
-            cd "$directory"
+            cd "$directory" || continue
         fi
         tmux rename-window "$(basename $directory)"
     fi

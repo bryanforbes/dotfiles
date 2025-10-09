@@ -1,3 +1,23 @@
+# common.zsh
+# ============================================================================
+# Sourced by: zprofile (and transitively by zshenv for non-login shells)
+# Purpose: Define common environment variables and utility functions shared
+#          across all shell configurations
+#
+# This file sets up:
+#   - XDG Base Directory paths
+#   - Homebrew base path detection
+#   - Common utility functions (is-darwin, is-linux)
+#
+# Load order: Before zshrc, as part of environment setup
+# ============================================================================
+
+# Prevent multiple sourcing
+if [[ -n "$_DOTFILES_COMMON_LOADED" ]]; then
+    return
+fi
+typeset -g _DOTFILES_COMMON_LOADED=1
+
 export DOTFILES=$HOME/.dotfiles
 export CACHEDIR=$HOME/.cache
 export CONFIGDIR=$HOME/.config
@@ -26,12 +46,6 @@ else
 fi
 
 export HOMEBREW_PYTHON_VERSION="3.13"
-
-# This must be set for asdf-direnv to work properly. The _load_asdf_utils
-# function in asdf-direnv's command.bash is unable to determine the proper
-# value for ASDF_DIR automatically.
-export ASDF_DIR=$HOMEBREW_BASE/opt/asdf/libexec
-export ASDF_DATA_DIR=$DATADIR/asdf
 
 function is-darwin {
     [[ "$OSTYPE" == darwin* ]]

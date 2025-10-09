@@ -10,7 +10,10 @@ indent_size = 4
 [**/zsh/functions/*]
 indent_style = space
 
-[.dotfiles/home/zsh*]
+[*.zsh]
+indent_style = space
+
+[.dotfiles/home/z*]
 indent_style = space
 
 [.dotfiles/bin/*]

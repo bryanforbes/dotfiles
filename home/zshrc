@@ -1,17 +1,32 @@
+# zsh configuration: zshrc
+# ============================================================================
+# Load order: 3rd (sourced for INTERACTIVE shells only)
+# Purpose: Interactive shell configuration (aliases, completions, keybindings, prompts)
+#
+# Interactive shells: Any shell where you can type commands
+# This is where most customization happens - it only runs for interactive use.
+#
+# Startup sequence:
+#   1. /etc/zshenv  (system-wide, always)
+#   2. ~/.zshenv    (always; sets GLOBAL_RCS=off, blocking other /etc files)
+#   3. ~/.zprofile  (if login shell OR non-login command shell at SHLVL 1)
+#   4. ~/.zshrc     (if interactive shell) ← YOU ARE HERE
+# ============================================================================
+
 # Declare some key global variables
 # ------------------------------------------------------------------------
-typeset -gU cdpath fpath manpath
+typeset -gU cdpath fpath
 
 # Setup fpath
 # ------------------------------------------------------------------------
 # The fpath should be initialized before trying to load plugins (with zfetch)
 # or trying to initialize completions
-typeset -gU local_fpath=(
+fpath=(
+    $ZCOMPDIR
     $ZFUNCDIR
     $DOTFILES/zsh/functions
-)
-fpath=(
-    $local_fpath
+    $ZPLUGDIR/zsh-users/zsh-completions/src
+    $ZPLUGDIR/sindresorhus/pure
     $fpath
 )
 
@@ -23,52 +38,32 @@ fi
 
 # Plugin init
 # ----------------------------------------------------------------------------
-zfetch $ZPLUGDIR zsh-users/zsh-completions 0.32.0
-zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting 0.7.1
-zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search v1.0.2
-zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions v0.6.4
-zfetch $ZPLUGDIR sindresorhus/pure v1.14.0
+zfetch $ZPLUGDIR zsh-users/zsh-completions
+zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting
+zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
+zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
+zfetch $ZPLUGDIR sindresorhus/pure
 zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
 zfetch $CACHEDIR/tmux tmux-plugins/tpm
 
 # Setup cdpath
 # ------------------------------------------------------------------------
-if [[ -d $HOME/Projects ]]; then
-    if [[ -d $HOME/Projects/sitepen ]]; then
-        cdpath=(
-            $HOME/Projects/sitepen
-            $cdpath
-        )
-    fi
-    cdpath=(
-        $HOME/Projects
-        $cdpath
-    )
-fi
-
 cdpath=(
     .
     $HOME
+    $HOME/Projects(/N)
+    $HOME/Projects/sitepen(/N)
     $cdpath
 )
-
-# manpath
-# ----------------------------------------------------------------------------
-# Set the list of directories that man searches for manuals.
-if [ -e /etc/manpaths ]; then
-    while read line; do 
-        manpath+=$line
-    done < /etc/manpaths
-fi
 
 # Editors
 # ----------------------------------------------------------------------------
 if (( $+commands[nvim] )); then
-    export VISUAL=$(whence -p nvim)
+    export VISUAL="$commands[nvim]"
 elif (( $+commands[vim] )); then
-    export VISUAL=$(whence -p vim)
+    export VISUAL="$commands[vim]"
 else
-    export VISUAL=$(whence -p vi)
+    export VISUAL="$commands[vi]"
 fi
 
 export EDITOR=$VISUAL
@@ -93,15 +88,6 @@ fi
 # completion plugins
 
 # Completion directories should be added to the fpath before compinit is called
-fpath=(
-    $ZCOMPDIR
-    $local_fpath
-    $ZPLUGDIR/zsh-users/zsh-completions/src
-    $ZPLUGDIR/sindresorhus/pure
-    $fpath
-)
-
-unset local_fpath
 
 # Load and initialize the completion system, ignoring insecure directories.
 # Note that fpath should be configured before calling compinit.
@@ -295,6 +281,9 @@ for key in "${(k)key_info[@]}"; do
     fi
 done
 
+# Treat these characters as part of a word.
+WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
+
 # Enables terminal application mode and updates editor information.
 function zle-line-init {
     # The terminal must be in application mode when ZLE is active for $terminfo
@@ -368,8 +357,8 @@ alias tox='no-coreutils tox'
 
 # Reload zshrc. Undefine DIRENV_WATCHES (if it exists) so that direnv will
 # reload the environment
-alias refresh='source ~/.zshenv && source ~/.zshrc'
-alias reload='exec env -u DIRENV_WATCHES $SHELL'
+alias refresh='source ~/.zshenv && source ~/.zprofile && source ~/.zshrc'
+# alias reload='exec env -u DIRENV_WATCHES $SHELL'
 
 # Default command options
 alias cp='cp -i'
@@ -575,7 +564,8 @@ export PAGER='less'
 # fzf
 # ------------------------------------------------------------------------
 if (( ${+commands[fzf]} )); then
-    export FZF_PATH=`echo $(which fzf)(:A:h:h)`
+    export FZF_PATH=${commands[fzf]:A:h:h}
+
 
     # Make FZF respond more quickly when hitting escape
     # https://github.com/junegunn/fzf.vim/issues/248
@@ -609,19 +599,29 @@ fi
 # ------------------------------------------------------------------------
 
 if (( ${+commands[mise]} )); then
-    eval "$(mise activate zsh)"
+    cache_file="${ZCACHEDIR}/mise-shellenv-cache.zsh"
 
-    # Wrap tmux to avoid environment loading issues
-    # See https://github.com/direnv/direnv/wiki/Tmux
-    # tmux() { direnv exec / tmux $*; }
+    if [[ "$commands[mise]" -nt "$cache_file" || ! -s "$cache_file" ]]; then
+        mkdir -p "$cache_file:h"
+        # Cache the result.
+        mise activate zsh >! "$cache_file" 2> /dev/null
+    fi
 
-    # dotfiles() { direnv exec / dotfiles $*; }
+    source "$cache_file"
+    unset cache_file
+fi
+
+# mosh
+# ------------------------------------------------------------------------
+if (( ${+commands[mosh]} )); then
+    # Allow ssh hostname completions to work for mosh
+    compdef mosh=ssh
 fi
 
 # Line editor
 # ------------------------------------------------------------------------
 # Syntax highlighting
-# --------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 # This should be near the end (preferably at the end) of the zshrc
 # https://github.com/zsh-users/zsh-syntax-highlighting
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
@@ -674,7 +674,7 @@ prompt pure
 # tmux
 # --------------------------------------------------------------------------
 function _zsh_tmux_update_environment_preexec {
-    eval $(tmux show-environment -s)
+    eval "$(tmux show-environment -s)"
 }
 
 if (( ${+commands[tmux]} )); then

@@ -1,0 +1,126 @@
+# zsh configuration: zprofile
+# ============================================================================
+# Load order: 2nd (sourced for LOGIN shells AND non-login command shells at SHLVL 1)
+# Purpose: Set up session environment (PATH, language, one-time setup)
+#
+# When sourced:
+#   - Login shells: Initial terminal window, SSH sessions, `zsh -l`
+#   - Command shells: Non-login, non-interactive at SHLVL 1 (e.g., `zsh -c 'command'`)
+#
+# This runs BEFORE zshrc, so interactive features go in zshrc, not here.
+#
+# Startup sequence:
+#   1. /etc/zshenv  (system-wide, always)
+#   2. ~/.zshenv    (always; sets GLOBAL_RCS=off, blocking other /etc files)
+#   3. ~/.zprofile  (if login shell OR non-login command shell at SHLVL 1) ← YOU ARE HERE
+#   4. ~/.zshrc     (if interactive shell)
+
+# Homebrew
+# ----------------------------------------------------------------------------
+# Use Bootsnap to speed up repeated brew calls
+export HOMEBREW_BOOTSNAP=1
+
+source $HOME/.dotfiles/zsh/common.zsh
+
+# Language
+# ----------------------------------------------------------------------------
+[[ -z "$LANG" ]] && eval "$(locale)"
+[[ -z "$LANG" ]] && export LANG=en_US.UTF-8
+[[ -z "$LC_ALL" ]] && export LC_ALL=$LANG
+
+# Cache and temp files
+# ----------------------------------------------------------------------------
+
+[[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
+[[ -d "$CONFIGDIR" ]] || mkdir -p "$CONFIGDIR"
+[[ -d "$DATADIR" ]] || mkdir -p "$DATADIR"
+[[ -d "$STATEDIR" ]] || mkdir -p "$STATEDIR"
+[[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
+[[ -d "$ZDATADIR" ]] || mkdir -p "$ZDATADIR"
+[[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
+[[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
+[[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
+
+if [[ -d "$TMPDIR" ]]; then
+    export TMPPREFIX="${TMPDIR%/}/zsh"
+    [[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
+fi
+
+# Terminal
+# --------------------------------------------------------------------------
+if [[ -z $TERM_PROGRAM ]]; then
+    if [[ -n $GNOME_TERMINAL_SCREEN ]]; then
+        export TERM_PROGRAM=gnome-terminal
+    elif [[ -n $KITTY_LISTEN_ON ]]; then
+        export TERM_PROGRAM=kitty
+    fi
+fi
+
+# Tmux
+# --------------------------------------------------------------------------
+export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
+
+# Rust
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+
+# General paths
+# ----------------------------------------------------------------------------
+typeset -gU path
+
+# Path
+# --------------------------------------------------------------------------
+
+if [[ -n "$PYTHONUSERBASE" ]]; then
+    python_user_path=$PYTHONUSERBASE/bin
+elif is-darwin; then
+    python_user_path=$HOME/Library/Python/$HOMEBREW_PYTHON_VERSION/bin
+fi # We don't need to add ~/.local/bin since it's at the beginning of the path
+
+if [[ -x /usr/libexec/path_helper ]]; then
+    eval "$(/usr/libexec/path_helper -s)"
+fi
+
+path=(
+    $HOME/.local/bin
+    $HOME/bin
+    $DOTFILES/bin
+
+    # PostgreSQL
+    $HOMEBREW_BASE/opt/postgresql@15/bin(/N)
+
+    # Rust
+    $CARGO_HOME/bin
+    $HOMEBREW_BASE/opt/rustup/bin(/N)
+
+    # Python
+    $python_user_path(/N)
+
+    # Put python before $HOMEBREW_BASE/bin since some of its programs, like pip,
+    # will eventually be overridden with things in $HOMEBREW_BASE/bin
+    # https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
+    $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION}/libexec/bin(/N)
+    $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION}/bin(/N)
+
+    # coreutils and gnu-sed
+    $HOMEBREW_BASE/opt/{coreutils,gnu-sed}/libexec/gnubin(/N)
+
+    $HOMEBREW_BASE/{s,}bin
+    /usr/local/{s,}bin
+    $path
+
+    # VMware
+    /Applications/VMware\ Fusion.app/Contents/Library(/N)
+)
+
+unset python_user_path
+
+# MANPATH doesn't need to be set because man will use PATH
+# to find manpages
+unset manpath
+
+# Added by OrbStack: command-line tools and integration
+# This won't be added again if you remove it.
+if [[ -f ~/.orbstack/shell/init.zsh ]]; then
+    source ~/.orbstack/shell/init.zsh
+fi

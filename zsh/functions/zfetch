@@ -24,10 +24,10 @@ if [[ $1 == "update" ]]; then
   for name in ${(@k)plugins}; do
     local cwd=$(pwd)
     local dest=$plugins[$name]
-    cd $dest
+    cd "$dest"
     echo -e "Updating ${Yel}${name}${Rst}..."
     git pull --quiet --recurse-submodules
-    cd $cwd
+    cd "$cwd"
   done
 elif [[ $1 == "ls" ]]; then
   for name in ${(@k)plugins}; do
@@ -55,24 +55,22 @@ else
     echo -e "Missing plugin ${Yel}${name}${Rst}"
     echo -e "  Cloning from ${Blu}${url}${Rst}..."
     if [[ -n $ref ]]; then
-      git clone --quiet $url $dest
-      if [[ $? != 0 ]]; then
+      if ! git clone --quiet "$url" "$dest"; then
         git_clone_error_msg $?
-        cd $cwd
-        return $?
+        cd "$cwd" || return 1
+        return 1
       fi
 
       git checkout --quiet $ref
       echo -e "  Checked out branch ${ref}"
     else
-      git clone --quiet --depth 1 $url $dest
-      if [[ $? != 0 ]]; then
+      if ! git clone --quiet --depth 1 "$url" "$dest"; then
         git_clone_error_msg $?
-        cd $cwd
-        return $?
+        cd "$cwd" || return 1
+        return 1
       fi
       echo -e "  Checked out master"
     fi
   fi
-  cd $cwd
+  cd "$cwd"
 fi
