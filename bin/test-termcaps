@@ -1,0 +1,58 @@
+#!/usr/bin/env zsh
+
+# Check if the terminal supports truecolor
+if [[ "$COLORTERM" != "truecolor" ]]; then
+  echo "Warning: COLORTERM != truecolor, results may not be accurate"
+fi
+
+# Function to print a sample with ANSI codes
+print_sample() {
+  local label=$1
+  local code=$2
+  local reset=$3
+  printf "%-15s: %sSample Text%s\n" "$label" "$code" "$reset"
+}
+
+# ANSI reset
+RESET=$'\033[0m'
+
+# Basic styles
+print_sample "Bold" $'\033[1m' $RESET
+print_sample "Dim" $'\033[2m' $RESET
+print_sample "Italic" $'\033[3m' $RESET
+print_sample "Underline" $'\033[4m' $RESET
+print_sample "Underline (double)" $'\033[21m' $RESET
+print_sample "Undercurl" $'\033[4:3m' $RESET  # xterm style 3 underline/undercurl
+print_sample "Strikethrough" $'\033[9m' $RESET
+print_sample "Reverse" $'\033[7m' $RESET
+print_sample "Blink" $'\033[5m' $RESET
+
+# Truecolor foreground gradient
+echo "\nForeground color gradient:"
+for i in {0..255..8}; do
+  r=$i
+  g=$((255-i))
+  b=$((i/2))
+  printf "\033[38;2;%d;%d;%dm█" $r $g $b
+done
+printf "%s\n" $RESET
+
+# Truecolor background gradient
+echo "\nBackground color gradient:"
+for i in {0..255..8}; do
+  r=$((i/2))
+  g=$i
+  b=$((255-i))
+  printf "\033[48;2;%d;%d;%dm " $r $g $b
+done
+printf "%s\n" $RESET
+
+# Demonstrate underline with color and style
+echo "\nUnderline / undercurl with colors:"
+for i in {0..255..32}; do
+  printf "\033[38;2;%d;0;255m\033[4mUnderline %d\033[0m " $i $i
+  printf "\033[38;2;0;%d;255m\033[4:3mUndercurl %d\033[0m " $i $i
+  printf "\n"
+done
+
+echo "\nAll done."
