@@ -1,58 +1,221 @@
 #!/usr/bin/env zsh
 
-# Check if the terminal supports truecolor
-if [[ "$COLORTERM" != "truecolor" ]]; then
-  echo "Warning: COLORTERM != truecolor, results may not be accurate"
-fi
+#################
+# ANSI Constants
+#################
 
-# Function to print a sample with ANSI codes
-print_sample() {
-  local label=$1
-  local code=$2
-  local reset=$3
-  printf "%-15s: %sSample Text%s\n" "$label" "$code" "$reset"
+RESET=$'\033[0m'
+BOLD=$'\033[1m'
+DIM=$'\033[2m'
+ITALIC=$'\033[3m'
+UNDERLINE=$'\033[4m'
+STRIKETHROUGH=$'\033[9m'
+CONCEAL=$'\033[8m'
+REVERSE=$'\033[7m'
+BLINK=$'\033[5m'
+
+# Extended underline styles (Smulx)
+UNDERLINE_SINGLE=$'\033[4:1m'
+UNDERLINE_DOUBLE=$'\033[4:2m'
+UNDERLINE_CURLY=$'\033[4:3m'    # Also called undercurl
+UNDERLINE_DOTTED=$'\033[4:4m'
+UNDERLINE_DASHED=$'\033[4:5m'
+
+# RGB color codes
+# Format: \033[38;2;R;G;Bm for foreground, \033[48;2;R;G;Bm for background
+RGB_FG_PREFIX=$'\033[38;2;'
+RGB_BG_PREFIX=$'\033[48;2;'
+
+# Display formatting
+LABEL_WIDTH=20
+
+# Track statistics
+typeset -g TPUT_SUCCESS=0
+typeset -g TPUT_FALLBACK=0
+typeset -g TPUT_FAILED=0
+
+####################
+# Capability Definitions
+####################
+
+# Format: display_name|tput_cap|tput_arg|fallback_ansi
+typeset -a capabilities
+capabilities=(
+  "bold|bold||$BOLD"
+  "dim|dim||$DIM"
+  "italic|sitm||$ITALIC"
+  "underline|smul||$UNDERLINE"
+  "strikethrough|smxx||$STRIKETHROUGH"
+  "conceal|invis||$CONCEAL"
+  "reverse|rev||$REVERSE"
+  "blink|blink||$BLINK"
+)
+
+# Smulx underline styles: 1=single, 2=double, 3=curly/undercurl, 4=dotted, 5=dashed
+typeset -a underline_styles
+underline_styles=(
+  "single|Smulx|1|$UNDERLINE_SINGLE"
+  "double|Smulx|2|$UNDERLINE_DOUBLE"
+  "undercurl|Smulx|3|$UNDERLINE_CURLY"
+  "dotted|Smulx|4|$UNDERLINE_DOTTED"
+  "dashed|Smulx|5|$UNDERLINE_DASHED"
+)
+
+####################
+# Helper Functions
+####################
+
+# Unified capability printer
+# $1 = pipe-delimited string: display_name|tput_cap|tput_arg|fallback_ansi
+# $2 = optional custom format string (default: "Sample Text")
+print_capability() {
+  local spec=$1
+  local custom_text=$2
+  local parts=(${(s:|:)spec})
+  local name=${parts[1]}
+  local tput_cap=${parts[2]}
+  local tput_arg=${parts[3]}
+  local fallback=${parts[4]}
+  
+  local seq tput_seq status_msg=""
+  
+  # Try tput first
+  if command -v tput &>/dev/null && [[ -n $tput_cap ]]; then
+    if [[ -n $tput_arg ]]; then
+      tput_seq=$(tput "$tput_cap" "$tput_arg" 2>/dev/null)
+    else
+      tput_seq=$(tput "$tput_cap" 2>/dev/null)
+    fi
+  fi
+  
+  # Determine what to use and track statistics
+  if [[ -n $tput_seq ]]; then
+    seq=$tput_seq
+    status_msg=""
+    ((TPUT_SUCCESS++))
+  elif [[ -n $fallback ]]; then
+    seq=$fallback
+    status_msg=" ${DIM}(not in terminfo, using fallback)${RESET}"
+    ((TPUT_FALLBACK++))
+  else
+    seq=""
+    ((TPUT_FAILED++))
+  fi
+  
+  if [[ -n $seq ]]; then
+    if [[ -n $custom_text ]]; then
+      printf "%-${LABEL_WIDTH}s: %s%s%s%s\n" "$name" "$seq" "$custom_text" "$RESET" "$status_msg"
+    else
+      printf "%-${LABEL_WIDTH}s: %sSample Text%s%s\n" "$name" "$seq" "$RESET" "$status_msg"
+    fi
+  else
+    printf "%-${LABEL_WIDTH}s: ${DIM}Not supported${RESET}\n" "$name"
+  fi
 }
 
-# ANSI reset
-RESET=$'\033[0m'
+####################
+# Display Functions
+####################
 
-# Basic styles
-print_sample "Bold" $'\033[1m' $RESET
-print_sample "Dim" $'\033[2m' $RESET
-print_sample "Italic" $'\033[3m' $RESET
-print_sample "Underline" $'\033[4m' $RESET
-print_sample "Underline (double)" $'\033[21m' $RESET
-print_sample "Undercurl" $'\033[4:3m' $RESET  # xterm style 3 underline/undercurl
-print_sample "Strikethrough" $'\033[9m' $RESET
-print_sample "Reverse" $'\033[7m' $RESET
-print_sample "Blink" $'\033[5m' $RESET
+show_env_info() {
+  print -P "%B--- Environment Information --- %b"
+  printf "%-${LABEL_WIDTH}s: %s\n" "TERM" "${TERM:-<not set>}"
+  printf "%-${LABEL_WIDTH}s: %s\n" "TERM_PROGRAM" "${TERM_PROGRAM:-<not set>}"
+  printf "%-${LABEL_WIDTH}s: %s\n" "COLORTERM" "${COLORTERM:-<not set>}"
+  printf "%-${LABEL_WIDTH}s: %s\n" "In tmux" "${TMUX:+yes}"
+  printf "%-${LABEL_WIDTH}s: %s\n" "In SSH" "${SSH_TTY:+yes}"
+  if [[ -n "$TMUX" ]]; then
+    local outer_term=$(tmux show-environment TERM_PROGRAM 2>/dev/null | cut -d= -f2)
+    printf "%-${LABEL_WIDTH}s: %s\n" "Outer TERM_PROGRAM" "${outer_term:-<unknown>}"
+  fi
+  echo
+}
 
-# Truecolor foreground gradient
-echo "\nForeground color gradient:"
-for i in {0..255..8}; do
-  r=$i
-  g=$((255-i))
-  b=$((i/2))
-  printf "\033[38;2;%d;%d;%dm█" $r $g $b
-done
-printf "%s\n" $RESET
+show_standard_caps() {
+  print -P "%B--- Terminal Capabilities --- %b\n"
+  for spec in "${capabilities[@]}"; do
+    print_capability "$spec"
+  done
+}
 
-# Truecolor background gradient
-echo "\nBackground color gradient:"
-for i in {0..255..8}; do
-  r=$((i/2))
-  g=$i
-  b=$((255-i))
-  printf "\033[48;2;%d;%d;%dm " $r $g $b
-done
-printf "%s\n" $RESET
+show_underline_styles() {
+  print -P "\n%B--- Smulx Underline Styles --- %b"
+  for spec in "${underline_styles[@]}"; do
+    local parts=(${(s:|:)spec})
+    local name=${parts[1]}
+    print_capability "$spec" "This is $name"
+  done
+}
 
-# Demonstrate underline with color and style
-echo "\nUnderline / undercurl with colors:"
-for i in {0..255..32}; do
-  printf "\033[38;2;%d;0;255m\033[4mUnderline %d\033[0m " $i $i
-  printf "\033[38;2;0;%d;255m\033[4:3mUndercurl %d\033[0m " $i $i
-  printf "\n"
-done
+show_truecolor() {
+  print -P "\n%B--- Truecolor Gradient --- %b"
+  for i in {0..255..16}; do
+    printf "${RGB_BG_PREFIX}%d;%d;%dm " $i $((255-i)) $((i/2))
+  done
+  printf "%s\n" $RESET
+}
 
-echo "\nAll done."
+show_hyperlinks() {
+  print -P "\n%B--- Hyperlink Support (OSC 8) --- %b"
+  # OSC 8 hyperlinks: \e]8;;URL\e\\ starts link, \e]8;;\e\\ ends it
+  # Use $'...' quoting so \e\\ is properly interpreted as ESC + backslash (ST character)
+  # rather than having printf try to parse it from the format string
+  local hyperlink_start=$'\e]8;;https://github.com\e\\'
+  local hyperlink_end=$'\e]8;;\e\\'
+  printf "%-${LABEL_WIDTH}s: %s%s%s%s\n" "Hyperlink test" "$hyperlink_start" "${UNDERLINE}GitHub Link${RESET}" "$hyperlink_end"
+  printf "%-${LABEL_WIDTH}s: Should be clickable (hold Cmd/Ctrl to click)\n" "Expected"
+  printf "%-${LABEL_WIDTH}s: Check 'link-url' setting in ghostty config\n" "Note"
+}
+
+show_colored_underlines() {
+  print -P "\n%B--- Colored Double Underline & Undercurl --- %b"
+  for i in {0..255..32}; do
+    local fg="${RGB_FG_PREFIX}${i};0;255m"
+    printf "${fg}${UNDERLINE_DOUBLE}Double %03d${RESET} " $i
+    printf "${fg}${UNDERLINE_CURLY}Undercurl %03d${RESET}\n" $i
+  done
+}
+
+check_tmux_passthrough() {
+  if [[ -n "$TMUX" ]]; then
+    print -P "\n%B--- Tmux Passthrough Check --- %b"
+    
+    printf "%-${LABEL_WIDTH}s: %sThis should be struck through%s\n" "Strikethrough test" "$STRIKETHROUGH" "$RESET"
+    printf "%-${LABEL_WIDTH}s: %sThis should have curly underline%s\n" "Undercurl test" "$UNDERLINE_CURLY" "$RESET"
+    
+    printf "\nIf the above show effects, tmux passthrough is working.\n"
+    printf "If not, add to tmux.conf:\n"
+    printf "  set -as terminal-features ',*:strikethrough:usstyle'\n"
+  fi
+}
+
+show_summary() {
+  print -P "\n%B--- Summary --- %b"
+  local total=$((TPUT_SUCCESS + TPUT_FALLBACK + TPUT_FAILED))
+  
+  printf "%-${LABEL_WIDTH}s: %d/%d\n" "Found in terminfo" "$TPUT_SUCCESS" "$total"
+  printf "%-${LABEL_WIDTH}s: %d/%d\n" "Using fallback" "$TPUT_FALLBACK" "$total"
+  printf "%-${LABEL_WIDTH}s: %d/%d\n" "Not supported" "$TPUT_FAILED" "$total"
+  
+  echo
+  if [[ $TPUT_FALLBACK -gt 0 ]]; then
+    printf "${DIM}Note: Fallback sequences may still render correctly even if not in terminfo.${RESET}\n"
+  fi
+  
+  if [[ -n "$TMUX" && $TPUT_FALLBACK -gt 0 ]]; then
+    printf "${DIM}Tip: Extended features require terminal-features in tmux.conf${RESET}\n"
+  fi
+}
+
+####################
+# Main Execution
+####################
+
+show_env_info
+show_standard_caps
+show_underline_styles
+show_truecolor
+show_hyperlinks
+show_colored_underlines
+check_tmux_passthrough
+show_summary
