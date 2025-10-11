@@ -43,7 +43,6 @@ zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting
 zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 zfetch $ZPLUGDIR sindresorhus/pure
-zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
 zfetch $CACHEDIR/tmux tmux-plugins/tpm
 
 # Setup cdpath
@@ -626,6 +625,7 @@ fi
 # https://github.com/zsh-users/zsh-syntax-highlighting
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
+ZSH_HIGHLIGHT_STYLES[comment]='fg=10' # base01
 
 # History substring search -- load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
@@ -635,13 +635,11 @@ HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 # autosuggest -- load this after zsh-syntax-highlighting and
-# zsh-history-substring-search (https://github.com/tarruda/zsh-autosuggestions)
+# zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions)
 
-# Use a solarized-friendly background color
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=15'
-
-# Make autosuggest faster
-# export ZSH_AUTOSUGGEST_USE_ASYNC=1
+# Use a solarized-friendly color
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=15' #base3
+export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 
 source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
 

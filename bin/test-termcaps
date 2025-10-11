@@ -1,64 +1,69 @@
 #!/usr/bin/env zsh
 
+# Load colors module for script output
+autoload -Uz colors && colors
+
 #################
 # ANSI Constants
 #################
 
-RESET=$'\033[0m'
-BOLD=$'\033[1m'
-DIM=$'\033[2m'
-ITALIC=$'\033[3m'
-UNDERLINE=$'\033[4m'
-STRIKETHROUGH=$'\033[9m'
-CONCEAL=$'\033[8m'
-REVERSE=$'\033[7m'
-BLINK=$'\033[5m'
+# Basic formatting (these are what we're testing, not for script output)
+typeset -gr RESET=$reset_color
+typeset -gr BOLD=$'\033[1m'
+typeset -gr DIM=$'\033[2m'
+typeset -gr ITALIC=$'\033[3m'
+typeset -gr UNDERLINE=$'\033[4m'
+typeset -gr STRIKETHROUGH=$'\033[9m'
+typeset -gr CONCEAL=$'\033[8m'
+typeset -gr REVERSE=$'\033[7m'
+typeset -gr BLINK=$'\033[5m'
 
 # Extended underline styles (Smulx)
-UNDERLINE_SINGLE=$'\033[4:1m'
-UNDERLINE_DOUBLE=$'\033[4:2m'
-UNDERLINE_CURLY=$'\033[4:3m'    # Also called undercurl
-UNDERLINE_DOTTED=$'\033[4:4m'
-UNDERLINE_DASHED=$'\033[4:5m'
+typeset -gr UNDERLINE_SINGLE=$'\033[4:1m'
+typeset -gr UNDERLINE_DOUBLE=$'\033[4:2m'
+typeset -gr UNDERLINE_CURLY=$'\033[4:3m'    # Also called undercurl
+typeset -gr UNDERLINE_DOTTED=$'\033[4:4m'
+typeset -gr UNDERLINE_DASHED=$'\033[4:5m'
 
 # RGB color codes
 # Format: \033[38;2;R;G;Bm for foreground, \033[48;2;R;G;Bm for background
-RGB_FG_PREFIX=$'\033[38;2;'
-RGB_BG_PREFIX=$'\033[48;2;'
+typeset -gr RGB_FG_PREFIX=$'\033[38;2;'
+typeset -gr RGB_BG_PREFIX=$'\033[48;2;'
 
 # Display formatting
-LABEL_WIDTH=20
+typeset -gr LABEL_WIDTH=20
 
 # Track statistics
-typeset -g TPUT_SUCCESS=0
-typeset -g TPUT_FALLBACK=0
-typeset -g TPUT_FAILED=0
+typeset -gi TPUT_SUCCESS=0
+typeset -gi TPUT_FALLBACK=0
+typeset -gi TPUT_FAILED=0
 
 ####################
 # Capability Definitions
 ####################
 
-# Format: display_name|tput_cap|tput_arg|fallback_ansi
-typeset -a capabilities
-capabilities=(
-  "bold|bold||$BOLD"
-  "dim|dim||$DIM"
-  "italic|sitm||$ITALIC"
-  "underline|smul||$UNDERLINE"
-  "strikethrough|smxx||$STRIKETHROUGH"
-  "conceal|invis||$CONCEAL"
-  "reverse|rev||$REVERSE"
-  "blink|blink||$BLINK"
+# Standard terminal capabilities
+# Each entry: capability_name => (tput_cap tput_arg fallback_seq)
+typeset -gA CAPABILITIES
+CAPABILITIES=(
+  bold        "bold||$BOLD"
+  dim         "dim||$DIM"
+  italic      "sitm||$ITALIC"
+  underline   "smul||$UNDERLINE"
+  strikethrough "smxx||$STRIKETHROUGH"
+  conceal     "invis||$CONCEAL"
+  reverse     "rev||$REVERSE"
+  blink       "blink||$BLINK"
 )
 
 # Smulx underline styles: 1=single, 2=double, 3=curly/undercurl, 4=dotted, 5=dashed
-typeset -a underline_styles
-underline_styles=(
-  "single|Smulx|1|$UNDERLINE_SINGLE"
-  "double|Smulx|2|$UNDERLINE_DOUBLE"
-  "undercurl|Smulx|3|$UNDERLINE_CURLY"
-  "dotted|Smulx|4|$UNDERLINE_DOTTED"
-  "dashed|Smulx|5|$UNDERLINE_DASHED"
+typeset -gA UNDERLINE_STYLES
+UNDERLINE_STYLES=(
+  single    "Smulx|1|$UNDERLINE_SINGLE"
+  double    "Smulx|2|$UNDERLINE_DOUBLE"
+  undercurl "Smulx|3|$UNDERLINE_CURLY"
+  dotted    "Smulx|4|$UNDERLINE_DOTTED"
+  dashed    "Smulx|5|$UNDERLINE_DASHED"
 )
 
 ####################
@@ -66,19 +71,22 @@ underline_styles=(
 ####################
 
 # Unified capability printer
-# $1 = pipe-delimited string: display_name|tput_cap|tput_arg|fallback_ansi
-# $2 = optional custom format string (default: "Sample Text")
+# $1 = capability name (display name)
+# $2 = pipe-delimited string: tput_cap|tput_arg|fallback_ansi
+# $3 = optional custom format string (default: "Sample Text")
 print_capability() {
-  local spec=$1
-  local custom_text=$2
-  local parts=(${(s:|:)spec})
-  local name=${parts[1]}
-  local tput_cap=${parts[2]}
-  local tput_arg=${parts[3]}
-  local fallback=${parts[4]}
-  
+  local name=$1
+  local spec=$2
+  local custom_text=$3
+
+  local -a parts
+  parts=(${(s:|:)spec})
+  local tput_cap=${parts[1]}
+  local tput_arg=${parts[2]}
+  local fallback=${parts[3]}
+
   local seq tput_seq status_msg=""
-  
+
   # Try tput first
   if command -v tput &>/dev/null && [[ -n $tput_cap ]]; then
     if [[ -n $tput_arg ]]; then
@@ -87,7 +95,7 @@ print_capability() {
       tput_seq=$(tput "$tput_cap" 2>/dev/null)
     fi
   fi
-  
+
   # Determine what to use and track statistics
   if [[ -n $tput_seq ]]; then
     seq=$tput_seq
@@ -95,21 +103,24 @@ print_capability() {
     ((TPUT_SUCCESS++))
   elif [[ -n $fallback ]]; then
     seq=$fallback
-    status_msg=" ${DIM}(not in terminfo, using fallback)${RESET}"
+    status_msg=" %F{242}(not in terminfo, using fallback)%f"
     ((TPUT_FALLBACK++))
   else
     seq=""
     ((TPUT_FAILED++))
   fi
-  
+
   if [[ -n $seq ]]; then
     if [[ -n $custom_text ]]; then
-      printf "%-${LABEL_WIDTH}s: %s%s%s%s\n" "$name" "$seq" "$custom_text" "$RESET" "$status_msg"
+      printf "%-${LABEL_WIDTH}s: %s%s%s" "$name" "$seq" "$custom_text" "$RESET"
+      print -P "$status_msg"
     else
-      printf "%-${LABEL_WIDTH}s: %sSample Text%s%s\n" "$name" "$seq" "$RESET" "$status_msg"
+      printf "%-${LABEL_WIDTH}s: %sSample Text%s" "$name" "$seq" "$RESET"
+      print -P "$status_msg"
     fi
   else
-    printf "%-${LABEL_WIDTH}s: ${DIM}Not supported${RESET}\n" "$name"
+    printf "%-${LABEL_WIDTH}s: " "$name"
+    print -P "%F{242}Not supported%f"
   fi
 }
 
@@ -133,17 +144,17 @@ show_env_info() {
 
 show_standard_caps() {
   print -P "%B--- Terminal Capabilities --- %b\n"
-  for spec in "${capabilities[@]}"; do
-    print_capability "$spec"
+  # Iterate over associative array in key order
+  for name in ${(ko)CAPABILITIES}; do
+    print_capability "$name" "${CAPABILITIES[$name]}"
   done
 }
 
 show_underline_styles() {
   print -P "\n%B--- Smulx Underline Styles --- %b"
-  for spec in "${underline_styles[@]}"; do
-    local parts=(${(s:|:)spec})
-    local name=${parts[1]}
-    print_capability "$spec" "This is $name"
+  # Iterate over associative array in key order
+  for name in ${(ko)UNDERLINE_STYLES}; do
+    print_capability "$name" "${UNDERLINE_STYLES[$name]}" "This is $name"
   done
 }
 
@@ -179,10 +190,10 @@ show_colored_underlines() {
 check_tmux_passthrough() {
   if [[ -n "$TMUX" ]]; then
     print -P "\n%B--- Tmux Passthrough Check --- %b"
-    
+
     printf "%-${LABEL_WIDTH}s: %sThis should be struck through%s\n" "Strikethrough test" "$STRIKETHROUGH" "$RESET"
     printf "%-${LABEL_WIDTH}s: %sThis should have curly underline%s\n" "Undercurl test" "$UNDERLINE_CURLY" "$RESET"
-    
+
     printf "\nIf the above show effects, tmux passthrough is working.\n"
     printf "If not, add to tmux.conf:\n"
     printf "  set -as terminal-features ',*:strikethrough:usstyle'\n"
@@ -191,19 +202,19 @@ check_tmux_passthrough() {
 
 show_summary() {
   print -P "\n%B--- Summary --- %b"
-  local total=$((TPUT_SUCCESS + TPUT_FALLBACK + TPUT_FAILED))
-  
+  local -i total=$((TPUT_SUCCESS + TPUT_FALLBACK + TPUT_FAILED))
+
   printf "%-${LABEL_WIDTH}s: %d/%d\n" "Found in terminfo" "$TPUT_SUCCESS" "$total"
   printf "%-${LABEL_WIDTH}s: %d/%d\n" "Using fallback" "$TPUT_FALLBACK" "$total"
   printf "%-${LABEL_WIDTH}s: %d/%d\n" "Not supported" "$TPUT_FAILED" "$total"
-  
+
   echo
   if [[ $TPUT_FALLBACK -gt 0 ]]; then
-    printf "${DIM}Note: Fallback sequences may still render correctly even if not in terminfo.${RESET}\n"
+    print -P "%F{242}Note: Fallback sequences may still render correctly even if not in terminfo.%f"
   fi
-  
+
   if [[ -n "$TMUX" && $TPUT_FALLBACK -gt 0 ]]; then
-    printf "${DIM}Tip: Extended features require terminal-features in tmux.conf${RESET}\n"
+    print -P "%F{242}Tip: Extended features require terminal-features in tmux.conf%f"
   fi
 }
 

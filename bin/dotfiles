@@ -72,7 +72,6 @@ function dotfiles-home {
     makedir $ZCOMPDIR
     makedir $ZPLUGDIR
     makedir $ZFUNCDIR
-    makedir $DATADIR/direnv/allow
 
     # Fix the terminal definition so that C-H works properly in neovim. This
     # function may also need to be run for the tmux terminal type.
@@ -147,7 +146,7 @@ function dotfiles-python {
     else
         local python_bin="$python_path/libexec/bin/python3"
     fi
-    local python_user_base="$($python_path/bin/python3 -c 'import site; print(site.USER_BASE, end="")')"
+    local python_user_base="$($python_bin -c 'import site; print(site.USER_BASE, end="")')"
 
     # if [[ ! -e "$python_user_base/bin/poetry" ]]; then
     #     log "Installing poetry..."
