@@ -80,7 +80,7 @@ print_capability() {
   local custom_text=$3
 
   local -a parts
-  parts=(${(s:|:)spec})
+  parts=("${(@s:|:)spec}")
   local tput_cap=${parts[1]}
   local tput_arg=${parts[2]}
   local fallback=${parts[3]}
