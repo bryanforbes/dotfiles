@@ -1,12 +1,6 @@
-#!/usr/bin/env -S zsh --no-rcs --no-globalrcs
+#!/usr/bin/env zsh
 
-source $HOME/.dotfiles/zsh/common.zsh
-
-local -U paths_to_remove=(
-    $HOMEBREW_BASE/opt/coreutils/libexec/gnubin
-    $HOMEBREW_BASE/opt/gnu-sed/libexec/gnubin
-)
-
-path=(${path:|paths_to_remove})
+path=(${path:#$HOMEBREW_BASE/opt/coreutils/libexec/gnubin})
+path=(${path:#$HOMEBREW_BASE/opt/gnu-sed/libexec/gnubin})
 
 exec "$@"

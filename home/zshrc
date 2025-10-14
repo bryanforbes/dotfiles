@@ -33,7 +33,10 @@ fpath=(
 # Autoload all user shell functions, following symlinks
 # ------------------------------------------------------------------------
 if [[ -d $DOTFILES/zsh/functions ]]; then
-    for func in $DOTFILES/zsh/functions/*(:t); autoload -Uz $func
+    for func in $DOTFILES/zsh/functions/*(N:t); autoload -Uz $func
+fi
+if [[ -d $ZDATADIR/functions ]]; then
+    for func in $ZDATADIR/functions/*(N:t); autoload -Uz $func
 fi
 
 # Plugin init

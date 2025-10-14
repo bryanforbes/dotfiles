@@ -1,6 +1,5 @@
 #!/usr/bin/env zsh
 
-source $HOME/.dotfiles/zsh/common.zsh
 source $HOME/.dotfiles/zsh/utilities.zsh
 
 export HOMEBREW_AUTO_UPDATE_SECS=300
@@ -15,7 +14,7 @@ function generate_terminfo {
     if (( $? != 0 )); then
         local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
 
-        # Fix so C-H will work in neovim
+        # Fix so backspace is mapped to ^?
         $HOMEBREW_BASE/opt/ncurses/bin/infocmp $term_name | sed -e 's/kbs=^[hH]/kbs=\\177/' > $tmpfile
 
         if is-darwin; then

@@ -4,6 +4,7 @@
 # Sourced by: Setup/installation scripts that need colored output and helpers
 #
 # Functions provided:
+#   - is-darwin, is-linux: Platform detection
 #   - log, logSub, err: Colored logging functions
 #   - makedir: Create directory with optional logging
 #   - link: Create symlink with optional logging
@@ -13,6 +14,14 @@
 if ! (( $+functions[colors] )); then
   autoload -Uz colors && colors
 fi
+
+function is-darwin {
+    [[ "$OSTYPE" == darwin* ]]
+}
+
+function is-linux {
+    [[ "$OSTYPE" == linux* ]]
+}
 
 # Log output
 function log {

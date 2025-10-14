@@ -43,6 +43,8 @@ fi
 
 chsh -s $ZSHPATH
 
-$HOMEBREW_BASE/bin/zsh --no-rcs --no-globalrcs -c "source $HOME/.dotfiles/home/zshenv; source $HOME/.dotfiles/home/zshrc; dotfiles"
+# Start with a clean environment, SHLVL=0 to simlate a login shell, and -f to prevent
+# loading rc files
+env -i SHLVL=0 $HOMEBREW_BASE/bin/zsh -f -c "source $HOME/.dotfiles/home/zshenv; dotfiles"
 
 echo "Done"

@@ -15,13 +15,6 @@
 #   3. ~/.zprofile  (if login shell OR non-login command shell at SHLVL 1) ← YOU ARE HERE
 #   4. ~/.zshrc     (if interactive shell)
 
-# Homebrew
-# ----------------------------------------------------------------------------
-# Use Bootsnap to speed up repeated brew calls
-export HOMEBREW_BOOTSNAP=1
-
-source $HOME/.dotfiles/zsh/common.zsh
-
 # Language
 # ----------------------------------------------------------------------------
 [[ -z "$LANG" ]] && eval "$(locale)"
@@ -30,6 +23,22 @@ source $HOME/.dotfiles/zsh/common.zsh
 
 # Cache and temp files
 # ----------------------------------------------------------------------------
+export DOTFILES=$HOME/.dotfiles
+export CACHEDIR=$HOME/.cache
+export CONFIGDIR=$HOME/.config
+export DATADIR=$HOME/.local/share
+export STATEDIR=$HOME/.local/state
+
+export XDG_CACHE_HOME=$CACHEDIR
+export XDG_CONFIG_HOME=$CONFIGDIR
+export XDG_DATA_HOME=$DATADIR
+export XDG_STATE_HOME=$STATEDIR
+
+export ZCACHEDIR=$CACHEDIR/zsh
+export ZDATADIR=$DATADIR/zsh
+export ZPLUGDIR=$ZCACHEDIR/plugins
+export ZCOMPDIR=$ZCACHEDIR/completions
+export ZFUNCDIR=$ZDATADIR/functions
 
 [[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
 [[ -d "$CONFIGDIR" ]] || mkdir -p "$CONFIGDIR"
@@ -45,6 +54,23 @@ if [[ -d "$TMPDIR" ]]; then
     export TMPPREFIX="${TMPDIR%/}/zsh"
     [[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
 fi
+
+# Homebrew
+# --------------------------------------------------------------------------
+# Use Bootsnap to speed up repeated brew calls
+export HOMEBREW_BOOTSNAP=1
+
+if [[ -d /home/linuxbrew/.linuxbrew ]]; then
+    export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
+elif [[ -d $HOME/.linuxbrew ]]; then
+    export HOMEBREW_BASE=$HOME/.linuxbrew
+elif [[ -d /opt/homebrew ]]; then
+    export HOMEBREW_BASE=/opt/homebrew
+else
+    export HOMEBREW_BASE=/usr/local
+fi
+
+export HOMEBREW_PYTHON_VERSION="3.13"
 
 # Terminal
 # --------------------------------------------------------------------------
@@ -70,16 +96,24 @@ typeset -gU path
 
 # Path
 # --------------------------------------------------------------------------
-
-if [[ -n "$PYTHONUSERBASE" ]]; then
-    python_user_path=$PYTHONUSERBASE/bin
-elif is-darwin; then
-    python_user_path=$HOME/Library/Python/$HOMEBREW_PYTHON_VERSION/bin
-fi # We don't need to add ~/.local/bin since it's at the beginning of the path
-
+# On macOS, use the system path_helper to set the initial PATH
 if [[ -x /usr/libexec/path_helper ]]; then
     eval "$(/usr/libexec/path_helper -s)"
 fi
+
+# This is similar to what site.py does to find user modules
+typeset -U _python_user_path=()
+
+if [[ -n "$PYTHONUSERBASE" ]]; then
+    _python_user_path+=("$PYTHONUSERBASE/bin")
+fi
+
+if [[ "$OSTYPE" == darwin* ]]; then
+    _python_user_path+=("$HOME/Library/Python/$HOMEBREW_PYTHON_VERSION/bin")
+fi
+
+# site.py also falls back to ~/.local/bin, but it's not added here since it's
+# at the beginning of the path
 
 path=(
     $HOME/.local/bin
@@ -94,13 +128,12 @@ path=(
     $HOMEBREW_BASE/opt/rustup/bin(/N)
 
     # Python
-    $python_user_path(/N)
+    $_python_user_path
 
     # Put python before $HOMEBREW_BASE/bin since some of its programs, like pip,
     # will eventually be overridden with things in $HOMEBREW_BASE/bin
     # https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
-    $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION}/libexec/bin(/N)
-    $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION}/bin(/N)
+    $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION}/{libexec/,}bin(/N)
 
     # coreutils and gnu-sed
     $HOMEBREW_BASE/opt/{coreutils,gnu-sed}/libexec/gnubin(/N)
@@ -113,7 +146,7 @@ path=(
     /Applications/VMware\ Fusion.app/Contents/Library(/N)
 )
 
-unset python_user_path
+unset _python_user_path
 
 # MANPATH doesn't need to be set because man will use PATH
 # to find manpages

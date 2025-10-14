@@ -83,7 +83,8 @@ if vim.fn.has('mouse') == 1 then
   opt.mouse = 'a'
 end
 
-opt.clipboard = { 'unnamed' }
+g.clipboard = 'osc52'
+opt.clipboard = 'unnamedplus'
 opt.termguicolors = true
 
 local state_dir = vim.fn.stdpath('state')

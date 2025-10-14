@@ -1,0 +1,9 @@
+local host="$1"
+local term="${2:-$TERM}"
+
+if [[ -z "$host" ]]; then
+    echo "Usage: install-terminfo <user@host> [term]"
+    return 1
+fi
+
+$HOMEBREW_BASE/opt/ncurses/bin/infocmp -x "$term" | ssh "$host" -- tic -x -o '~/.terminfo' -
