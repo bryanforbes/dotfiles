@@ -6,7 +6,7 @@ export HOMEBREW_AUTO_UPDATE_SECS=300
 export HOMEBREW_BUNDLE_NO_UPGRADE=1
 export HOMEBREW_BUNDLE_FILE="${DOTFILES}/Brewfile"
 
-function generate_terminfo {
+generate_terminfo() {
     local term_name="$1"
 
     infocmp "$term_name" &> /dev/null
@@ -29,19 +29,19 @@ function generate_terminfo {
 }
 
 # Fix terminal config
-function fixterm {
+fixterm() {
     generate_terminfo "tmux-256color"
     generate_terminfo "tmux"
 }
 
 # Rebuild bat cache
-function dotfiles-bat {
+dotfiles-bat() {
     log "Rebuilding bat cache..."
     bat cache --build 2>&1 > /dev/null
 }
 
 # Link dotfiles into $HOME and $CONFIGDIR, update terminfo
-function dotfiles-home {
+dotfiles-home() {
     log "Updating home directory files..."
 
     makedir $CONFIGDIR
@@ -77,7 +77,7 @@ function dotfiles-home {
     fixterm
 }
 
-function dotfiles-brew {
+dotfiles-brew() {
     if [[ ! -w $HOMEBREW_BASE/bin ]]; then
         log "Skipping homebrew update (no write permissions)"
         return
@@ -111,7 +111,7 @@ function dotfiles-brew {
 }
 
 # Update zsh plugins
-function dotfiles-zsh {
+dotfiles-zsh() {
     log "Updating zsh plugins..."
 
     if [[ -z $ZPLUGDIR ]]; then
@@ -137,7 +137,7 @@ function dotfiles-zsh {
 }
 
 # Update user python2 and python3 packages
-function dotfiles-python {
+dotfiles-python() {
     local python_path="${HOMEBREW_BASE}/opt/python@${HOMEBREW_PYTHON_VERSION}"
 
     if [[ -e "$python_path/bin/python3" ]]; then
@@ -160,7 +160,7 @@ function dotfiles-python {
 }
 
 # Update global npm packages
-function dotfiles-node {
+dotfiles-node() {
     if [[ ! -w $HOMEBREW_BASE/bin ]]; then
         log "Skipping node update (no write permissions)"
         return
@@ -170,6 +170,9 @@ function dotfiles-node {
     if (( $+commands[corepack] )); then
         log "Enabling corepack..."
         corepack enable 2>&1 > /dev/null
+
+        log "Updating pnpm completions..."
+        pnpm completion zsh >! $ZCOMPDIR/_pnpm
     fi
 
     local node_path=$1
@@ -224,7 +227,7 @@ function dotfiles-node {
 }
 
 # Update tmux plugins
-function dotfiles-tmux {
+dotfiles-tmux() {
     log "Updating tmux plugins..."
 
     if [[ -z $TMUX_PLUGIN_MANAGER_PATH ]]; then
@@ -252,7 +255,7 @@ function dotfiles-tmux {
 }
 
 # Update vim plugins
-function dotfiles-vim {
+dotfiles-vim() {
     # Migrate neovim state files from data directory to state directory
     local nvim_data_dir="$DATADIR/nvim"
     local nvim_state_dir="$STATEDIR/nvim"

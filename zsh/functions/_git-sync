@@ -1,7 +1,7 @@
 #compdef git-sync
 #description sync the current branch from a remote
 
-__git_branch_names () {
+__git_branch_names() {
   local expl remote
   declare -a branch_names
 
@@ -12,7 +12,7 @@ __git_branch_names () {
   _wanted branch-names expl branch-name compadd $* - $branch_names
 }
 
-__git_remote_names () {
+__git_remote_names() {
   local expl
   declare -a remote_names
 
@@ -22,7 +22,7 @@ __git_remote_names () {
   _wanted remote-names expl remote-name compadd $* - $remote_names
 }
 
-__git_command_successful () {
+__git_command_successful() {
   if (( ${#pipestatus:#0} > 0 )); then
     _message 'not a git repository'
     return 1

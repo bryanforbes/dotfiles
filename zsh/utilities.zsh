@@ -15,16 +15,16 @@ if ! (( $+functions[colors] )); then
   autoload -Uz colors && colors
 fi
 
-function is-darwin {
+is-darwin() {
     [[ "$OSTYPE" == darwin* ]]
 }
 
-function is-linux {
+is-linux() {
     [[ "$OSTYPE" == linux* ]]
 }
 
 # Log output
-function log {
+log() {
     local newline color=('-c' $fg_bold[green])
 
     zparseopts -E -D -K n=newline c:=color
@@ -35,17 +35,17 @@ function log {
 }
 
 # Log output
-function logSub {
+logSub() {
     log -c $fg_bold[blue] $@
 }
 
 # Log error output
-function err {
+err() {
     log -c $fg_bold[red] $@
 }
 
 # Create a directory
-function makedir {
+makedir() {
     local quiet=0
     if [[ "$1" == "-q" ]]; then
         quiet=1
@@ -66,7 +66,7 @@ function makedir {
 }
 
 # Create a symlink
-function link {
+link() {
     local quiet=0
     if [[ "$1" == "-q" ]]; then
         quiet=1
@@ -86,7 +86,7 @@ function link {
     fi
 }
 
-function dot-sleep {
+dot-sleep() {
     local color=('-c' $fg_bold[white])
 
     zparseopts -E -D -K c:=color

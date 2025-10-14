@@ -9,7 +9,7 @@ else
     echo "Flashing $FIRMWARE"
 fi
 
-function copy-to-volume {
+copy-to-volume() {
     local hand="$1"
     local volume="$2"
 
