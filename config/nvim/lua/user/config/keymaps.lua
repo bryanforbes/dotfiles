@@ -84,6 +84,20 @@ vim.keymap.set('', '<leader>d', function()
   Snacks.bufdelete.delete({ wipe = true })
 end, { desc = 'Delete and wipeout buffer' })
 
+-- Dismiss wildmenu with Esc but keep current text
+vim.keymap.set('c', '<Esc>', function()
+  vim.api.nvim_feedkeys(
+    vim.api.nvim_replace_termcodes(
+      vim.fn.wildmenumode() == 1 and '<C-e>' or '<C-c>',
+      true,
+      false,
+      true
+    ),
+    'n',
+    false
+  )
+end, { noremap = true, desc = 'Dismiss wildmenu' })
+
 -- Git file picker
 local root = Snacks.git.get_root(vim.fn.getcwd())
 if root ~= nil then

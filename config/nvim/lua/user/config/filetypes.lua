@@ -23,7 +23,7 @@ vim.filetype.add({
     ['intern.*%.json'] = 'jsonc',
     ['.*/zsh/functions/.*'] = 'zsh',
     ['~/%.dotfiles/bin/.*'] = 'zsh',
-    ['~/%.dotfiles/home/zsh.*'] = 'zsh',
+    ['~/%.dotfiles/home/z.*'] = 'zsh',
     ['~/%.dotfiles/home/editorconfig'] = 'editorconfig',
   },
 })

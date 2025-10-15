@@ -1,93 +1,18 @@
 local opt = vim.opt
 local g = vim.g
 
+----------
+-- General
+----------
+
 -- Set leader for mappings
 g.mapleader = ','
 
-opt.shortmess:append({ I = true, c = true, s = true, S = true })
-
-opt.autoindent = true
-opt.smartindent = false
-opt.backspace = 'indent,eol,start'
-
-opt.hidden = true
-
-opt.history = 1000
-
-opt.ruler = true
-opt.showcmd = true
-opt.cmdheight = 0
-opt.messagesopt = { 'wait:2000', 'history:500' }
-opt.laststatus = 0
-opt.showmode = true
-opt.hlsearch = true
-opt.number = true
-opt.numberwidth = 4
-opt.visualbell = false
-
-opt.scrolloff = 3
-opt.sidescrolloff = 5
-opt.sidescroll = 1
-
-opt.expandtab = false
-opt.smarttab = true
-opt.tabstop = 4
-opt.softtabstop = 4
-opt.shiftwidth = 4
-opt.shiftround = true
-
-opt.ignorecase = true
-opt.smartcase = true
-
-opt.cursorline = true
+opt.fileformats = { 'unix', 'mac', 'dos' }
+opt.exrc = true
+opt.modeline = false
 
 opt.confirm = true
-
-opt.modeline = false
-opt.exrc = true
-opt.joinspaces = false
-opt.textwidth = 0
-
-opt.wildmenu = true
-opt.wildmode = 'list:longest'
----@diagnostic disable-next-line: undefined-field
-opt.completeopt:append({ 'noinsert', 'menuone', 'noselect' })
-
-opt.fileformats = { 'unix', 'mac', 'dos' }
-opt.spelllang = 'en'
-opt.foldlevelstart = 20
-
-opt.signcolumn = 'yes'
-opt.lazyredraw = true
-opt.guicursor = {
-  'n-v-c:block',
-  'i-ci-ve:ver25',
-  'r-cr:hor20',
-  'o:hor50',
-  'a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor',
-  'sm:block-blinkwait175-blinkoff150-blinkon175',
-}
-opt.updatetime = 300
-
-opt.list = true
-opt.listchars = {
-  tab = '╶─',
-  trail = '~',
-  extends = '»',
-  precedes = '«',
-  -- eol = '$',
-}
-
-if vim.fn.has('mouse') == 1 then
-  -- opt.mousehide = true
-  opt.mouse = 'a'
-end
-
--- Use OSC 52 clipboard integration outside of tmux
-g.clipboard = vim.env.TMUX and require('user.util.tmux-osc52').provider()
-  or 'osc52'
-opt.clipboard = 'unnamedplus'
-opt.termguicolors = true
 
 local state_dir = vim.fn.stdpath('state')
 opt.directory = vim.fs.joinpath(state_dir, 'swap')
@@ -98,20 +23,100 @@ opt.backupcopy = 'yes'
 opt.updatecount = 20
 opt.undofile = true
 opt.undolevels = 1000
+opt.updatetime = 200
+
+-- Use OSC 52 clipboard integration outside of tmux
+g.clipboard = vim.env.TMUX and require('user.util.tmux-osc52').provider()
+  or 'osc52'
+opt.clipboard = 'unnamedplus'
+opt.mouse = 'a'
+
+-------------
+-- Appearance
+-------------
+opt.termguicolors = true
+opt.cursorline = true
+opt.number = true
+opt.numberwidth = 4
+
+opt.ruler = false
+opt.showmode = false
+
+opt.signcolumn = 'yes'
+
+opt.scrolloff = 3
+opt.sidescrolloff = 5
+opt.smoothscroll = true
+
+opt.list = true
+opt.listchars = {
+  tab = '╶─',
+  trail = '~',
+  extends = '»',
+  precedes = '«',
+  -- eol = '$',
+}
+
+opt.pumblend = 5
+-- opt.winblend = 5
+opt.winborder = 'rounded'
+
+opt.cmdheight = 0
+-- opt.messagesopt = { 'wait:2000', 'history:500' }
+opt.shortmess:append({
+  -- don't show "search hit BOTTOM, continuing at TOP"
+  s = true,
+  -- don't show "written" or "[w]"
+  W = true,
+  -- don't show intro message when starting vim
+  I = true,
+  -- don't show messages for completion
+  c = true,
+  -- don't show search count messages
+  S = true,
+})
+opt.laststatus = 3
+opt.wildmenu = true
+opt.wildmode = { 'longest:full', 'full' }
+
+opt.guicursor = {
+  'n-v-c:block',
+  'i-ci-ve:ver25',
+  'r-cr:hor20',
+  'o:hor50',
+  'a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor',
+  'sm:block-blinkwait175-blinkoff150-blinkon175',
+}
+
+----------
+-- Editing
+----------
+opt.spelllang = { 'en' }
+
+opt.ignorecase = true
+opt.infercase = true
+opt.smartcase = true
+opt.smartindent = true
+
+opt.completeopt = { 'menu', 'menuone', 'noselect' }
+opt.virtualedit = 'block'
+
+opt.expandtab = true
+opt.tabstop = 4
+opt.softtabstop = 4
+opt.shiftwidth = 4
+opt.shiftround = true
+
+opt.foldlevelstart = 20
 
 -- Tell nvim which python to use
-local homebrew_base = os.getenv('HOMEBREW_BASE')
-local python2_path = homebrew_base .. '/bin/python2'
-if vim.fn.executable(python2_path) == 1 then
-  g.python_host_prog = python2_path
-end
-
-local python3_path = homebrew_base .. '/bin/python3'
-if vim.fn.executable(python3_path) == 1 then
+local homebrew_base = vim.env.HOMEBREW_BASE
+local python3_path = vim.fs.joinpath(vim.env.HOMEBREW_BASE, 'bin/python3')
+if homebrew_base and vim.fn.executable(python3_path) == 1 then
   g.python3_host_prog = python3_path
 end
 
-g.node_host_prog = homebrew_base .. '/bin/neovim-node-host'
+g.node_host_prog = vim.fs.joinpath(homebrew_base, 'bin/neovim-node-host')
 
 -- HTML indent
 g.html_indent_inctags = 'body,head,tbody'
@@ -127,7 +132,9 @@ g.vim_json_syntax_conceal = 0
 -- typescript-vim
 g.typescript_indent_disable = 1
 
--- diagnostics
+--------------
+-- Diagnostics
+--------------
 vim.diagnostic.config({
   update_in_insert = false,
   virtual_text = false,
@@ -138,8 +145,6 @@ vim.diagnostic.config({
   underline = true,
   severity_sort = true,
   float = {
-    border = 'rounded',
-    max_width = 80,
     header = false,
     title = 'Diagnostics:',
     title_pos = 'left',
