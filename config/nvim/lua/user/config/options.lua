@@ -83,7 +83,38 @@ if vim.fn.has('mouse') == 1 then
   opt.mouse = 'a'
 end
 
-g.clipboard = 'osc52'
+if vim.env.TMUX ~= nil then
+  -- If inside tmux, use tmux clipboard integration, but request
+  -- the clipboard from the client using OSC 52
+
+  local copy = { 'tmux', 'load-buffer', '-w', '-' }
+
+  local function paste()
+    vim.fn.system('tmux refresh-client -l')
+    local out = vim.fn.systemlist('tmux save-buffer -', { '' }, 1)
+    if vim.v.shell_error ~= 0 then
+      vim.notify('Failed to paste from tmux buffer', vim.log.levels.WARN)
+      return 0
+    end
+    return out
+  end
+
+  g.clipboard = {
+    name = 'tmux-osc52',
+    copy = {
+      ['+'] = copy,
+      ['*'] = copy,
+    },
+    paste = {
+      ['+'] = paste,
+      ['*'] = paste,
+    },
+  }
+else
+  -- Use OSC 52 clipboard integration outside of tmux
+  g.clipboard = 'osc52'
+end
+
 opt.clipboard = 'unnamedplus'
 opt.termguicolors = true
 
