@@ -675,7 +675,8 @@ prompt pure
 # tmux
 # --------------------------------------------------------------------------
 _zsh_tmux_update_environment_preexec() {
-    eval "$(tmux show-environment -s)"
+    # Filter out PATH updates to avoid conflicts with mise
+    eval "$(tmux show-environment -s | sed '/^export PATH=/d; /^PATH=/d')"
 }
 
 if (( ${+commands[tmux]} )); then
