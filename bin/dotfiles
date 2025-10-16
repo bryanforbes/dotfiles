@@ -276,7 +276,7 @@ dotfiles-vim() {
             local state_file="$nvim_state_dir/$file"
 
             if [[ -L "$state_file" ]]; then
-                local target="$($HOMEBREW_BASE/opt/coreutils/libexec/gnubin/readlink -f "$state_file")"
+                local target="${state_file:A}"
 
                 if [[ "$target" == "$data_file" ]]; then
                     rm -f "$state_file"

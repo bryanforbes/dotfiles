@@ -55,6 +55,12 @@ if [[ -d "$TMPDIR" ]]; then
     [[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
 fi
 
+hash -d cache=$CACHEDIR
+hash -d config=$CONFIGDIR
+hash -d data=$DATADIR
+hash -d state=$STATEDIR
+hash -d zplugins=$ZPLUGDIR
+
 # Homebrew
 # --------------------------------------------------------------------------
 # Use Bootsnap to speed up repeated brew calls
@@ -69,6 +75,8 @@ elif [[ -d /opt/homebrew ]]; then
 else
     export HOMEBREW_BASE=/usr/local
 fi
+
+hash -d brew=$HOMEBREW_BASE
 
 export HOMEBREW_PYTHON_VERSION="3.13"
 
@@ -121,11 +129,11 @@ path=(
     $DOTFILES/bin
 
     # PostgreSQL
-    $HOMEBREW_BASE/opt/postgresql@15/bin(/N)
+    ~brew/opt/postgresql@15/bin(/N)
 
     # Rust
     $CARGO_HOME/bin
-    $HOMEBREW_BASE/opt/rustup/bin(/N)
+    ~brew/opt/rustup/bin(/N)
 
     # Python
     $_python_user_path
@@ -133,12 +141,12 @@ path=(
     # Put python before $HOMEBREW_BASE/bin since some of its programs, like pip,
     # will eventually be overridden with things in $HOMEBREW_BASE/bin
     # https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
-    $HOMEBREW_BASE/opt/python@${HOMEBREW_PYTHON_VERSION}/{libexec/,}bin(/N)
+    ~brew/opt/python@${HOMEBREW_PYTHON_VERSION}/{libexec/,}bin(/N)
 
     # coreutils and gnu-sed
-    $HOMEBREW_BASE/opt/{coreutils,gnu-sed}/libexec/gnubin(/N)
+    ~brew/opt/{coreutils,gnu-sed}/libexec/gnubin(/N)
 
-    $HOMEBREW_BASE/{s,}bin
+    ~brew/{s,}bin
     /usr/local/{s,}bin
     $path
 
