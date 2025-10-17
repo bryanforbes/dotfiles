@@ -62,19 +62,19 @@ vim.api.nvim_create_autocmd({ 'InsertEnter', 'WinLeave' }, {
 
 -- If I enter a command that causes the "Press ENTER" prompt
 -- to show, I want that to stay open until I press enter
-vim.api.nvim_create_autocmd({ 'CmdlineEnter' }, {
-  group = group,
-  callback = function(args)
-    local id
-    id = vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorMoved' }, {
-      callback = function()
-        vim.api.nvim_del_autocmd(id)
-        vim.opt.messagesopt:remove('hit-enter')
-      end,
-    })
-    vim.opt.messagesopt:append('hit-enter')
-  end,
-})
+-- vim.api.nvim_create_autocmd({ 'CmdlineEnter' }, {
+--   group = group,
+--   callback = function(args)
+--     local id
+--     id = vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorMoved' }, {
+--       callback = function()
+--         vim.api.nvim_del_autocmd(id)
+--         vim.opt.messagesopt:remove('hit-enter')
+--       end,
+--     })
+--     vim.opt.messagesopt:append('hit-enter')
+--   end,
+-- })
 
 -- Show a notification when starting/stopping macro recording
 vim.api.nvim_create_autocmd({ 'RecordingEnter', 'RecordingLeave' }, {
@@ -91,3 +91,15 @@ vim.api.nvim_create_autocmd({ 'RecordingEnter', 'RecordingLeave' }, {
     end
   end,
 })
+
+vim.api.nvim_create_user_command('ReloadNeosolarized', function()
+  for name, _ in pairs(package.loaded) do
+    if name:match('^nvim%-neosolarized') or name == 'user.config.theme' then
+      package.loaded[name] = nil
+    end
+
+    vim.schedule(function()
+      require('user.config.theme')
+    end)
+  end
+end, {})
