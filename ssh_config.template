@@ -1,0 +1,40 @@
+# Rather than managing my ~/.ssh/config file with a symlink, I use this template
+# to minimize the risk of leaking sensitive information.
+
+# These will be applied to all SSH connections and can't be overridden
+# later in this file
+Host *
+  Compression yes
+
+  # Keep session alive across NAT / Wi-Fi
+  ServerAliveInterval 30       # send heartbeat every 30 seconds
+  ServerAliveCountMax 3        # disconnect if no response after 3 heartbeats (90s)
+  TCPKeepAlive yes             # OS-level keepalives
+
+  # In order for these to work, the server must accept them as well
+  SendEnv COLORTERM TERM_PROGRAM TERM_PROGRAM_VERSION ZSH_TMUX_AUTOSTART
+
+# Orbstack wants this at the top, but the above global settings do not
+# override anything in it
+Include ~/.orbstack/ssh/config
+
+# PER-HOST CONFIGURATION BLOCKS
+Host example
+  User paul
+  Port 424242
+  HostName example.com
+# END OF PER-HOST CONFIGURATION BLOCKS
+
+# Any host that should not autostart tmux sessions by default
+# should have a block like this
+# Match exec "test -z \"$ZSH_TMUX_AUTOSTART\"" originalhost host_that_should_not_autostart
+#   SetEnv ZSH_TMUX_AUTOSTART=0
+
+# Autostart tmux sessions if the environment variable is not already set
+Match exec "test -z \"$ZSH_TMUX_AUTOSTART\""
+  SetEnv ZSH_TMUX_AUTOSTART=1
+
+# These will be applied to all SSH connections unless a previous block
+# has already set them
+Host *
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"

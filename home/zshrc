@@ -431,6 +431,10 @@ alias tls='tmux list-sessions'
 alias tas='tmux attach -t'
 alias tks='tmux kill-session -t'
 
+# ssh
+alias ssh-no-tmux='ZSH_TMUX_AUTOSTART=0 ssh'
+alias ssh-tmux='ZSH_TMUX_AUTOSTART=1 ssh'
+
 # Colorize ls
 if (( $+commands[dircolors] )); then
     alias ls="${aliases[ls]:-ls} --group-directories-first --color=auto"
@@ -680,18 +684,14 @@ _zsh_tmux_update_environment_preexec() {
 }
 
 if (( ${+commands[tmux]} )); then
-    if [[ -z "$ZSH_TMUX_AUTOSTART" ]]; then
-        ZSH_TMUX_AUTOSTART=${${SSH_TTY:+1}:-0}
-    fi
-
     if [[ "$ZSH_TMUX_AUTOSTART" == "1" && -z "$TMUX" && -z "$VIM" && -z "$EMACS" && -z "$INSIDE_EMACS" && "$TERM_PROGRAM" != "vscode" ]]; then
+        export ZSH_TMUX_AUTOSTARTED=1
+
         tmux start-server
 
         if ! tmux has-session 2> /dev/null; then
             tmux new-session -d -s default \; set-option -t default destroy-unattached off &> /dev/null
         fi
-
-        export ZSH_TMUX_AUTOSTARTED=1
 
         # Attach to the last session used. (detach first)
         exec tmux attach-session -d
