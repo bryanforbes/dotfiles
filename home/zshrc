@@ -27,6 +27,9 @@ fpath=(
     $DOTFILES/zsh/functions
     $ZPLUGDIR/zsh-users/zsh-completions/src
     $ZPLUGDIR/sindresorhus/pure
+    /usr/local/share/zsh/site-functions
+    /usr/share/zsh/vendor-functions
+    /usr/share/zsh/vendor-completions
     $fpath
 )
 
