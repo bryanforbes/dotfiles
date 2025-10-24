@@ -9,11 +9,13 @@ brew 'neovim-remote'                            # control nvim from shell
 brew 'node'                                     # NodeJS
 brew "python@#{ENV['HOMEBREW_PYTHON_VERSION']}" # update from stock python
 brew 'poetry'                                   # python project management
+brew 'uv'                                       # python project management
 brew 'ripgrep'                                  # better grep
 brew 'stylua'                                   # lua file formatting
 brew 'tree-sitter-cli'                          # tree-sitter CLI
 brew 'tmux'                                     # terminal multiplexer
 brew 'zsh'                                      # newer zsh
+brew 'fswatch'                                  # file change watcher
 
 if OS.mac?
   brew 'coreutils'           # GNU coreutils
@@ -21,6 +23,7 @@ if OS.mac?
   brew 'gnu-sed'             # GNU sed
   brew 'gnu-tar'             # GNU tar
   brew 'gnupg'               # update from stock gnupg
+  brew 'util-linux'          # setsid for completion reloading
   cask 'font-iosevka'        # iosevka font
   cask 'sf-symbols'          # UI fonts from Apple
   cask 'ghostty'             # Terminal emulator

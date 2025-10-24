@@ -33,14 +33,22 @@ fpath=(
     $fpath
 )
 
-# Autoload all user shell functions, following symlinks
+# Autoload all user shell functions (excluding completion functions),
+# following symlinks. Completion functions are handled by compinit.
 # ------------------------------------------------------------------------
-if [[ -d $DOTFILES/zsh/functions ]]; then
-    for func in $DOTFILES/zsh/functions/*(N:t); autoload -Uz $func
-fi
-if [[ -d $ZDATADIR/functions ]]; then
-    for func in $ZDATADIR/functions/*(N:t); autoload -Uz $func
-fi
+() {
+    setopt localoptions extendedglob
+
+    local func_dirs=("$@")
+
+    for dir in $func_dirs(/N); do
+        for func in $dir/*(N:t); do
+            if [[ $func != _* ]]; then
+                autoload -Uz "$func"
+            fi
+        done
+    done
+} "$DOTFILES/zsh/functions" "$ZFUNCDIR"
 
 # Plugin init
 # ----------------------------------------------------------------------------
@@ -125,7 +133,7 @@ fi
 # Compile the zcompfile in the background
 {
     # Compile zcompdump, if modified, to increase startup speed.
-    if [[ -s "$ZCOMPFILE" && (! -s "${ZCOMPFILE}.zwc" || "$ZCOMPFILE" -nt "${ZCOMPFILE}.zwc") ]] then
+    if [[ -s "$ZCOMPFILE" && (! -s "${ZCOMPFILE}.zwc" || "$ZCOMPFILE" -nt "${ZCOMPFILE}.zwc") ]]; then
         if command mkdir "${ZCOMPFILE}.zwc.lock" 2>/dev/null; then
             zcompile "$ZCOMPFILE"
             command rmdir  "${ZCOMPFILE}.zwc.lock" 2>/dev/null
@@ -608,9 +616,9 @@ fi
 # ------------------------------------------------------------------------
 
 if (( ${+commands[mise]} )); then
-    cache_file="${ZCACHEDIR}/mise-shellenv-cache.zsh"
+    cache_file="${ZCACHEDIR}/shellenv/mise.zsh"
 
-    if [[ "$commands[mise]" -nt "$cache_file" || ! -s "$cache_file" ]]; then
+    if [[ "$commands[mise]:A" -nt "$cache_file" || ! -s "$cache_file" ]]; then
         mkdir -p "$cache_file:h"
         # Cache the result.
         mise activate zsh >! "$cache_file" 2> /dev/null
@@ -707,6 +715,13 @@ if (( ${+commands[tmux]} )); then
 
     unset ZSH_TMUX_AUTOSTART
 fi
+
+ZSH_RELOAD_COMPLETIONS_ZCOMPDUMP="$ZCOMPFILE"
+ZSH_RELOAD_COMPLETIONS_DEBUG=1
+if [[ -x "$HOMEBREW_BASE/opt/util-linux/bin/setsid" ]]; then
+    ZSH_RELOAD_COMPLETIONS_SETSID="$HOMEBREW_BASE/opt/util-linux/bin/setsid"
+fi
+source $DOTFILES/zsh/reload-completions/reload-completions.zsh
 
 # Local config
 # --------------------------------------------------------------------------
