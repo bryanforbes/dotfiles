@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+0=${(%):-%N}
+
 setopt err_exit pipe_fail no_bg_nice no_unset extendedglob
 
 # Purpose: ensure the watcher detaches itself from any invoking terminal.

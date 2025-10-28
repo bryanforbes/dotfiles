@@ -717,6 +717,7 @@ if (( ${+commands[tmux]} )); then
 fi
 
 ZSH_RELOAD_COMPLETIONS_ZCOMPDUMP="$ZCOMPFILE"
+ZSH_RELOAD_COMPLETIONS_STATE_DIR="$STATEDIR/zsh/reload-completions"
 ZSH_RELOAD_COMPLETIONS_DEBUG=1
 if [[ -x "$HOMEBREW_BASE/opt/util-linux/bin/setsid" ]]; then
     ZSH_RELOAD_COMPLETIONS_SETSID="$HOMEBREW_BASE/opt/util-linux/bin/setsid"
