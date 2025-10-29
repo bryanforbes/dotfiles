@@ -128,6 +128,9 @@ path=(
     $HOME/bin
     $DOTFILES/bin
 
+    # npm global packages (corepack will install here, too)
+    ~data/npm/bin
+
     # PostgreSQL
     ~brew/opt/postgresql@15/bin(/N)
 

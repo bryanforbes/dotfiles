@@ -102,6 +102,7 @@ dotfiles-home() {
     makedir $CACHEDIR/tmux
     makedir $DATADIR/nvim
     makedir $STATEDIR/nvim
+    makedir $DATADIR/npm
     makedir $ZCOMPDIR
     makedir $ZPLUGDIR
     makedir $ZFUNCDIR
@@ -193,36 +194,29 @@ dotfiles-python() {
 
 # Update global npm packages
 dotfiles-node() {
-    if [[ ! -w $HOMEBREW_BASE/bin ]]; then
-        log "Skipping node update (no write permissions)"
+    local npm_prefix="${$(npm config get prefix)%/:A}"
+    if [[ -z "$npm_prefix" || "$npm_prefix" != "$DATADIR/"* ]]; then
+        err "Please run \"npm config set prefix '\${DATADIR}/npm'\""
         return
     fi
 
-    # Enable pnpm/yarn/etc.
-    if (( $+commands[corepack] )); then
-        log "Enabling corepack..."
-        corepack enable 2>&1 > /dev/null
-
-        log "Updating pnpm completions..."
-        update_completions pnpm completion zsh
+    if [[ "${commands[npm]}" == "$HOMEBREW_BASE/"* ]]; then
+        log "Installing npm and corepack..."
+        npm install -g npm corepack >/dev/null 2>&1
+        rehash
     fi
 
-    local node_path=$1
-    if [[ -z $node_path ]]; then
-        log "Updating global node packages..."
-        node_path=$HOMEBREW_BASE/bin
-    fi
+    local npm_bin="${npm_prefix}/bin"
+    local npm_cmd="${npm_bin}/npm"
 
-    # if a node_path was provided, the function was called from another
-    # function, so don't print the top-level message
-    if [[ ! -x $node_path/npm ]]; then
-        err "No npm executable"
+    if [[ ! -x "$npm_cmd" ]]; then
+        err "No npm executable at '$npm_cmd'"
         return
     fi
 
     # get list of outdated global packages
-    local mods=($($node_path/npm --registry=https://registry.npmjs.org outdated --location=global --parseable))
-    for mod in $mods; do
+    local -a mods=($("$npm_cmd" --registry=https://registry.npmjs.org outdated --location=global --parseable))
+    for mod in "${mods[@]}"; do
         # extract current and latest fields
         array=(${(@s/:/)mod})
         currentPkg=$array[3]
@@ -252,10 +246,37 @@ dotfiles-node() {
             (( latest[3] > current[3] ));
                     };
                 }; then
-            $node_path/npm install --registry=https://registry.npmjs.org --progress=false --location=global $latestPkg > /dev/null
+            "$npm_cmd" install --registry=https://registry.npmjs.org --progress=false --location=global $latestPkg > /dev/null
             logSub "Installed $latestPkg"
         fi
     done
+
+    # Enable pnpm/yarn/etc.
+    if (( ${+commands[corepack]} )); then
+        local -a corepack_commands=(pnpm pnpx yarn yarnpkg)
+        # Collect broken/existing shim links (nullglob + broken symlinks qualifier)
+        local -a corepack_broken=( ${npm_bin}/${^corepack_commands}(-@N) )
+        local -a corepack_existing=( ${npm_bin}/${^corepack_commands}(@N) )
+        local -i enable_corepack=0
+
+        if (( ${#corepack_broken[@]} )); then
+            logSub -c $fg_bold[yellow] "Repairing corepack..."
+            rm -f -- "${corepack_broken[@]}"
+            enable_corepack=1
+        elif (( ! ${#corepack_existing[@]} )); then
+            logSub "Enabling corepack..."
+            enable_corepack=1
+        elif [[ -e "${npm_bin}/pnpm" && "${commands[corepack]:A}" -nt "${npm_bin}/pnpm" ]]; then
+            logSub "Updating corepack..."
+            enable_corepack=1
+        fi
+
+        if (( enable_corepack )); then
+            corepack enable >/dev/null 2>&1
+        fi
+
+        update_completions pnpm completion zsh
+    fi
 }
 
 # Update tmux plugins
