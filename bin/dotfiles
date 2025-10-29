@@ -6,6 +6,40 @@ export HOMEBREW_AUTO_UPDATE_SECS=300
 export HOMEBREW_BUNDLE_NO_UPGRADE=1
 export HOMEBREW_BUNDLE_FILE="${DOTFILES}/Brewfile"
 
+typeset -i completions_updated=0
+
+update_completions() {
+    # Require at least one argument
+    if (( $# == 0 )); then
+        return 1
+    fi
+
+    local cmd=$1
+    shift
+
+    # Exit if the command does not exist
+    if (( ! ${+commands[$cmd]} )); then
+        return 0
+    fi
+
+    local function_file="${ZCOMPDIR}/_${cmd}"
+    local cmd_path="$commands[$cmd]:A"
+
+    # Only regenerate completions if the file is missing or stale
+    if [[ ! -s $function_file || $cmd_path -nt $function_file ]]; then
+        logSub "Updating completions for $cmd... "
+
+        mkdir -p "${function_file:h}"  # Ensure the directory exists
+
+        if ! "$cmd" "$@" >! "$function_file" 2>/dev/null; then
+            err "Failed to update completions for $cmd"
+            return 1
+        fi
+
+        completions_updated=1
+    fi
+}
+
 generate_terminfo() {
     local term_name="$1"
 
@@ -105,9 +139,7 @@ dotfiles-brew() {
     fi
 
     # Update mise zsh completions
-    if (( $+commands[mise] )); then
-        mise completions zsh >! $ZCOMPDIR/_mise
-    fi
+    update_completions mise completions zsh
 }
 
 # Update zsh plugins
@@ -155,8 +187,8 @@ dotfiles-python() {
     #     $python_user_base/bin/poetry self update
     # fi
 
-    log "Updating poetry completions..."
-    poetry completions zsh > $ZCOMPDIR/_poetry
+    update_completions poetry completions zsh
+    update_completions uv generate-shell-completion zsh
 }
 
 # Update global npm packages
@@ -172,7 +204,7 @@ dotfiles-node() {
         corepack enable 2>&1 > /dev/null
 
         log "Updating pnpm completions..."
-        pnpm completion zsh >! $ZCOMPDIR/_pnpm
+        update_completions pnpm completion zsh
     fi
 
     local node_path=$1
@@ -351,6 +383,16 @@ else
     dotfiles-tmux
     dotfiles-vim
     dotfiles-bat
+fi
+
+if (( completions_updated )); then
+    log "Rebuilding zsh completions cache..."
+
+    autoload -Uz compinit
+    compinit -i -d "${ZCOMPFILE}.new"
+    zcompile "${ZCOMPFILE}.new"
+    mv -f "${ZCOMPFILE}.new.zwc" "${ZCOMPFILE}.zwc"
+    mv -f "${ZCOMPFILE}.new" "${ZCOMPFILE}"
 fi
 
 log "Done"

@@ -122,6 +122,38 @@ else
     touch "$ZCOMPFILE"
 fi
 
+# Load zstat builtin for file modification time checking
+# -F <module> <features> limits features that are loaded from the module
+zmodload -F zsh/stat b:zstat
+
+typeset -gi __ZCOMPDUMP_LAST_MTIME=0
+
+_zsh_reload_completions_if_needed() {
+    local -A stats=()
+
+    # Get the last modification time of the dump file
+    if ! zstat -H stats +mtime "$ZCOMPFILE" 2>/dev/null; then
+        print "Error: cannot stat $file" >&2
+        return
+    fi
+
+    if (( $stats[mtime] > $__ZCOMPDUMP_LAST_MTIME )); then
+        # The first time this runs (when the shell starts up), the last mtime
+        # will be 0, so we skip reloading completions because they've been
+        # loaded above.
+        if (( $__ZCOMPDUMP_LAST_MTIME != 0 )); then
+            compinit -u -d "$ZCOMPFILE"
+            return
+        fi
+
+        __ZCOMPDUMP_LAST_MTIME=$stats[mtime]
+    fi
+}
+
+# Check if zcompdump needs to be reloaded before each prompt
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _zsh_reload_completions_if_needed
+
 # Kitty shell integration
 if [[ -n "$KITTY_INSTALLATION_DIR" ]]; then
     export KITTY_SHELL_INTEGRATION="enabled"
