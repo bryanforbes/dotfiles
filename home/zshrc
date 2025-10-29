@@ -646,7 +646,6 @@ fi
 
 # mise
 # ------------------------------------------------------------------------
-
 if (( ${+commands[mise]} )); then
     cache_file="${ZCACHEDIR}/shellenv/mise.zsh"
 
@@ -658,6 +657,15 @@ if (( ${+commands[mise]} )); then
 
     source "$cache_file"
     unset cache_file
+
+    # Ties MISE_ENV and mise_env together like PATH and path
+    typeset -xTU MISE_ENV mise_env ','
+
+    if [[ "$OSTYPE" == darwin* ]]; then
+        mise_env+=('macos')
+    elif [[ "$OSTYPE" == linux* ]]; then
+        mise_env+=('linux')
+    fi
 fi
 
 # mosh
