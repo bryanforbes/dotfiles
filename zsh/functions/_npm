@@ -1,0 +1,21 @@
+#compdef npm
+
+# `npm completion` outputs this completion, but it's designed
+# to go directly in `.zshrc`. In order for it to be lazy-loadable,
+# it must be wrapped with compdef and the funcstack conditional.
+
+_npm() {
+    local si=$IFS
+    compadd -- $(COMP_CWORD=$((CURRENT-1)) \
+                    COMP_LINE=$BUFFER \
+                    COMP_POINT=0 \
+                    npm completion -- "${words[@]}" \
+                    2>/dev/null)
+    IFS=$si
+}
+
+if [ "$funcstack[1]" = "_npm" ]; then
+    _npm "$@"
+else
+    compdef _npm npm
+fi
