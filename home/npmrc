@@ -1,2 +1,2 @@
 ignore-scripts=true
-prefix=${DATADIR}/npm
+prefix=${XDG_DATA_HOME}/npm

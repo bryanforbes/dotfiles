@@ -21,33 +21,36 @@
 [[ -z "$LANG" ]] && export LANG=en_US.UTF-8
 [[ -z "$LC_ALL" ]] && export LC_ALL=$LANG
 
-# Cache and temp files
+# Environment variables
 # ----------------------------------------------------------------------------
-export DOTFILES=$HOME/.dotfiles
-export CACHEDIR=$HOME/.cache
-export CONFIGDIR=$HOME/.config
-export DATADIR=$HOME/.local/share
-export STATEDIR=$HOME/.local/state
+export DOTFILES=${HOME%/}/.dotfiles
 
-export XDG_CACHE_HOME=$CACHEDIR
-export XDG_CONFIG_HOME=$CONFIGDIR
-export XDG_DATA_HOME=$DATADIR
-export XDG_STATE_HOME=$STATEDIR
+# Rule of thumb:
+# - XDG_CONFIG_HOME: configuration files
+# - XDG_DATA_HOME: user data files (databases, downloads, plugins, etc.)
+# - XDG_STATE_HOME: non-disposable state files (history, logs, etc.)
+# - XDG_CACHE_HOME: disposable cache files (temporary files,
+#   performance-related, and data that can be recreated without loss)
+export XDG_CONFIG_HOME=${HOME%/}/.config
+export XDG_DATA_HOME=${HOME%/}/.local/share
+export XDG_STATE_HOME=${HOME%/}/.local/state
+export XDG_CACHE_HOME=${HOME%/}/.cache
 
-export ZCACHEDIR=$CACHEDIR/zsh
-export ZDATADIR=$DATADIR/zsh
-export ZPLUGDIR=$ZCACHEDIR/plugins
-export ZCOMPDIR=$ZCACHEDIR/completions
+export ZDATADIR=$XDG_DATA_HOME/zsh
+export ZSTATEDIR=$XDG_STATE_HOME/zsh
+export ZCACHEDIR=$XDG_CACHE_HOME/zsh
+
+export ZPLUGDIR=$ZDATADIR/plugins
 export ZFUNCDIR=$ZDATADIR/functions
 
-[[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
-[[ -d "$CONFIGDIR" ]] || mkdir -p "$CONFIGDIR"
-[[ -d "$DATADIR" ]] || mkdir -p "$DATADIR"
-[[ -d "$STATEDIR" ]] || mkdir -p "$STATEDIR"
+[[ -d "$XDG_CACHE_HOME" ]] || mkdir -p "$XDG_CACHE_HOME"
+[[ -d "$XDG_CONFIG_HOME" ]] || mkdir -p "$XDG_CONFIG_HOME"
+[[ -d "$XDG_DATA_HOME" ]] || mkdir -p "$XDG_DATA_HOME"
+[[ -d "$XDG_STATE_HOME" ]] || mkdir -p "$XDG_STATE_HOME"
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
 [[ -d "$ZDATADIR" ]] || mkdir -p "$ZDATADIR"
+[[ -d "$ZSTATEDIR" ]] || mkdir -p "$ZSTATEDIR"
 [[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
-[[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
 [[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
 
 if [[ -d "$TMPDIR" ]]; then
@@ -55,10 +58,10 @@ if [[ -d "$TMPDIR" ]]; then
     [[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
 fi
 
-hash -d cache=$CACHEDIR
-hash -d config=$CONFIGDIR
-hash -d data=$DATADIR
-hash -d state=$STATEDIR
+hash -d config=$XDG_CONFIG_HOME
+hash -d data=$XDG_DATA_HOME
+hash -d state=$XDG_STATE_HOME
+hash -d cache=$XDG_CACHE_HOME
 hash -d zplugins=$ZPLUGDIR
 
 # Homebrew
@@ -92,7 +95,9 @@ fi
 
 # Tmux
 # --------------------------------------------------------------------------
-export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
+export TMUX_DATA_HOME="$XDG_DATA_HOME/tmux"
+export TMUX_STATE_HOME="$XDG_STATE_HOME/tmux"
+export TMUX_PLUGIN_MANAGER_PATH="$TMUX_DATA_HOME/plugins"
 
 # Rust
 export CARGO_HOME="$XDG_DATA_HOME/cargo"

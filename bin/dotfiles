@@ -22,7 +22,7 @@ update_completions() {
         return 0
     fi
 
-    local function_file="${ZCOMPDIR}/_${cmd}"
+    local function_file="${ZFUNCDIR}/_${cmd}"
     local cmd_path="$commands[$cmd]:A"
 
     # Only regenerate completions if the file is missing or stale
@@ -68,19 +68,55 @@ fixterm() {
     generate_terminfo "tmux"
 }
 
+migrate-xdg() {
+    # Zsh history
+    if [[ ! -f "$XDG_STATE_HOME/zsh/zhistory" && -f "$XDG_CACHE_HOME/zsh/zhistory" ]]; then
+        logSub "Migrating zsh history to state directory..."
+        mkdir -p "$XDG_STATE_HOME/zsh"
+        chmod 700 "$XDG_STATE_HOME/zsh"
+        cp -pR "$XDG_CACHE_HOME/zsh/zhistory" "$XDG_STATE_HOME/zsh/zhistory.bak"
+        ln "$XDG_CACHE_HOME/zsh/zhistory" "$XDG_STATE_HOME/zsh/zhistory"
+    fi
+
+    # Completions
+    local completions=( "$XDG_CACHE_HOME/zsh/completions"/*(N) )
+    if (( ${#completions[@]} )); then
+        logSub "Migrating zsh completions to data directory..."
+        mkdir -p "$XDG_DATA_HOME/zsh/functions"
+        mv "$XDG_CACHE_HOME/zsh/completions"/* "$XDG_DATA_HOME/zsh/functions"
+    fi
+
+    # Resurrect state files
+    if [[ ! -d "$XDG_STATE_HOME/tmux/resurrect" && -d "$XDG_CACHE_HOME/tmux/resurrect" ]]; then
+        logSub "Migrating tmux resurrect data to state directory..."
+        mkdir -p "$XDG_STATE_HOME/tmux"
+        chmod 700 "$XDG_STATE_HOME/tmux"
+        mv "$XDG_CACHE_HOME/tmux/resurrect" "$XDG_STATE_HOME/tmux"
+        chmod 700 "$XDG_STATE_HOME/tmux/resurrect"
+    fi
+
+    # Tmux plugins
+    if [[ ! -d "$XDG_DATA_HOME/tmux/plugins/tpm" ]]; then
+        logSub "Migrating tmux plugins data to state directory..."
+        mkdir -p "$XDG_DATA_HOME/tmux/plugins"
+        git clone https://github.com/tmux-plugins/tpm "$XDG_DATA_HOME/tmux/plugins/tpm"
+        "$XDG_DATA_HOME/tmux/plugins/tpm/bin/install_plugins" >/dev/null 2>&1 > /dev/null
+    fi
+}
+
 # Rebuild bat cache
 dotfiles-bat() {
     log "Rebuilding bat cache..."
     bat cache --build 2>&1 > /dev/null
 }
 
-# Link dotfiles into $HOME and $CONFIGDIR, update terminfo
+# Link dotfiles into $HOME and $XDG_CONFIG_HOME, update terminfo
 dotfiles-home() {
     log "Updating home directory files..."
 
-    makedir $CONFIGDIR
+    makedir "$XDG_CONFIG_HOME"
 
-    for file in $HOME/.[a-z]*(@,N) $CONFIGDIR/[a-zA-Z]*(@,N); do
+    for file in $HOME/.[a-z]*(@,N) $XDG_CONFIG_HOME/[a-zA-Z]*(@,N); do
         if [[ ! -e $file ]]; then
             rm $file
             logSub "Removed invalid link $file"
@@ -92,24 +128,26 @@ dotfiles-home() {
     done
 
     for file in $DOTFILES/config/*(.,/); do
-        link $file $CONFIGDIR/$file:t
+        link "$file" "$XDG_CONFIG_HOME/$file:t"
     done
 
     if is-darwin; then
         link $DOTFILES/hammerspoon $HOME/.hammerspoon
     fi
 
-    makedir $CACHEDIR/tmux
-    makedir $DATADIR/nvim
-    makedir $STATEDIR/nvim
-    makedir $DATADIR/npm
-    makedir $ZCOMPDIR
-    makedir $ZPLUGDIR
-    makedir $ZFUNCDIR
+    makedir "$XDG_STATE_HOME/tmux"
+    makedir "$XDG_DATA_HOME/tmux"
+    makedir "$XDG_STATE_HOME/nvim"
+    makedir "$XDG_DATA_HOME/nvim"
+    makedir "$XDG_DATA_HOME/npm"
+    makedir "$ZPLUGDIR"
+    makedir "$ZFUNCDIR"
 
     # Fix the terminal definition so that C-H works properly in neovim. This
     # function may also need to be run for the tmux terminal type.
     fixterm
+
+    migrate-xdg
 }
 
 dotfiles-brew() {
@@ -195,8 +233,8 @@ dotfiles-python() {
 # Update global npm packages
 dotfiles-node() {
     local npm_prefix="${$(npm config get prefix)%/:A}"
-    if [[ -z "$npm_prefix" || "$npm_prefix" != "$DATADIR/"* ]]; then
-        err "Please run \"npm config set prefix '\${DATADIR}/npm'\""
+    if [[ -z "$npm_prefix" || "$npm_prefix" != "$XDG_DATA_HOME/"* ]]; then
+        err "Please run \"npm config set prefix '\${XDG_DATA_HOME}/npm'\""
         return
     fi
 
@@ -310,8 +348,8 @@ dotfiles-tmux() {
 # Update vim plugins
 dotfiles-vim() {
     # Migrate neovim state files from data directory to state directory
-    local nvim_data_dir="$DATADIR/nvim"
-    local nvim_state_dir="$STATEDIR/nvim"
+    local nvim_data_dir="$XDG_DATA_HOME/nvim"
+    local nvim_state_dir="$XDG_STATE_HOME/nvim"
     local migration_files=("swap" "backup" "undo" "shada" "trust" "log" "blink" "lazy/readme" "lazy/pkg-cache.lua" "lazy/state.json")
     local files_to_migrate=()
 

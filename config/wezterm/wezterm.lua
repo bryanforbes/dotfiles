@@ -1,10 +1,12 @@
 local wezterm = require('wezterm')
 local mux = wezterm.mux
 
-wezterm.add_to_config_reload_watch_list('~/.dotfiles/config/wezterm/')
+wezterm.add_to_config_reload_watch_list(
+  os.getenv('XDG_CONFIG_HOME') .. '/wezterm/'
+)
 
 ---@type string
-local cache_dir = os.getenv('HOME') .. '/.cache/wezterm'
+local cache_dir = os.getenv('XDG_CACHE_HOME') .. '/wezterm'
 ---@type string
 local window_size_cache_path = cache_dir .. '/window_size_cache.txt'
 

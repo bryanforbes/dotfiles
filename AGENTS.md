@@ -94,10 +94,10 @@ The ZSH configuration is split across multiple files with a specific load order:
 Core environment variables defined in `home/zprofile`:
 - `DOTFILES` - Points to `~/.dotfiles`
 - `HOMEBREW_BASE` - Homebrew installation path (varies by system/arch)
-- `CONFIGDIR` - `~/.config` (XDG_CONFIG_HOME)
-- `CACHEDIR` - `~/.cache` (XDG_CACHE_HOME)
-- `DATADIR` - `~/.local/share` (XDG_DATA_HOME)
-- `STATEDIR` - `~/.local/state` (XDG_STATE_HOME)
+- `XDG_CONFIG_HOME` - Configuration directory (default `~/.config`)
+- `XDG_CACHE_HOME` - Cache directory (default `~/.cache`)
+- `XDG_DATA_HOME` - User data directory (default `~/.local/share`)
+- `XDG_STATE_HOME` - State directory (default `~/.local/state`)
 - `HOMEBREW_PYTHON_VERSION` - Python version to use (e.g., "3.13")
 
 ### Key Directories
