@@ -642,19 +642,11 @@ if (( ${+commands[rg]} )); then
     export RIPGREP_CONFIG_PATH=$HOME/.config/ripgrep/ripgreprc
 fi
 
-# mise
+# mise configuration (activation at end of file)
 # ------------------------------------------------------------------------
 if (( ${+commands[mise]} )); then
-    cache_file="${ZCACHEDIR}/shellenv/mise.zsh"
-
-    if [[ "$commands[mise]:A" -nt "$cache_file" || ! -s "$cache_file" ]]; then
-        mkdir -p "$cache_file:h"
-        # Cache the result.
-        mise activate zsh >! "$cache_file" 2> /dev/null
-    fi
-
-    source "$cache_file"
-    unset cache_file
+    export MISE_EXPERIMENTAL=1
+    # export MISE_AGGRESSIVE=1
 
     # Ties MISE_ENV and mise_env together like PATH and path
     typeset -xTU MISE_ENV mise_env ','
@@ -664,6 +656,22 @@ if (( ${+commands[mise]} )); then
     elif [[ "$OSTYPE" == linux* ]]; then
         mise_env+=('linux')
     fi
+
+    cache_file="${ZCACHEDIR}/shellenv/mise.zsh"
+
+    if [[ "$commands[mise]:A" -nt "$cache_file" || ! -s "$cache_file" ]]; then
+        mkdir -p "$cache_file:h"
+        # Cache the result.
+        { mise activate zsh | sed '/^export PATH=/d' } >! "$cache_file" 2> /dev/null
+    fi
+
+    _mise_hook_precmd() {}
+    _mise_hook_chpwd() {}
+    _mise_hook() {}
+    mise() {}
+
+    source "$cache_file"
+    unset cache_file
 fi
 
 # mosh
@@ -752,6 +760,18 @@ if (( ${+commands[tmux]} )); then
     fi
 
     unset ZSH_TMUX_AUTOSTART
+fi
+
+# mise activation (this needs to be last)
+# ------------------------------------------------------------------------
+if (( ${+commands[mise]} )); then
+    # Remove the following when 2025.11.1 is released
+    _mise_hook_precmd() {}
+    _mise_hook_chpwd() {}
+    _mise_hook() {}
+    mise() {}
+
+    source <(mise activate zsh)
 fi
 
 # Local config

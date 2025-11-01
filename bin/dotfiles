@@ -14,6 +14,12 @@ update_completions() {
         return 1
     fi
 
+    local forced=0
+    if [[ "$1" == "-f" ]]; then
+        forced=1
+        shift
+    fi
+
     local cmd=$1
     shift
 
@@ -26,7 +32,7 @@ update_completions() {
     local cmd_path="$commands[$cmd]:A"
 
     # Only regenerate completions if the file is missing or stale
-    if [[ ! -s $function_file || $cmd_path -nt $function_file ]]; then
+    if (( forced )) || [[ ! -s $function_file || $cmd_path -nt $function_file ]]; then
         logSub "Updating completions for $cmd... "
 
         mkdir -p "${function_file:h}"  # Ensure the directory exists
@@ -176,9 +182,45 @@ dotfiles-brew() {
     if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
         rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
     fi
+}
+
+dotfiles-mise() {
+    global-mise() { mise --cd "$DOTFILES" "$@" 2>/dev/null; }
+
+    local -a install_tools
+    local -a upgrade_tools
+
+    for line in ""${(@f)$(global-mise outdated --bump)}""; do
+        local name="${line%%[[:space:]]*}"
+        if [[ "$line" == *"[MISSING]"* ]]; then
+            install_tools+=("$name")
+        elif [[ -n "$line" ]]; then
+            upgrade_tools+=("$name")
+        fi
+    done
+
+    if (( ${#install_tools[@]} )); then
+        log "Installing missing mise tools: ${install_tools[@]}..."
+        global-mise install "${install_tools[@]}"
+    fi
+
+    if (( ${#upgrade_tools[@]} )); then
+        log "Updating outdated mise tools: ${upgrade_tools[@]}..."
+        global-mise upgrade "${upgrade_tools[@]}"
+    fi
+
+    rehash
+
+    local mise_args
+    if [[ " ${install_tools[@]} ${upgrade_tools[@]} " ==  *" usage "* ]]; then
+        mise_args="-f"
+    fi
 
     # Update mise zsh completions
-    update_completions mise completions zsh
+    update_completions "$mise_args" mise completions zsh
+
+    update_completions poetry completions zsh
+    update_completions uv generate-shell-completion zsh
 }
 
 # Update zsh plugins
@@ -225,9 +267,6 @@ dotfiles-python() {
     #     log "Updating poetry..."
     #     $python_user_base/bin/poetry self update
     # fi
-
-    update_completions poetry completions zsh
-    update_completions uv generate-shell-completion zsh
 }
 
 # Update global npm packages
@@ -436,6 +475,7 @@ if [[ -n $1 ]]; then
 else
     dotfiles-home
     dotfiles-brew
+    dotfiles-mise
     dotfiles-zsh
     dotfiles-python
     dotfiles-node

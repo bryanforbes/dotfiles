@@ -2,4 +2,6 @@
 experimental = true
 
 [tools]
+poetry = "latest"
 usage = "latest"
+uv = "latest"

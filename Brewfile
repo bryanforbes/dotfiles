@@ -8,8 +8,6 @@ brew 'neovim'                                   # better vim
 brew 'neovim-remote'                            # control nvim from shell
 brew 'node'                                     # NodeJS
 brew "python@#{ENV['HOMEBREW_PYTHON_VERSION']}" # update from stock python
-brew 'poetry'                                   # python project management
-brew 'uv'                                       # python project management
 brew 'ripgrep'                                  # better grep
 brew 'stylua'                                   # lua file formatting
 brew 'tree-sitter-cli'                          # tree-sitter CLI
