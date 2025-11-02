@@ -771,7 +771,7 @@ if (( ${+commands[mise]} )); then
     _mise_hook() {}
     mise() {}
 
-    source <(mise activate zsh)
+    source <(command mise activate zsh)
 fi
 
 # Local config
