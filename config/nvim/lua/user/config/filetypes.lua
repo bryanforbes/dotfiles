@@ -3,6 +3,7 @@ vim.filetype.add({
   extension = {
     jin = 'jinja',
     smd = 'json',
+    pkl = 'pkl',
   },
   filename = {
     ['poetry.lock'] = 'toml',
