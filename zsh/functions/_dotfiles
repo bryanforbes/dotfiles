@@ -6,6 +6,7 @@ _dotfiles_commands() {
     'bat:Rebuild bat theme and filetype cache'
     'brew:Update brew packages, install defaults'
     'home:Update dotfiles and home directories, fixup terminfo database'
+    'mise:Update global tools installed via mise'
     'node:Update global node packages, install defaults'
     'python:Update global python packages, install defaults'
     'tmux:Update tpm packages'
@@ -16,6 +17,7 @@ _dotfiles_commands() {
 }
 
 _dotfiles() {
+  local ret=1
   local -a args
   args=(
     # If -h or --help are provided, don't complete any more options, files, or

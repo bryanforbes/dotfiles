@@ -49,9 +49,7 @@ update_completions() {
 generate_terminfo() {
     local term_name="$1"
 
-    infocmp "$term_name" &> /dev/null
-
-    if (( $? != 0 )); then
+    if ! infocmp "$term_name" &> /dev/null; then
         local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
 
         # Fix so backspace is mapped to ^?
@@ -166,8 +164,7 @@ dotfiles-brew() {
 
     logSub "Checking for missing brew packages..."
 
-    brew bundle check &> /dev/null
-    if (( $? != 0 )); then
+    if ! brew bundle check &> /dev/null; then
         logSub "Installing missing brew packages..."
         brew bundle install
     fi
@@ -185,6 +182,8 @@ dotfiles-brew() {
 }
 
 dotfiles-mise() {
+    log "Updating mise tools..."
+
     global-mise() { mise --cd "$DOTFILES" "$@" 2>/dev/null; }
 
     local -a install_tools
@@ -200,24 +199,26 @@ dotfiles-mise() {
     done
 
     if (( ${#install_tools[@]} )); then
-        log "Installing missing mise tools: ${install_tools[@]}..."
+        logSub "Installing missing mise tools: ${install_tools[@]}..."
         global-mise install "${install_tools[@]}"
     fi
 
     if (( ${#upgrade_tools[@]} )); then
-        log "Updating outdated mise tools: ${upgrade_tools[@]}..."
+        logSub "Updating outdated mise tools: ${upgrade_tools[@]}..."
         global-mise upgrade "${upgrade_tools[@]}"
     fi
 
+    # Update shell environment so new/updated tools are available
+    source <(global-mise env --shell=zsh)
     rehash
 
+    # Update mise zsh completions
     local mise_args
     if [[ " ${install_tools[@]} ${upgrade_tools[@]} " ==  *" usage "* ]]; then
-        mise_args="-f"
+        update_completions -f mise completions zsh
+    else
+        update_completions mise completions zsh
     fi
-
-    # Update mise zsh completions
-    update_completions "$mise_args" mise completions zsh
 
     update_completions poetry completions zsh
     update_completions uv generate-shell-completion zsh
@@ -232,16 +233,16 @@ dotfiles-zsh() {
         return
     fi
 
-    cd $ZPLUGDIR
-    for org in *; do
-        cd $org
-        for plugin in *; do
-            cd $plugin
-            head=$(git rev-parse HEAD)
-            git pull -q --recurse-submodules
-            git submodule update --remote
-            if [[ $(git rev-parse HEAD) != $head ]]; then
-                logSub "Updated $org/$plugin"
+    for org in $ZPLUGDIR/*(/N); do
+        for plugin in $org/*(/N); do
+            head=$(git -C "${plugin}" rev-parse HEAD)
+            git -C "${plugin}" pull -q --recurse-submodules
+            git -C "${plugin}" submodule update --remote
+            if [[ $(git -C "${plugin}" rev-parse HEAD) != $head ]]; then
+                logSub "Updated ${plugin:t2}"
+                if [[ "$plugin" == "zsh-users/zsh-completions" ]]; then
+                    completions_updated=1
+                fi
             fi
             cd ..
         done
@@ -457,6 +458,7 @@ if [[ -n $help ]]; then
     echo '    bat            Rebuild bat theme and filetype cache'
     echo '    brew           Update brew packages, install defaults'
     echo '    home           Update dotfiles and home directories, fixup terminfo database'
+    echo '    mise           Update global tools installed via mise'
     echo '    node           Update global node packages, install defaults'
     echo '    python         Update global python packages, install defaults'
     echo '    tmux           Update tpm packages'
