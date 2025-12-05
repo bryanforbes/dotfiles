@@ -1,0 +1,5 @@
+compinit -i -d "${ZCOMPFILE}.new"
+zcompile "${ZCOMPFILE}.new"
+mv -f "${ZCOMPFILE}.new.zwc" "${ZCOMPFILE}.zwc"
+mv -f "${ZCOMPFILE}.new" "${ZCOMPFILE}"
+compinit -i -C "${ZCOMPFILE}"
