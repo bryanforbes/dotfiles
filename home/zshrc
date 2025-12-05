@@ -86,7 +86,7 @@ autoload -Uz colors && colors
 
 # Colorize ls
 if (( $+commands[dircolors] )); then
-    eval "$(dircolors --sh)"
+    source <(dircolors --sh)
     LS_COLORS="${LS_COLORS//;90:/;92:}"  # replace base03 text with base01
 else
     export LSCOLORS='exfxcxdxbxGxDxabagacad'
@@ -656,22 +656,6 @@ if (( ${+commands[mise]} )); then
     elif [[ "$OSTYPE" == linux* ]]; then
         mise_env+=('linux')
     fi
-
-    cache_file="${ZCACHEDIR}/shellenv/mise.zsh"
-
-    if [[ "$commands[mise]:A" -nt "$cache_file" || ! -s "$cache_file" ]]; then
-        mkdir -p "$cache_file:h"
-        # Cache the result.
-        { mise activate zsh | sed '/^export PATH=/d' } >! "$cache_file" 2> /dev/null
-    fi
-
-    _mise_hook_precmd() {}
-    _mise_hook_chpwd() {}
-    _mise_hook() {}
-    mise() {}
-
-    source "$cache_file"
-    unset cache_file
 fi
 
 # mosh
@@ -737,7 +721,7 @@ prompt pure
 # --------------------------------------------------------------------------
 _zsh_tmux_update_environment_preexec() {
     # Filter out PATH updates to avoid conflicts with mise
-    eval "$(tmux show-environment -s | sed '/^export PATH=/d; /^PATH=/d')"
+    source <(tmux show-environment -s | sed '/^export PATH=/d; /^PATH=/d')
 }
 
 if (( ${+commands[tmux]} )); then
@@ -765,12 +749,6 @@ fi
 # mise activation (this needs to be last)
 # ------------------------------------------------------------------------
 if (( ${+commands[mise]} )); then
-    # Remove the following when 2025.11.1 is released
-    _mise_hook_precmd() {}
-    _mise_hook_chpwd() {}
-    _mise_hook() {}
-    mise() {}
-
     source <(command mise activate zsh)
 fi
 

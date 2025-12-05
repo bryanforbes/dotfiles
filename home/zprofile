@@ -17,7 +17,7 @@
 
 # Language
 # ----------------------------------------------------------------------------
-[[ -z "$LANG" ]] && eval "$(locale)"
+[[ -z "$LANG" ]] && source <(locale)
 [[ -z "$LANG" ]] && export LANG=en_US.UTF-8
 [[ -z "$LC_ALL" ]] && export LC_ALL=$LANG
 
@@ -111,7 +111,7 @@ typeset -gU path
 # --------------------------------------------------------------------------
 # On macOS, use the system path_helper to set the initial PATH
 if [[ -x /usr/libexec/path_helper ]]; then
-    eval "$(/usr/libexec/path_helper -s)"
+    source <(/usr/libexec/path_helper -s)
 fi
 
 # This is similar to what site.py does to find user modules
