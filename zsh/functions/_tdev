@@ -1,0 +1,5 @@
+#compdef tdev
+
+_arguments \
+    '(-n)-n[Create windows in new tmux window]' \
+    '*:directory:_files -W cdpath -/'

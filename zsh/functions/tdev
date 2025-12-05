@@ -1,9 +1,9 @@
-local new_window directories
+local new_window
 
 zparseopts -E -D n=new_window
 
 # copy $@ to $directories
-directories=("${@[@]}")
+local directories=("${@[@]}")
 
 if [[ -n "$new_window" ]]; then
     new_window=1
@@ -15,14 +15,32 @@ if [[ -z "$directories" ]]; then
     directories=($PWD)
 fi
 
+local directory
 for directory in $directories; do
+    # Resolve directory using $cdpath if not absolute or in current dir
+    if [[ "$directory" != /* && ! -d "$directory" ]]; then
+        local cdpath_base
+        for cdpath_base in $cdpath; do
+            local cdpath_dir="$cdpath_base/$directory"
+            if [[ -d "$cdpath_dir" ]]; then
+                directory="$cdpath_dir"
+                break
+            fi
+        done
+    fi
+
+    if [[ ! -d "$directory" ]]; then
+        echo "No such directory: $directory" >&2
+        continue
+    fi
+
     if (( $new_window )); then
-        tmux new-window -c "$directory" -n "$(basename $directory)"
+        tmux new-window -c "$directory" -n "${directory:t}"
     else
         if [[ "$directory" != "$PWD" ]]; then
             cd "$directory" || continue
         fi
-        tmux rename-window "$(basename $directory)"
+        tmux rename-window "${directory:t}"
     fi
 
     tmux split-window -d -l "25%" -c "$directory"
