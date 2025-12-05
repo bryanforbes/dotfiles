@@ -55,6 +55,7 @@ dotfiles
 ```bash
 dotfiles bat      # Rebuild bat theme/filetype cache
 dotfiles brew     # Update Homebrew packages
+dotfiles mise     # Update mise packages
 dotfiles home     # Update symlinks and terminfo
 dotfiles node     # Update global npm packages
 dotfiles python   # Update Python packages
@@ -67,6 +68,18 @@ dotfiles zsh      # Update ZSH plugins
 ```bash
 dotfiles --help
 ```
+
+## Documentation Lookups
+
+When researching libraries or tools:
+- Use context7 (`mcp__context7__resolve-library-id` and `mcp__context7__get-library-docs`) for:
+  - Neovim plugins (lazy.nvim, LSP, treesitter, etc.)
+  - Zsh and Zsh plugins (zsh-completions, zsh-autosuggestions, etc.)
+  - Homebrew packages
+  - Node/Python/Lua libraries used in this project
+- Use `web_search` and `read_web_page` for:
+  - External tool documentation not in context7
+  - Up-to-date API references or recent changes
 
 ## Development Workflow
 
@@ -189,7 +202,7 @@ Packages are defined in `Brewfile` using Homebrew Bundle format:
 
 **General conventions:**
 - **Shebang:** Use `#!/usr/bin/env zsh` for ZSH scripts, `#!/bin/bash` for Bash
-- **Functions:** Use ZSH function syntax: `function name { ... }`
+- **Functions:** Use ZSH function syntax: `name() { ... }`
 - **Conditionals:** Use `[[ ]]` for tests (ZSH/Bash), not `[ ]`
 - **Arrays:** ZSH 1-indexed arrays, use `${array[@]}` for all elements
 - **Exit codes:** Use `if ! command; then` or check with `(( $? != 0 ))`
