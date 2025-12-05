@@ -40,6 +40,11 @@ return {
             return
           end
 
+          -- Disable autoformat for files in a certain path
+          if bufname:match('/node_modules/') or bufname:match('/.venv/') then
+            return
+          end
+
           return {
             lsp_fallback = true,
             timeout_ms = 1000,
@@ -62,17 +67,13 @@ return {
           css = { 'prettier' },
           rust = { 'rustfmt' },
         },
+        default_format_opts = {
+          require_cwd = true,
+        },
         formatters = {
-          ruff_format = { require_cwd = true },
           ruff_organize_imports = {
-            require_cwd = true,
             append_args = { '--select=F401' },
           },
-          isort = { require_cwd = true },
-          black = { require_cwd = true },
-          prettier = { require_cwd = true },
-          stylua = { require_cwd = true },
-          rustfmt = { require_cwd = true },
         },
       }
     end,
