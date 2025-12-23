@@ -66,11 +66,30 @@ return {
           svelte = { 'prettier' },
           css = { 'prettier' },
           rust = { 'rustfmt' },
+          pkl = { 'pkl' },
+          markdown = { 'rumdl' },
         },
         default_format_opts = {
           require_cwd = true,
         },
         formatters = {
+          rumdl = {
+            command = 'rumdl',
+            args = {
+              'fmt',
+              '--force-exclude',
+              '--stdin-filename',
+              '$FILENAME',
+              '-',
+            },
+            stdin = true,
+            cwd = require('conform.util').root_file({
+              '.rumdl.toml',
+              'rumdl.toml',
+              '.config/rumdl.toml',
+              'pyproject.toml',
+            }),
+          },
           ruff_organize_imports = {
             append_args = { '--select=F401' },
           },
