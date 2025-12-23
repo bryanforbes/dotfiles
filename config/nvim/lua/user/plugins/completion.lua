@@ -131,6 +131,7 @@ return {
             inherit_defaults = true,
             'lazydev',
           },
+          codecompanion = { 'codecompanion' },
         },
         providers = {
           lazydev = {
@@ -200,7 +201,7 @@ return {
       'CodeCompanionCmd',
     },
     opts = {
-      strategies = {
+      interactions = {
         chat = {
           adapter = 'copilot',
         },
