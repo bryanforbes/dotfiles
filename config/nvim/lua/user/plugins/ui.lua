@@ -11,7 +11,7 @@ return {
     event = 'VeryLazy',
     opts = {
       options = {
-        theme = 'solarized',
+        theme = 'solarized-osaka',
         component_separators = '|',
       },
       sections = {

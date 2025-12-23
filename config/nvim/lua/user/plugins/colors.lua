@@ -1,3 +1,5 @@
+--- @module 'lazy.nvim'
+--- @type LazyPluginSpec[]
 return {
   {
     'svrana/neosolarized.nvim',
@@ -166,5 +168,48 @@ return {
         end,
       })
     end,
+  },
+  {
+    'craftzdog/solarized-osaka.nvim',
+    lazy = false,
+    priority = 1000,
+    build = function(plugin)
+      local dotfiles = vim.fs.normalize('~/.dotfiles')
+      local ghostty_config_dir =
+        vim.fs.joinpath(dotfiles, 'config', 'ghostty', 'themes')
+      local ghostty_extras_dir =
+        vim.fs.joinpath(plugin.dir, 'extras', 'ghostty')
+
+      for ghostty_extra_theme in vim.fs.dir(ghostty_extras_dir) do
+        local theme_name = vim.fs.basename(ghostty_extra_theme)
+        local config_theme = vim.fs.joinpath(ghostty_config_dir, theme_name)
+        local extras_theme = vim.fs.joinpath(ghostty_extras_dir, theme_name)
+
+        if not vim.uv.fs_stat(config_theme) then
+          vim.uv.fs_symlink(extras_theme, config_theme)
+        elseif vim.uv.fs_realpath(config_theme) ~= extras_theme then
+          vim.uv.fs_unlink(config_theme)
+          vim.uv.fs_symlink(extras_theme, config_theme)
+        end
+      end
+    end,
+    opts = {
+      transparent = true,
+      styles = {
+        keywords = { italic = false },
+      },
+      dim_inactive = true,
+      on_highlights = function(hl, c)
+        hl.ColorColumn = {
+          bg = c.base03,
+        }
+        hl.MatchParen = {
+          fg = c.base3,
+          bg = c.none,
+          bold = true,
+        }
+        hl.CursorLineNr.bg = c.base03
+      end,
+    },
   },
 }

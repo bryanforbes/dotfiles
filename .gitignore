@@ -1,6 +1,7 @@
 config/nvim/plugin/packer_compiled.lua
 config/nvim/.netrwhist
 config/direnv/lib/use_asdf.sh
+config/ghostty/themes/solarized_osaka_*
 /hammerspoon/Spoons/*
 !/hammerspoon/Spoons/SilenceMe.spoon
 !/hammerspoon/Spoons/SpoonInstall.spoon

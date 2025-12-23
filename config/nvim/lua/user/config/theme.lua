@@ -48,4 +48,4 @@ require('nvim-neosolarized').setup({
   end,
 })
 
-vim.cmd.colorscheme('nvim-neosolarized')
+vim.cmd.colorscheme('solarized-osaka')
