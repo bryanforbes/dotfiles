@@ -96,3 +96,4 @@ end
 vim.lsp.enable('pyright')
 vim.lsp.enable('basedpyright')
 vim.lsp.enable('ruff')
+vim.lsp.enable('rumdl')
