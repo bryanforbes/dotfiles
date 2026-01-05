@@ -12,8 +12,6 @@ font-feature = -liga
 adjust-cell-width = -1
 
 # Window
-window-padding-x = 0
-window-padding-y = 0
 window-padding-balance = false
 window-save-state = always
 quit-after-last-window-closed = true
