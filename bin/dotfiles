@@ -240,7 +240,7 @@ dotfiles-zsh() {
             git -C "${plugin}" submodule update --remote
             if [[ $(git -C "${plugin}" rev-parse HEAD) != $head ]]; then
                 logSub "Updated ${plugin:t2}"
-                if [[ "$plugin" == "zsh-users/zsh-completions" ]]; then
+                if [[ "${plugin:t2}" == "zsh-users/zsh-completions" ]]; then
                     completions_updated=1
                 fi
             fi
